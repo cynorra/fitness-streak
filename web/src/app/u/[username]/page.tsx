@@ -2,7 +2,7 @@ import { createClient } from '@/utils/supabase/server'
 import { notFound, redirect } from 'next/navigation'
 import Navbar from '@/components/Navbar'
 import Link from 'next/link'
-import { requestDietitian } from './actions'
+import { requestDietitian, startConversation } from './actions'
 import PostInteractions from '@/app/feed/PostInteractions'
 
 export default async function UserProfile({ params }: { params: Promise<{ username: string }> }) {
@@ -140,15 +140,27 @@ export default async function UserProfile({ params }: { params: Promise<{ userna
                  </div>
               </div>
 
-              {currentUser && currentUser.id !== profile.id && profile.role === 'dietitian' && (
-                 <div className="md:self-center">
+              {currentUser && currentUser.id !== profile.id && (
+                 <div className="md:self-center flex flex-col sm:flex-row gap-4">
+                    {profile.role === 'dietitian' && (
+                       <form action={async (formData) => {
+                          'use server'
+                          await requestDietitian(formData)
+                       }}>
+                          <input type="hidden" name="dietitianId" value={profile.id} />
+                          <button className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 px-10 py-5 rounded-3xl font-black text-xs uppercase tracking-[0.2em] hover:scale-105 active:scale-95 transition-all shadow-2xl">
+                             Çalışma İsteği Gönder 🤝
+                          </button>
+                       </form>
+                    )}
+                    
                     <form action={async (formData) => {
                        'use server'
-                       await requestDietitian(formData)
+                       await startConversation(formData)
                     }}>
-                       <input type="hidden" name="dietitianId" value={profile.id} />
-                       <button className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 px-10 py-5 rounded-3xl font-black text-xs uppercase tracking-[0.2em] hover:scale-105 active:scale-95 transition-all shadow-2xl">
-                          Çalışma İsteği Gönder 🤝
+                       <input type="hidden" name="targetUserId" value={profile.id} />
+                       <button className="bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-50 border-2 border-zinc-100 dark:border-zinc-700 px-10 py-5 rounded-3xl font-black text-xs uppercase tracking-[0.2em] hover:scale-105 active:scale-95 transition-all shadow-xl">
+                          Mesaj Gönder 💬
                        </button>
                     </form>
                  </div>

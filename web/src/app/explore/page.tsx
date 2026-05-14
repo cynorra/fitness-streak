@@ -3,21 +3,25 @@ import Navbar from '@/components/Navbar'
 import Link from 'next/link'
 
 interface Props {
-  searchParams: Promise<{ q: string }>
+  searchParams: Promise<{ q: string; role: string }>
 }
 
 export default async function ExplorePage({ searchParams }: Props) {
-  const { q } = await searchParams
+  const { q, role } = await searchParams
   const supabase = await createClient()
 
   let query = supabase
     .from('profiles')
     .select('*')
     .order('current_streak', { ascending: false })
-    .limit(24)
+    .limit(48)
 
   if (q) {
-    query = query.or(`username.ilike.%${q}%,display_name.ilike.%${q}%`)
+    query = query.or(`username.ilike.%${q}%,display_name.ilike.%${q}%,specialty.ilike.%${q}%,bio.ilike.%${q}%`)
+  }
+
+  if (role && role !== 'all') {
+    query = query.eq('role', role)
   }
 
   const { data: users } = await query
@@ -41,7 +45,7 @@ export default async function ExplorePage({ searchParams }: Props) {
                 name="q"
                 type="text" 
                 defaultValue={q}
-                placeholder="İsim veya @kullaniciadi ile ara..."
+                placeholder="İsim, uzmanlık veya @kullaniciadi ile ara..."
                 className="w-full bg-white dark:bg-zinc-900 rounded-[2.5rem] pl-16 pr-24 py-6 text-sm font-bold text-zinc-900 dark:text-zinc-50 border-none outline-none ring-1 ring-zinc-200 dark:ring-zinc-800 focus:ring-2 focus:ring-orange-500 transition-all shadow-xl shadow-orange-500/5"
               />
               <button className="absolute right-4 top-1/2 -translate-y-1/2 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 px-8 py-3 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:scale-105 transition-transform active:scale-95 shadow-lg">
@@ -50,13 +54,26 @@ export default async function ExplorePage({ searchParams }: Props) {
            </form>
         </div>
 
-        {/* Categories / Filters (Mockup for now) */}
+        {/* Filters */}
         <div className="flex gap-3 mb-10 overflow-x-auto pb-4 scrollbar-hide">
-           {['Hepsi', 'Diyetisyenler', 'En Yüksek Streak', 'Yeni Üyeler'].map((cat) => (
-              <button key={cat} className="whitespace-nowrap px-6 py-2.5 rounded-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-orange-500 hover:border-orange-500 transition-all shadow-sm">
-                 {cat}
-              </button>
-           ))}
+           <Link 
+             href="/explore" 
+             className={`whitespace-nowrap px-6 py-2.5 rounded-full border text-[10px] font-black uppercase tracking-widest transition-all shadow-sm ${!role || role === 'all' ? 'bg-orange-500 border-orange-500 text-white' : 'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 text-zinc-500 hover:text-orange-500'}`}
+           >
+              Hepsi
+           </Link>
+           <Link 
+             href="/explore?role=dietitian" 
+             className={`whitespace-nowrap px-6 py-2.5 rounded-full border text-[10px] font-black uppercase tracking-widest transition-all shadow-sm ${role === 'dietitian' ? 'bg-orange-500 border-orange-500 text-white' : 'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 text-zinc-500 hover:text-orange-500'}`}
+           >
+              Diyetisyenler
+           </Link>
+           <Link 
+             href="/explore?role=user" 
+             className={`whitespace-nowrap px-6 py-2.5 rounded-full border text-[10px] font-black uppercase tracking-widest transition-all shadow-sm ${role === 'user' ? 'bg-orange-500 border-orange-500 text-white' : 'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 text-zinc-500 hover:text-orange-500'}`}
+           >
+              Sporcular
+           </Link>
         </div>
 
         {/* Results Grid */}
@@ -79,6 +96,9 @@ export default async function ExplorePage({ searchParams }: Props) {
                           <span className="bg-orange-500 text-white text-[8px] font-black uppercase px-2.5 py-1 rounded-full tracking-widest shadow-lg shadow-orange-500/20">Diyetisyen</span>
                        )}
                     </div>
+                    {user.specialty && (
+                      <p className="text-[10px] text-orange-500 font-black uppercase tracking-widest mb-1">{user.specialty}</p>
+                    )}
                     <p className="text-[11px] text-zinc-400 font-black uppercase tracking-widest mb-4">@{user.username}</p>
                     <div className="flex items-center gap-3">
                        <div className="flex flex-col">
