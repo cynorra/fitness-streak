@@ -110,7 +110,12 @@ export default function StreakHome() {
 
       {weekWorkouts.length > 0 && (
         <View style={styles.recentSection}>
+        <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>SON ANTRENMANLAR</Text>
+          <TouchableOpacity onPress={() => router.push('/history' as any)}>
+            <Text style={styles.seeAllText}>TÜMÜNÜ GÖR</Text>
+          </TouchableOpacity>
+        </View>
           {weekWorkouts.slice(0, 5).map(w => (
             <View key={w.id} style={styles.workoutRow}>
               <View>
@@ -195,10 +200,15 @@ const styles = StyleSheet.create({
   statValue: { color: '#fff', fontSize: 36, fontWeight: '900', letterSpacing: -2 },
   statLabel: { color: '#444', fontSize: 9, fontWeight: '900', marginTop: 4, textTransform: 'uppercase', letterSpacing: 1.5 },
   recentSection: { paddingHorizontal: 16, paddingBottom: 40 },
+  sectionHeader: { 
+    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', 
+    marginBottom: 16 
+  },
   sectionTitle: {
     color: '#666', fontSize: 10, fontWeight: '900',
-    letterSpacing: 3, marginBottom: 16, textTransform: 'uppercase',
+    letterSpacing: 3, textTransform: 'uppercase',
   },
+  seeAllText: { color: '#ff6b35', fontSize: 10, fontWeight: '900', letterSpacing: 1 },
   workoutRow: {
     backgroundColor: '#111', padding: 20, borderRadius: 20,
     marginBottom: 12, flexDirection: 'row',

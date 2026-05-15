@@ -1,3 +1,4 @@
+import 'react-native-url-polyfill/auto';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { useEffect } from 'react';
 import { AuthProvider, useAuth } from '../lib/auth';
@@ -35,6 +36,7 @@ function RootLayoutNav() {
       <Stack.Screen name="messages" options={{ animation: 'slide_from_right' }} />
       <Stack.Screen name="chat/[id]" options={{ animation: 'slide_from_right' }} />
       <Stack.Screen name="log" options={{ presentation: 'modal' }} />
+      <Stack.Screen name="history" options={{ animation: 'slide_from_bottom' }} />
     </Stack>
   );
 }
