@@ -6,6 +6,7 @@ import {
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../lib/auth';
 import { format, parseISO } from 'date-fns';
+import { useRouter } from 'expo-router';
 import { tr } from 'date-fns/locale';
 
 type FeedItem = {
@@ -26,6 +27,7 @@ type FeedItem = {
 
 export default function Feed() {
   const { profile } = useAuth();
+  const router = useRouter();
   const [items, setItems] = useState<FeedItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -125,7 +127,18 @@ export default function Feed() {
       keyExtractor={i => i.id}
       ListHeaderComponent={
         <View style={styles.header}>
-          <Text style={styles.title}>Akış</Text>
+          <View style={styles.logoRow}>
+            <View style={{flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1}}>
+              <View style={styles.logoBox}>
+                <Text style={styles.logoLetter}>S</Text>
+              </View>
+              <Text style={styles.logoText}>STREAK<Text style={{color: '#ff6b35'}}>FIT</Text></Text>
+            </View>
+            <TouchableOpacity onPress={() => router.push('/messages' as any)} style={styles.msgBtn}>
+              <Text style={styles.msgIcon}>💬</Text>
+            </TouchableOpacity>
+          </View>
+          <Text style={styles.title}>TOPLULUK AKIŞI</Text>
         </View>
       }
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#ff6b35" />}
@@ -189,8 +202,14 @@ export default function Feed() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0a0a0a' },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#0a0a0a' },
-  header: { padding: 24, paddingTop: 60 },
-  title: { color: '#fff', fontSize: 28, fontWeight: '900', letterSpacing: -1 },
+  header: { padding: 24, paddingTop: 60, gap: 12 },
+  logoRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
+  msgBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: '#111', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: '#222' },
+  msgIcon: { fontSize: 20 },
+  logoBox: { width: 32, height: 32, backgroundColor: '#ff6b35', borderRadius: 8, justifyContent: 'center', alignItems: 'center' },
+  logoLetter: { color: '#fff', fontWeight: '900', fontSize: 18 },
+  logoText: { color: '#fff', fontSize: 24, fontWeight: '900', letterSpacing: -1.5 },
+  title: { color: '#666', fontSize: 11, fontWeight: '900', letterSpacing: 2, textTransform: 'uppercase' },
   empty: { padding: 48, alignItems: 'center' },
   emptyEmoji: { fontSize: 56, marginBottom: 16 },
   emptyText: { color: '#888', fontSize: 14, textAlign: 'center', lineHeight: 22 },

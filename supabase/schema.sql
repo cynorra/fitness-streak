@@ -1,4 +1,4 @@
-﻿-- ============================================================
+-- ============================================================
 -- STREAK-FIT VERÄ°TABANI ÅEMASI
 -- Supabase SQL Editor'a yapÄ±ÅŸtÄ±r ve Ã§alÄ±ÅŸtÄ±r
 -- ============================================================
@@ -413,7 +413,7 @@ returns trigger as $$
 begin
   if new.status = 'approved' and old.status = 'pending' then
     insert into public.notifications (user_id, actor_id, type)
-    values (new.client_id, new.dietitian_id, 'dietitian_approved', 'repost');
+    values (new.client_id, new.dietitian_id, 'dietitian_approved');
   end if;
   return new;
 end;
@@ -455,7 +455,7 @@ create policy "Kullanıcı rozetleri herkes tarafından görülebilir" on public
 
 -- Rozet Kontrol Tetikleyicisi
 create or replace function public.check_and_award_badges()
-returns trigger as 
+returns trigger as $$
 begin
   insert into public.user_badges (user_id, badge_id)
   select new.id, b.id
@@ -465,7 +465,7 @@ begin
   
   return new;
 end;
- language plpgsql security definer;
+$$ language plpgsql security definer;
 
 create trigger trg_check_badges
 after update of current_streak on public.profiles
@@ -490,7 +490,7 @@ create policy "Repost sil" on public.reposts for delete using (user_id = auth.ui
 
 -- Repost Bildirimi
 create or replace function public.on_repost_notify()
-returns trigger as 
+returns trigger as $$
 declare
   v_post_owner_id uuid;
 begin
@@ -502,8 +502,19 @@ begin
   end if;
   return new;
 end;
- language plpgsql security definer;
+$$ language plpgsql security definer;
 
 create trigger trg_on_repost_notify
 after insert on public.reposts
 for each row execute function public.on_repost_notify();
+
+-- ============================================================
+-- REALTIME YAPILANDIRMASI
+-- ============================================================
+begin;
+  drop publication if exists supabase_realtime;
+  create publication supabase_realtime for table 
+    public.notifications,
+    public.messages,
+    public.conversations;
+commit;

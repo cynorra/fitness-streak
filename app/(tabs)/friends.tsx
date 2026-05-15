@@ -4,6 +4,7 @@ import {
   FlatList, Alert, ActivityIndicator,
 } from 'react-native';
 import { supabase } from '../../lib/supabase';
+import { useRouter } from 'expo-router';
 import { useAuth } from '../../lib/auth';
 
 type FriendRow = {
@@ -17,6 +18,7 @@ type FriendRow = {
 
 export default function Friends() {
   const { profile } = useAuth();
+  const router = useRouter();
   const [query, setQuery] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [friends, setFriends] = useState<FriendRow[]>([]);
@@ -122,7 +124,18 @@ export default function Friends() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Arkadaşlar</Text>
+        <View style={styles.logoRow}>
+          <View style={{flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1}}>
+            <View style={styles.logoBox}>
+              <Text style={styles.logoLetter}>S</Text>
+            </View>
+            <Text style={styles.logoText}>STREAK<Text style={{color: '#ff6b35'}}>FIT</Text></Text>
+          </View>
+          <TouchableOpacity onPress={() => router.push('/messages' as any)} style={styles.msgBtn}>
+            <Text style={styles.msgIcon}>💬</Text>
+          </TouchableOpacity>
+        </View>
+        <Text style={styles.title}>ARKADAŞLAR</Text>
       </View>
 
       <TextInput
@@ -215,8 +228,14 @@ export default function Friends() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0a0a0a' },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#0a0a0a' },
-  header: { padding: 24, paddingTop: 60 },
-  title: { color: '#fff', fontSize: 28, fontWeight: '900', letterSpacing: -1 },
+  header: { padding: 24, paddingTop: 60, gap: 12 },
+  logoRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
+  msgBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: '#111', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: '#222' },
+  msgIcon: { fontSize: 20 },
+  logoBox: { width: 32, height: 32, backgroundColor: '#ff6b35', borderRadius: 8, justifyContent: 'center', alignItems: 'center' },
+  logoLetter: { color: '#fff', fontWeight: '900', fontSize: 18 },
+  logoText: { color: '#fff', fontSize: 24, fontWeight: '900', letterSpacing: -1.5 },
+  title: { color: '#666', fontSize: 11, fontWeight: '900', letterSpacing: 2, textTransform: 'uppercase' },
   searchInput: {
     backgroundColor: '#1a1a1a', marginHorizontal: 16, marginBottom: 16,
     padding: 14, borderRadius: 12, color: '#fff', fontSize: 15,

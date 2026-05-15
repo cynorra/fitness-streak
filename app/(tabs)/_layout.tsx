@@ -31,10 +31,10 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="log"
+        name="notifications"
         options={{
-          title: 'Logla',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 22, color }}>➕</Text>,
+          title: 'Bildirimler',
+          tabBarIcon: ({ color }) => <Text style={{ fontSize: 22, color }}>🔔</Text>,
         }}
       />
       <Tabs.Screen

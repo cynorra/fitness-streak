@@ -4,6 +4,34 @@ import Navbar from '@/components/Navbar'
 import Link from 'next/link'
 import { requestDietitian, startConversation } from './actions'
 import PostInteractions from '@/app/feed/PostInteractions'
+import { Metadata } from 'next'
+
+export async function generateMetadata({ params }: { params: Promise<{ username: string }> }): Promise<Metadata> {
+  const { username } = await params
+  const supabase = await createClient()
+  
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('display_name, username, current_streak, bio')
+    .eq('username', username)
+    .single()
+
+  if (!profile) return { title: 'Kullanıcı Bulunamadı | Streak-Fit' }
+
+  const name = profile.display_name || profile.username
+  const streak = profile.current_streak || 0
+
+  return {
+    title: `${name} (@${profile.username}) | ${streak} Günlük Seri - Streak-Fit`,
+    description: profile.bio || `${name} kullanıcısının fitness profilini ve antrenman serisini Streak-Fit üzerinde takip et.`,
+    openGraph: {
+      title: `${name} | ${streak} Günlük Seri`,
+      description: profile.bio || `${name} kullanıcısının gelişimini takip et.`,
+      type: 'profile',
+      username: profile.username,
+    }
+  }
+}
 
 export default async function UserProfile({ params }: { params: Promise<{ username: string }> }) {
   const { username } = await params

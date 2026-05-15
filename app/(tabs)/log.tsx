@@ -56,8 +56,21 @@ export default function LogWorkout() {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <Text style={styles.title}>Antrenman Logla</Text>
-      <Text style={styles.subtitle}>Ne yaptın bugün?</Text>
+      <View style={styles.header}>
+        <View style={styles.logoRow}>
+          <View style={{flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1}}>
+            <View style={styles.logoBox}>
+              <Text style={styles.logoLetter}>S</Text>
+            </View>
+            <Text style={styles.logoText}>STREAK<Text style={{color: '#ff6b35'}}>FIT</Text></Text>
+          </View>
+          <TouchableOpacity onPress={() => router.push('/messages' as any)} style={styles.msgBtn}>
+            <Text style={styles.msgIcon}>💬</Text>
+          </TouchableOpacity>
+        </View>
+        <Text style={styles.title}>ANTRENMAN LOGLA</Text>
+        <Text style={styles.subtitle}>NE YAPTIN BUGÜN?</Text>
+      </View>
 
       <View style={styles.typeGrid}>
         {WORKOUT_TYPES.map(t => (
@@ -115,8 +128,15 @@ export default function LogWorkout() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0a0a0a' },
   content: { padding: 24, paddingTop: 60 },
-  title: { color: '#fff', fontSize: 28, fontWeight: '900', letterSpacing: -1 },
-  subtitle: { color: '#888', fontSize: 14, marginTop: 4, marginBottom: 24 },
+  header: { gap: 12, marginBottom: 32 },
+  logoRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
+  msgBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: '#111', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: '#222' },
+  msgIcon: { fontSize: 20 },
+  logoBox: { width: 32, height: 32, backgroundColor: '#ff6b35', borderRadius: 8, justifyContent: 'center', alignItems: 'center' },
+  logoLetter: { color: '#fff', fontWeight: '900', fontSize: 18 },
+  logoText: { color: '#fff', fontSize: 24, fontWeight: '900', letterSpacing: -1.5 },
+  title: { color: '#fff', fontSize: 32, fontWeight: '900', letterSpacing: -1.5 },
+  subtitle: { color: '#666', fontSize: 10, fontWeight: '900', letterSpacing: 3, textTransform: 'uppercase' },
   typeGrid: {
     flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 24,
   },

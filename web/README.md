@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Streak-Fit Web (Next.js 16)
 
-## Getting Started
+Streak-Fit, topluluk odaklı bir fitness ve motivasyon platformudur. Bu web platformu, mobil MVP ile senkronize çalışacak şekilde, yüksek performans ve SEO odaklı olarak inşa edilmiştir.
 
-First, run the development server:
+## 🚀 Özellikler
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Dinamik Streak Takibi:** Antrenman serilerinizi koruyun ve toplulukla paylaşın.
+- **Sosyal Akış (Feed):** Arkadaşlarınızın antrenmanlarını görün, Kudos (beğeni) verin ve yorum yapın.
+- **Gerçek Zamanlı Mesajlaşma:** Supabase Realtime ile anlık sohbet edin.
+- **Diyetisyen & Koç Yönetimi:** Uzmanlardan destek alın veya danışanlarınızı yönetin.
+- **SEO Optimizasyonu:** Kullanıcı profilleri ve içerikler için dinamik metadata, sitemap ve robots.txt desteği.
+- **Premium Tasarım:** Modern, hızlı ve responsive (mobil uyumlu) arayüz.
+
+## 🛠️ Teknoloji Yığını
+
+- **Framework:** Next.js 16 (App Router)
+- **Veritabanı & Auth:** Supabase (PostgreSQL, Realtime, SSR)
+- **Styling:** Tailwind CSS 4
+- **Diller:** TypeScript
+
+## 🚦 Başlangıç
+
+Öncelikle `.env.local` dosyasını oluşturun ve gerekli değişkenleri ekleyin:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ardından geliştirme sunucusunu başlatın:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm install
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+[http://localhost:3000](http://localhost:3000) adresinden uygulamaya erişebilirsiniz.
 
-## Learn More
+## 📱 Mobil Uygulama
 
-To learn more about Next.js, take a look at the following resources:
+Mobil uygulama için kök dizindeki Expo projesine göz atın.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+© 2026 Streak-Fit. Tüm hakları saklıdır.

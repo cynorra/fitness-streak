@@ -32,6 +32,9 @@ function RootLayoutNav() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="(auth)" />
       <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="messages" options={{ animation: 'slide_from_right' }} />
+      <Stack.Screen name="chat/[id]" options={{ animation: 'slide_from_right' }} />
+      <Stack.Screen name="log" options={{ presentation: 'modal' }} />
     </Stack>
   );
 }

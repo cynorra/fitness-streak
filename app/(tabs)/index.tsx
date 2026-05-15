@@ -1,12 +1,14 @@
-import { View, Text, StyleSheet, ScrollView, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, RefreshControl, TouchableOpacity } from 'react-native';
 import { useAuth } from '../../lib/auth';
 import { useEffect, useState, useCallback } from 'react';
+import { useRouter } from 'expo-router';
 import { supabase, Workout } from '../../lib/supabase';
 import { format, parseISO, subDays } from 'date-fns';
 import { tr } from 'date-fns/locale';
 
 export default function StreakHome() {
   const { profile, refreshProfile } = useAuth();
+  const router = useRouter();
   const [weekWorkouts, setWeekWorkouts] = useState<Workout[]>([]);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -53,16 +55,32 @@ export default function StreakHome() {
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#ff6b35" />}
     >
       <View style={styles.header}>
-        <Text style={styles.hello}>Selam, {profile?.display_name || profile?.username}</Text>
+        <View style={styles.logoRow}>
+          <View style={{flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1}}>
+            <View style={styles.logoBox}>
+              <Text style={styles.logoLetter}>S</Text>
+            </View>
+            <Text style={styles.logoText}>STREAK<Text style={{color: '#ff6b35'}}>FIT</Text></Text>
+          </View>
+          <TouchableOpacity onPress={() => router.push('/messages' as any)} style={styles.msgBtn}>
+            <Text style={styles.msgIcon}>💬</Text>
+          </TouchableOpacity>
+        </View>
+        <Text style={styles.hello}>SELAM, {profile?.display_name?.toUpperCase() || profile?.username?.toUpperCase()}</Text>
       </View>
 
       <View style={styles.streakCard}>
-        <Text style={styles.flame}>🔥</Text>
+        <View style={styles.flameContainer}>
+          <Text style={styles.flame}>🔥</Text>
+          <View style={styles.flameGlow} />
+        </View>
         <Text style={styles.streakNumber}>{streak}</Text>
         <Text style={styles.streakLabel}>
           {streak === 1 ? 'GÜN' : 'GÜNLÜK STREAK'}
         </Text>
-        <Text style={styles.greeting}>{greeting}</Text>
+        <View style={styles.greetingBox}>
+          <Text style={styles.greeting}>{greeting.toUpperCase()}</Text>
+        </View>
       </View>
 
       <View style={styles.weekStrip}>
@@ -106,61 +124,96 @@ export default function StreakHome() {
           ))}
         </View>
       )}
+
+      {/* Floating Log Button */}
+      <TouchableOpacity 
+        style={styles.fab} 
+        onPress={() => router.push('/log' as any)}
+      >
+        <Text style={styles.fabIcon}>+</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0a0a0a' },
-  header: { padding: 24, paddingTop: 60 },
-  hello: { color: '#888', fontSize: 14 },
+  header: { padding: 24, paddingTop: 60, gap: 12 },
+  logoRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
+  msgBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: '#111', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: '#222' },
+  msgIcon: { fontSize: 20 },
+  logoBox: { width: 32, height: 32, backgroundColor: '#ff6b35', borderRadius: 8, justifyContent: 'center', alignItems: 'center' },
+  logoLetter: { color: '#fff', fontWeight: '900', fontSize: 18 },
+  logoText: { color: '#fff', fontSize: 24, fontWeight: '900', letterSpacing: -1.5 },
+  hello: { color: '#666', fontSize: 11, fontWeight: '900', letterSpacing: 2 },
   streakCard: {
-    backgroundColor: '#1a1a1a', margin: 16, padding: 32,
-    borderRadius: 24, alignItems: 'center',
-    borderWidth: 1, borderColor: '#2a2a2a',
+    backgroundColor: '#111', margin: 16, padding: 40,
+    borderRadius: 40, alignItems: 'center',
+    borderWidth: 1, borderColor: '#222',
+    shadowColor: '#ff6b35', shadowOffset: { width: 0, height: 20 },
+    shadowOpacity: 0.1, shadowRadius: 40,
   },
-  flame: { fontSize: 72, marginBottom: 8 },
+  flameContainer: { position: 'relative', marginBottom: 8 },
+  flame: { fontSize: 80, zIndex: 1 },
+  flameGlow: { 
+    position: 'absolute', top: -10, left: -10, 
+    width: 60, height: 60, backgroundColor: '#ff6b35', 
+    borderRadius: 30, opacity: 0.2 
+  },
   streakNumber: {
-    fontSize: 96, fontWeight: '900', color: '#ff6b35',
-    letterSpacing: -4, lineHeight: 100,
+    fontSize: 120, fontWeight: '900', color: '#ff6b35',
+    letterSpacing: -6, lineHeight: 120,
   },
   streakLabel: {
-    color: '#888', fontSize: 12, fontWeight: '700',
-    letterSpacing: 2, marginTop: 4,
+    color: '#666', fontSize: 11, fontWeight: '900',
+    letterSpacing: 3, marginTop: -4,
   },
-  greeting: { color: '#fff', fontSize: 14, marginTop: 16, textAlign: 'center' },
+  greetingBox: { 
+    marginTop: 24, paddingVertical: 8, paddingHorizontal: 16, 
+    backgroundColor: '#1a1a1a', borderRadius: 12, borderWidth: 1, borderColor: '#2a2a2a' 
+  },
+  greeting: { color: '#fff', fontSize: 10, fontWeight: '900', letterSpacing: 1, textAlign: 'center' },
   weekStrip: {
     flexDirection: 'row', justifyContent: 'space-between',
     paddingHorizontal: 16, marginBottom: 24,
   },
   dayCol: { alignItems: 'center', flex: 1 },
-  dayLabel: { color: '#666', fontSize: 11, marginBottom: 8, textTransform: 'uppercase' },
+  dayLabel: { color: '#444', fontSize: 10, fontWeight: '900', marginBottom: 8, textTransform: 'uppercase', letterSpacing: 1 },
   dayDot: {
-    width: 36, height: 36, borderRadius: 18,
-    backgroundColor: '#1a1a1a', borderWidth: 1, borderColor: '#2a2a2a',
+    width: 40, height: 40, borderRadius: 12,
+    backgroundColor: '#111', borderWidth: 1, borderColor: '#222',
     justifyContent: 'center', alignItems: 'center',
   },
-  dayDotActive: { backgroundColor: '#ff6b35', borderColor: '#ff6b35' },
-  checkmark: { color: '#fff', fontWeight: '900', fontSize: 16 },
-  dayNum: { color: '#888', fontSize: 11, marginTop: 6 },
-  statsRow: { flexDirection: 'row', paddingHorizontal: 16, gap: 12, marginBottom: 24 },
+  dayDotActive: { backgroundColor: '#ff6b35', borderColor: '#ff6b35', shadowColor: '#ff6b35', shadowOpacity: 0.3, shadowRadius: 10, shadowOffset: { width: 0, height: 4 } },
+  checkmark: { color: '#fff', fontWeight: '900', fontSize: 18 },
+  dayNum: { color: '#666', fontSize: 10, fontWeight: '900', marginTop: 6 },
+  statsRow: { flexDirection: 'row', paddingHorizontal: 16, gap: 12, marginBottom: 32 },
   statCard: {
-    flex: 1, backgroundColor: '#1a1a1a', padding: 20,
-    borderRadius: 16, borderWidth: 1, borderColor: '#2a2a2a',
+    flex: 1, backgroundColor: '#111', padding: 24,
+    borderRadius: 24, borderWidth: 1, borderColor: '#222',
   },
-  statValue: { color: '#fff', fontSize: 32, fontWeight: '900' },
-  statLabel: { color: '#888', fontSize: 12, marginTop: 4 },
-  recentSection: { paddingHorizontal: 16, paddingBottom: 32 },
+  statValue: { color: '#fff', fontSize: 36, fontWeight: '900', letterSpacing: -2 },
+  statLabel: { color: '#444', fontSize: 9, fontWeight: '900', marginTop: 4, textTransform: 'uppercase', letterSpacing: 1.5 },
+  recentSection: { paddingHorizontal: 16, paddingBottom: 40 },
   sectionTitle: {
-    color: '#666', fontSize: 11, fontWeight: '700',
-    letterSpacing: 2, marginBottom: 12,
+    color: '#666', fontSize: 10, fontWeight: '900',
+    letterSpacing: 3, marginBottom: 16, textTransform: 'uppercase',
   },
   workoutRow: {
-    backgroundColor: '#1a1a1a', padding: 16, borderRadius: 12,
-    marginBottom: 8, flexDirection: 'row',
+    backgroundColor: '#111', padding: 20, borderRadius: 20,
+    marginBottom: 12, flexDirection: 'row',
     justifyContent: 'space-between', alignItems: 'center',
+    borderWidth: 1, borderColor: '#222',
   },
-  workoutType: { color: '#fff', fontSize: 15, fontWeight: '600' },
-  workoutDate: { color: '#888', fontSize: 12, marginTop: 2 },
-  workoutDuration: { color: '#ff6b35', fontSize: 16, fontWeight: '700' },
+  workoutType: { color: '#fff', fontSize: 15, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 0.5 },
+  workoutDate: { color: '#444', fontSize: 11, fontWeight: '700', marginTop: 2 },
+  workoutDuration: { color: '#ff6b35', fontSize: 18, fontWeight: '900', letterSpacing: -0.5 },
+  fab: {
+    position: 'absolute', bottom: 32, right: 24,
+    width: 64, height: 64, borderRadius: 32,
+    backgroundColor: '#ff6b35', justifyContent: 'center', alignItems: 'center',
+    shadowColor: '#ff6b35', shadowOpacity: 0.5, shadowRadius: 20,
+    shadowOffset: { width: 0, height: 8 }, elevation: 8,
+  },
+  fabIcon: { color: '#fff', fontSize: 32, fontWeight: '900', marginTop: -2 },
 });
