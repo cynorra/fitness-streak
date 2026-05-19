@@ -4,8 +4,8 @@ import {
   ScrollView, Alert,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { supabase, WORKOUT_TYPES } from '../../lib/supabase';
-import { useAuth } from '../../lib/auth';
+import { supabase, WORKOUT_TYPES } from '../lib/supabase';
+import { useAuth } from '../lib/auth';
 
 export default function LogWorkout() {
   const { profile, refreshProfile } = useAuth();

@@ -12,11 +12,11 @@ export default async function LoginPage({ searchParams }: Props) {
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans transition-colors duration-500">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <Link href="/" className="flex justify-center items-center gap-2 mb-8 group">
-          <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-rose-500 rounded-2xl flex items-center justify-center text-white font-black text-2xl group-hover:rotate-6 transition-transform shadow-lg shadow-orange-500/20">
-            S
+          <div className="w-12 h-12 bg-gradient-to-br from-orange-500 via-rose-500 to-purple-600 rounded-2xl flex items-center justify-center text-white font-black text-2xl group-hover:rotate-6 transition-transform shadow-lg shadow-orange-500/20">
+            F
           </div>
           <span className="text-3xl font-black tracking-tighter text-zinc-900 dark:text-zinc-50">
-            STREAK<span className="text-orange-500">FIT</span>
+            FIT<span className="inline-block bg-gradient-to-r from-orange-500 via-rose-500 to-purple-600 bg-clip-text text-transparent">BRIDGE</span>
           </span>
         </Link>
         <h2 className="text-center text-3xl font-black tracking-tight text-zinc-900 dark:text-zinc-50 mb-2">

@@ -23,11 +23,11 @@ export default async function Navbar() {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/70 dark:bg-black/70 backdrop-blur-xl border-b border-zinc-200/50 dark:border-zinc-800/50">
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-rose-500 rounded-xl flex items-center justify-center text-white font-black group-hover:rotate-6 transition-transform shadow-sm">
-            S
+          <div className="w-8 h-8 bg-gradient-to-br from-orange-500 via-rose-500 to-purple-600 rounded-xl flex items-center justify-center text-white font-black group-hover:rotate-6 transition-transform shadow-sm">
+            F
           </div>
           <span className="text-xl font-black tracking-tighter text-zinc-900 dark:text-zinc-50">
-            STREAK<span className="text-orange-500">FIT</span>
+            FIT<span className="inline-block bg-gradient-to-r from-orange-500 via-rose-500 to-purple-600 bg-clip-text text-transparent">BRIDGE</span>
           </span>
         </Link>
 

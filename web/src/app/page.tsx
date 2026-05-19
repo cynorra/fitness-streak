@@ -79,7 +79,7 @@ export default function Home() {
                        <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                        <div className="bg-white dark:bg-zinc-900 w-full h-full rounded-[3rem] shadow-2xl p-8 flex flex-col gap-6 -rotate-3 group-hover:rotate-0 transition-all duration-700">
                           <div className="flex items-center gap-4">
-                             <div className="w-12 h-12 bg-orange-100 dark:bg-orange-500/20 rounded-xl flex items-center justify-center text-orange-500 font-black">S</div>
+                             <div className="w-12 h-12 bg-orange-100 dark:bg-orange-500/20 rounded-xl flex items-center justify-center text-orange-500 font-black">F</div>
                              <div>
                                 <div className="h-3 w-32 bg-zinc-100 dark:bg-zinc-800 rounded-full mb-2"></div>
                                 <div className="h-2 w-20 bg-zinc-50 dark:bg-zinc-800/50 rounded-full"></div>
@@ -105,7 +105,7 @@ export default function Home() {
         <section className="px-6 py-32">
            <div className="max-w-7xl mx-auto text-center mb-20">
               <h2 className="text-4xl md:text-7xl font-black text-zinc-900 dark:text-zinc-50 tracking-tight leading-none mb-6">Herkes İçin Bir Yer.</h2>
-              <p className="text-zinc-500 dark:text-zinc-400 text-xl font-medium">İster sporcu ol, ister uzman. Streak-Fit seni bekliyor.</p>
+              <p className="text-zinc-500 dark:text-zinc-400 text-xl font-medium">İster sporcu ol, ister uzman. FitBridge seni bekliyor.</p>
            </div>
            <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12">
               <div className="p-12 bg-zinc-900 rounded-[3.5rem] text-white shadow-2xl relative overflow-hidden group border border-white/5">
@@ -131,7 +131,7 @@ export default function Home() {
               Geleceğini <br /> Bugün Şekillendir.
             </h2>
             <p className="text-xl md:text-2xl text-zinc-400 dark:text-zinc-500 font-bold mb-16 max-w-xl mx-auto relative z-10">
-              Streak-Fit ile gelişimini bir üst seviyeye taşıma zamanı geldi.
+              FitBridge ile gelişimini bir üst seviyeye taşıma zamanı geldi.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-6 relative z-10">
                <Link href="/login" className="px-12 py-6 bg-orange-500 text-white rounded-[2rem] font-black uppercase tracking-widest hover:scale-110 transition-all shadow-2xl shadow-orange-500/20">

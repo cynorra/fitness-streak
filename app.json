@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "StreakFit: Sosyal Fitness",
-    "displayName": "StreakFit",
-    "slug": "streak-fit",
+    "name": "FitBridge: Sosyal Fitness & Diyetisyen",
+    "displayName": "FitBridge",
+    "slug": "fitbridge",
     "version": "1.0.0",
     "description": "Arkadaşlarınla antrenman serilerini (streak) paylaş, motivasyonunu yüksek tut!",
     "orientation": "portrait",
@@ -32,7 +32,7 @@
           "action": "VIEW",
           "data": [
             {
-              "scheme": "streakfit"
+              "scheme": "fitbridge"
             }
           ],
           "category": [
