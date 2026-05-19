@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import {
   View, Text, StyleSheet, FlatList, TouchableOpacity,
-  RefreshControl, ActivityIndicator,
+  RefreshControl, ActivityIndicator, TextInput, KeyboardAvoidingView, Platform, Keyboard, Alert
 } from 'react-native';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../lib/auth';
@@ -9,74 +9,81 @@ import { format, parseISO } from 'date-fns';
 import { useRouter } from 'expo-router';
 import { tr } from 'date-fns/locale';
 
-type FeedItem = {
+type PostItem = {
   id: string;
-  workout_type: string;
-  duration_minutes: number;
-  note: string | null;
-  logged_at: string;
+  content: string;
+  created_at: string;
   user_id: string;
   profile: {
     username: string;
     display_name: string | null;
-    current_streak: number;
   };
-  kudos_count: number;
-  user_gave_kudos: boolean;
+  like_count: number;
+  user_liked: boolean;
+  comment_count: number;
 };
 
 export default function Feed() {
   const { profile } = useAuth();
   const router = useRouter();
-  const [items, setItems] = useState<FeedItem[]>([]);
+  const [items, setItems] = useState<PostItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [newPostContent, setNewPostContent] = useState('');
+  const [isPosting, setIsPosting] = useState(false);
 
   const load = useCallback(async () => {
     if (!profile) return;
 
-    // RLS sayesinde sadece kendimin + arkadaşlarımın antrenmanları gelir
-    const { data: workouts } = await supabase
-      .from('workouts')
-      .select('id, workout_type, duration_minutes, note, logged_at, user_id')
-      .order('logged_at', { ascending: false })
+    // Sadece onaylanmış postları çekiyoruz
+    const { data: posts, error } = await supabase
+      .from('posts')
+      .select('id, content, created_at, user_id, moderation_status')
+      .eq('moderation_status', 'approved')
+      .order('created_at', { ascending: false })
       .limit(50);
 
-    if (!workouts || workouts.length === 0) {
+    if (error || !posts || posts.length === 0) {
       setItems([]);
       setLoading(false);
       return;
     }
 
-    const userIds = [...new Set(workouts.map(w => w.user_id))];
-    const workoutIds = workouts.map(w => w.id);
+    const userIds = [...new Set(posts.map(p => p.user_id))];
+    const postIds = posts.map(p => p.id);
 
-    const [{ data: profiles }, { data: kudosData }] = await Promise.all([
-      supabase
-        .from('profiles')
-        .select('id, username, display_name, current_streak')
-        .in('id', userIds),
-      supabase
-        .from('kudos')
-        .select('workout_id, giver_id')
-        .in('workout_id', workoutIds),
+    const [
+      { data: profiles },
+      { data: likesData },
+      { data: commentsData }
+    ] = await Promise.all([
+      supabase.from('profiles').select('id, username, display_name').in('id', userIds),
+      supabase.from('post_likes').select('post_id, user_id').in('post_id', postIds),
+      supabase.from('post_comments').select('post_id, id').in('post_id', postIds),
     ]);
 
     const profileMap = new Map(profiles?.map(p => [p.id, p]) || []);
-    const kudosByWorkout = new Map<string, { count: number; gaveKudos: boolean }>();
-    (kudosData || []).forEach(k => {
-      const curr = kudosByWorkout.get(k.workout_id) || { count: 0, gaveKudos: false };
-      kudosByWorkout.set(k.workout_id, {
+    const likesByPost = new Map<string, { count: number; userLiked: boolean }>();
+    
+    (likesData || []).forEach(l => {
+      const curr = likesByPost.get(l.post_id) || { count: 0, userLiked: false };
+      likesByPost.set(l.post_id, {
         count: curr.count + 1,
-        gaveKudos: curr.gaveKudos || k.giver_id === profile.id,
+        userLiked: curr.userLiked || l.user_id === profile.id,
       });
     });
 
-    const feed: FeedItem[] = workouts.map(w => ({
-      ...w,
-      profile: profileMap.get(w.user_id) as any,
-      kudos_count: kudosByWorkout.get(w.id)?.count || 0,
-      user_gave_kudos: kudosByWorkout.get(w.id)?.gaveKudos || false,
+    const commentsByPost = new Map<string, number>();
+    (commentsData || []).forEach(c => {
+      commentsByPost.set(c.post_id, (commentsByPost.get(c.post_id) || 0) + 1);
+    });
+
+    const feed: PostItem[] = posts.map(p => ({
+      ...p,
+      profile: profileMap.get(p.user_id) as any,
+      like_count: likesByPost.get(p.id)?.count || 0,
+      user_liked: likesByPost.get(p.id)?.userLiked || false,
+      comment_count: commentsByPost.get(p.id) || 0,
     }));
 
     setItems(feed);
@@ -91,25 +98,47 @@ export default function Feed() {
     setRefreshing(false);
   };
 
-  const toggleKudos = async (item: FeedItem) => {
-    if (!profile || item.user_id === profile.id) return;
+  const handlePost = async () => {
+    if (!profile || !newPostContent.trim()) return;
+    setIsPosting(true);
+    Keyboard.dismiss();
 
-    if (item.user_gave_kudos) {
-      // şimdilik kaldırma yok, sadece optimist UI
-      return;
+    const { error } = await supabase.from('posts').insert({
+      user_id: profile.id,
+      content: newPostContent.trim(),
+    });
+
+    setIsPosting(false);
+    
+    if (error) {
+      Alert.alert('Hata', 'Paylaşım yapılamadı. Lütfen tekrar deneyin.');
+    } else {
+      setNewPostContent('');
+      onRefresh(); // Refresh feed
     }
+  };
 
+  const toggleLike = async (item: PostItem) => {
+    if (!profile) return;
+
+    const isCurrentlyLiked = item.user_liked;
+
+    // Optimistic UI
     setItems(curr => curr.map(i =>
       i.id === item.id
-        ? { ...i, user_gave_kudos: true, kudos_count: i.kudos_count + 1 }
+        ? { 
+            ...i, 
+            user_liked: !isCurrentlyLiked, 
+            like_count: isCurrentlyLiked ? i.like_count - 1 : i.like_count + 1 
+          }
         : i
     ));
 
-    await supabase.from('kudos').insert({
-      giver_id: profile.id,
-      receiver_id: item.user_id,
-      workout_id: item.id,
-    });
+    if (isCurrentlyLiked) {
+      await supabase.from('post_likes').delete().match({ post_id: item.id, user_id: profile.id });
+    } else {
+      await supabase.from('post_likes').insert({ post_id: item.id, user_id: profile.id });
+    }
   };
 
   if (loading) {
@@ -121,88 +150,122 @@ export default function Feed() {
   }
 
   return (
-    <FlatList
-      style={styles.container}
-      data={items}
-      keyExtractor={i => i.id}
-      ListHeaderComponent={
-        <View style={styles.header}>
-          <View style={styles.logoRow}>
-            <View style={{flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1}}>
-              <View style={styles.logoBox}>
-                <Text style={styles.logoLetter}>S</Text>
+    <KeyboardAvoidingView 
+      style={styles.container} 
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
+      <FlatList
+        data={items}
+        keyExtractor={i => i.id}
+        keyboardShouldPersistTaps="handled"
+        ListHeaderComponent={
+          <View style={styles.header}>
+            <View style={styles.logoRow}>
+              <View style={{flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1}}>
+                <View style={styles.logoBox}>
+                  <Text style={styles.logoLetter}>S</Text>
+                </View>
+                <Text style={styles.logoText}>STREAK<Text style={{color: '#ff6b35'}}>FIT</Text></Text>
               </View>
-              <Text style={styles.logoText}>STREAK<Text style={{color: '#ff6b35'}}>FIT</Text></Text>
+              <TouchableOpacity onPress={() => router.push('/messages' as any)} style={styles.msgBtn}>
+                <Text style={styles.msgIcon}>💬</Text>
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity onPress={() => router.push('/messages' as any)} style={styles.msgBtn}>
-              <Text style={styles.msgIcon}>💬</Text>
-            </TouchableOpacity>
-          </View>
-          <Text style={styles.title}>TOPLULUK AKIŞI</Text>
-        </View>
-      }
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#ff6b35" />}
-      ListEmptyComponent={
-        <View style={styles.empty}>
-          <Text style={styles.emptyEmoji}>👥</Text>
-          <Text style={styles.emptyText}>
-            Henüz akışta bir şey yok.{'\n'}
-            Arkadaş ekle, antrenmanlarını gör.
-          </Text>
-        </View>
-      }
-      renderItem={({ item }) => (
-        <View style={styles.card}>
-          <View style={styles.cardHeader}>
-            <View style={styles.avatar}>
-              <Text style={styles.avatarText}>
-                {(item.profile?.display_name || item.profile?.username || '?')[0].toUpperCase()}
-              </Text>
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.userName}>
-                {item.profile?.display_name || item.profile?.username}
-              </Text>
-              <Text style={styles.userMeta}>
-                🔥 {item.profile?.current_streak ?? 0} • {format(parseISO(item.logged_at), 'd MMM HH:mm', { locale: tr })}
-              </Text>
+            <Text style={styles.title}>TOPLULUK AKIŞI</Text>
+
+            {/* Create Post Section */}
+            <View style={styles.createPostContainer}>
+              <TextInput
+                style={styles.postInput}
+                placeholder="Bugün antrenman nasıl geçti? 🏋️‍♂️"
+                placeholderTextColor="#555"
+                multiline
+                maxLength={500}
+                value={newPostContent}
+                onChangeText={setNewPostContent}
+              />
+              <View style={styles.postActionRow}>
+                <Text style={styles.charCount}>{newPostContent.length}/500</Text>
+                <TouchableOpacity 
+                  style={[styles.postButton, (!newPostContent.trim() || isPosting) && styles.postButtonDisabled]}
+                  onPress={handlePost}
+                  disabled={!newPostContent.trim() || isPosting}
+                >
+                  {isPosting ? (
+                    <ActivityIndicator color="#fff" size="small" />
+                  ) : (
+                    <Text style={styles.postButtonText}>Paylaş ✨</Text>
+                  )}
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-
-          <View style={styles.workoutBox}>
-            <Text style={styles.workoutType}>{item.workout_type}</Text>
-            <Text style={styles.workoutDuration}>{item.duration_minutes} dakika</Text>
+        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#ff6b35" />}
+        ListEmptyComponent={
+          <View style={styles.empty}>
+            <Text style={styles.emptyEmoji}>💬</Text>
+            <Text style={styles.emptyText}>
+              Henüz akışta bir paylaşım yok.{'\n'}
+              İlk gönderiyi sen paylaş!
+            </Text>
           </View>
+        }
+        renderItem={({ item }) => (
+          <View style={styles.card}>
+            <View style={styles.cardHeader}>
+              <View style={styles.avatar}>
+                <Text style={styles.avatarText}>
+                  {(item.profile?.display_name || item.profile?.username || '?')[0].toUpperCase()}
+                </Text>
+              </View>
+              <View style={{ flex: 1 }}>
+                <View style={{flexDirection: 'row', alignItems: 'center', gap: 6}}>
+                  <Text style={styles.userName}>
+                    {item.profile?.display_name || item.profile?.username}
+                  </Text>
+                  <Text style={styles.userHandle}>@{item.profile?.username}</Text>
+                </View>
+                <Text style={styles.userMeta}>
+                  {format(parseISO(item.created_at), 'd MMM HH:mm', { locale: tr })}
+                </Text>
+              </View>
+            </View>
 
-          {item.note && <Text style={styles.note}>"{item.note}"</Text>}
+            <Text style={styles.postContent}>{item.content}</Text>
 
-          <View style={styles.actions}>
-            <TouchableOpacity
-              style={styles.kudosBtn}
-              onPress={() => toggleKudos(item)}
-              disabled={item.user_id === profile?.id}
-            >
-              <Text style={styles.kudosEmoji}>
-                {item.user_gave_kudos ? '👏' : '👋'}
-              </Text>
-              <Text style={[
-                styles.kudosCount,
-                item.user_gave_kudos && styles.kudosCountActive,
-              ]}>
-                {item.kudos_count} alkış
-              </Text>
-            </TouchableOpacity>
+            <View style={styles.actions}>
+              <TouchableOpacity
+                style={styles.actionBtn}
+                onPress={() => toggleLike(item)}
+              >
+                <Text style={styles.actionEmoji}>
+                  {item.user_liked ? '❤️' : '🤍'}
+                </Text>
+                <Text style={[
+                  styles.actionCount,
+                  item.user_liked && styles.likeCountActive,
+                ]}>
+                  {item.like_count}
+                </Text>
+              </TouchableOpacity>
+              
+              <View style={styles.actionBtn}>
+                <Text style={styles.actionEmoji}>💬</Text>
+                <Text style={styles.actionCount}>{item.comment_count}</Text>
+              </View>
+            </View>
           </View>
-        </View>
-      )}
-    />
+        )}
+      />
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0a0a0a' },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#0a0a0a' },
-  header: { padding: 24, paddingTop: 60, gap: 12 },
+  header: { padding: 24, paddingTop: 60, gap: 12, paddingBottom: 16 },
   logoRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
   msgBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: '#111', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: '#222' },
   msgIcon: { fontSize: 20 },
@@ -210,35 +273,83 @@ const styles = StyleSheet.create({
   logoLetter: { color: '#fff', fontWeight: '900', fontSize: 18 },
   logoText: { color: '#fff', fontSize: 24, fontWeight: '900', letterSpacing: -1.5 },
   title: { color: '#666', fontSize: 11, fontWeight: '900', letterSpacing: 2, textTransform: 'uppercase' },
+  
+  createPostContainer: {
+    backgroundColor: '#1a1a1a',
+    borderRadius: 20,
+    padding: 16,
+    marginTop: 16,
+    borderWidth: 1,
+    borderColor: '#2a2a2a',
+  },
+  postInput: {
+    color: '#fff',
+    fontSize: 16,
+    minHeight: 60,
+    textAlignVertical: 'top',
+    fontStyle: 'italic',
+  },
+  postActionRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 12,
+  },
+  charCount: {
+    color: '#555',
+    fontSize: 12,
+    fontWeight: '600'
+  },
+  postButton: {
+    backgroundColor: '#ff6b35',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+  },
+  postButtonDisabled: {
+    backgroundColor: '#444',
+  },
+  postButtonText: {
+    color: '#fff',
+    fontWeight: '900',
+    fontSize: 13,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+  },
+
   empty: { padding: 48, alignItems: 'center' },
   emptyEmoji: { fontSize: 56, marginBottom: 16 },
   emptyText: { color: '#888', fontSize: 14, textAlign: 'center', lineHeight: 22 },
+  
   card: {
-    backgroundColor: '#1a1a1a', marginHorizontal: 16, marginBottom: 12,
-    padding: 16, borderRadius: 16, borderWidth: 1, borderColor: '#2a2a2a',
+    backgroundColor: '#111', marginHorizontal: 16, marginBottom: 16,
+    padding: 20, borderRadius: 24, borderWidth: 1, borderColor: '#222',
   },
-  cardHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
+  cardHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 16 },
   avatar: {
-    width: 40, height: 40, borderRadius: 20, backgroundColor: '#ff6b35',
+    width: 44, height: 44, borderRadius: 22, backgroundColor: '#222',
     justifyContent: 'center', alignItems: 'center', marginRight: 12,
   },
-  avatarText: { color: '#fff', fontWeight: '900', fontSize: 16 },
-  userName: { color: '#fff', fontSize: 15, fontWeight: '700' },
-  userMeta: { color: '#888', fontSize: 12, marginTop: 2 },
-  workoutBox: {
-    backgroundColor: '#0a0a0a', padding: 14, borderRadius: 10,
-    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
+  avatarText: { color: '#ff6b35', fontWeight: '900', fontSize: 18 },
+  userName: { color: '#fff', fontSize: 15, fontWeight: '800' },
+  userHandle: { color: '#666', fontSize: 12, fontWeight: '600' },
+  userMeta: { color: '#888', fontSize: 11, marginTop: 4, textTransform: 'uppercase', fontWeight: '700', letterSpacing: 0.5 },
+  
+  postContent: {
+    color: '#f4f4f5',
+    fontSize: 16,
+    lineHeight: 24,
+    fontWeight: '500',
+    marginBottom: 20,
   },
-  workoutType: { color: '#fff', fontSize: 16, fontWeight: '700' },
-  workoutDuration: { color: '#ff6b35', fontSize: 15, fontWeight: '700' },
-  note: { color: '#aaa', fontSize: 13, marginTop: 10, fontStyle: 'italic' },
-  actions: { marginTop: 12, flexDirection: 'row' },
-  kudosBtn: {
+  
+  actions: { flexDirection: 'row', gap: 20 },
+  actionBtn: {
     flexDirection: 'row', alignItems: 'center', gap: 6,
-    paddingVertical: 6, paddingHorizontal: 10,
-    backgroundColor: '#0a0a0a', borderRadius: 8,
+    paddingVertical: 6, paddingHorizontal: 12,
+    backgroundColor: '#1a1a1a', borderRadius: 12,
   },
-  kudosEmoji: { fontSize: 16 },
-  kudosCount: { color: '#888', fontSize: 13, fontWeight: '600' },
-  kudosCountActive: { color: '#ff6b35' },
+  actionEmoji: { fontSize: 14 },
+  actionCount: { color: '#888', fontSize: 13, fontWeight: '700' },
+  likeCountActive: { color: '#ff6b35' },
 });
