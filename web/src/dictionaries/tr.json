@@ -1,0 +1,27 @@
+{
+  "navbar": {
+    "dashboard": "Panel",
+    "feed": "Akış",
+    "messages": "Mesajlar",
+    "clients": "Danışanlar",
+    "admin": "Admin",
+    "explore": "Keşfet",
+    "login": "Giriş",
+    "start": "Başla",
+    "logout": "Çıkış"
+  },
+  "footer": {
+    "privacy": "Gizlilik",
+    "terms": "Şartlar",
+    "contact": "İletişim",
+    "copyright": "Topluluk odaklı fitness platformu."
+  },
+  "home": {
+    "heroBadge": "✨ Yeni: Aktif Fitness Topluluğu ve Uzman Diyetisyen Desteği",
+    "heroTitle1": "Fitness Dünyasının",
+    "heroTitle2": "Sosyal Kalbi.",
+    "heroDesc": "Antrenmanlarını paylaş, uzman diyetisyenlerden destek al ve toplulukla beraber büyü. Gelişimini sadece takip etme, paylaş.",
+    "heroStartBtn": "Hemen Başla ➔",
+    "heroExploreBtn": "Keşfet"
+  }
+}

@@ -16,14 +16,14 @@ export async function generateMetadata({ params }: { params: Promise<{ username:
     .eq('username', username)
     .single()
 
-  if (!profile) return { title: 'Kullanıcı Bulunamadı | Streak-Fit' }
+  if (!profile) return { title: 'Kullanıcı Bulunamadı | VitaTribe' }
 
   const name = profile.display_name || profile.username
   const streak = profile.current_streak || 0
 
   return {
-    title: `${name} (@${profile.username}) | ${streak} Günlük Seri - Streak-Fit`,
-    description: profile.bio || `${name} kullanıcısının fitness profilini ve antrenman serisini Streak-Fit üzerinde takip et.`,
+    title: `${name} (@${profile.username}) | ${streak} Günlük Seri - VitaTribe`,
+    description: profile.bio || `${name} kullanıcısının fitness profilini ve antrenman serisini VitaTribe üzerinde takip et.`,
     openGraph: {
       title: `${name} | ${streak} Günlük Seri`,
       description: profile.bio || `${name} kullanıcısının gelişimini takip et.`,

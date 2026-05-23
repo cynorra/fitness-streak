@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "FitBridge: Sosyal Fitness & Diyetisyen",
-    "displayName": "FitBridge",
-    "slug": "fitbridge",
+    "name": "VitaTribe: Sosyal Fitness & Diyetisyen",
+    "displayName": "VitaTribe",
+    "slug": "vitatribe",
     "version": "1.0.0",
     "description": "Arkadaşlarınla antrenman serilerini (streak) paylaş, motivasyonunu yüksek tut!",
     "orientation": "portrait",
@@ -32,7 +32,7 @@
           "action": "VIEW",
           "data": [
             {
-              "scheme": "fitbridge"
+              "scheme": "vitatribe"
             }
           ],
           "category": [

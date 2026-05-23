@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next';
 import { createClient } from '@/utils/supabase/server';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://streak-fit.com';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://vitatribe.com';
 
   // Fetch all usernames for sitemap (limited to 1000 for safety)
   const supabase = await createClient();

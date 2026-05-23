@@ -51,7 +51,7 @@ export default function Login() {
       <ScrollView contentContainerStyle={styles.scroll}>
         <View style={styles.brand}>
           <Text style={styles.flame}>🔥</Text>
-          <Text style={styles.title}>streak-fit</Text>
+          <Text style={styles.title}>VitaTribe</Text>
           <Text style={styles.tagline}>Her gün bir adım. Streak'in yansın.</Text>
         </View>
 

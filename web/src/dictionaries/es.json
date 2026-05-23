@@ -1,0 +1,27 @@
+{
+  "navbar": {
+    "dashboard": "Tablero",
+    "feed": "Inicio",
+    "messages": "Mensajes",
+    "clients": "Clientes",
+    "admin": "Admin",
+    "explore": "Explorar",
+    "login": "Entrar",
+    "start": "Empezar",
+    "logout": "Salir"
+  },
+  "footer": {
+    "privacy": "Privacidad",
+    "terms": "Términos",
+    "contact": "Contacto",
+    "copyright": "Plataforma de fitness impulsada por la comunidad."
+  },
+  "home": {
+    "heroBadge": "✨ Nuevo: Comunidad activa de fitness y dietistas expertos",
+    "heroTitle1": "El corazón social del",
+    "heroTitle2": "mundo del fitness.",
+    "heroDesc": "Comparte tus entrenamientos, recibe apoyo de expertos y crece con la comunidad. No solo sigas tu progreso, compártelo.",
+    "heroStartBtn": "Empieza ahora ➔",
+    "heroExploreBtn": "Explorar"
+  }
+}

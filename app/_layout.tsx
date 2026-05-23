@@ -4,6 +4,11 @@ import { useEffect } from 'react';
 import { AuthProvider, useAuth } from '../lib/auth';
 import { View, ActivityIndicator } from 'react-native';
 
+import * as SplashScreen from 'expo-splash-screen';
+
+// Splash ekranının otomatik kapanmasını engelliyoruz
+SplashScreen.preventAutoHideAsync();
+
 function RootLayoutNav() {
   const { session, loading } = useAuth();
   const segments = useSegments();
@@ -19,14 +24,14 @@ function RootLayoutNav() {
     } else if (session && inAuthGroup) {
       router.replace('/(tabs)');
     }
+
+    // Yükleme (auth kontrolü) bittiğinde native splash ekranını gizle
+    SplashScreen.hideAsync();
   }, [session, loading, segments]);
 
   if (loading) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#0a0a0a' }}>
-        <ActivityIndicator size="large" color="#ff6b35" />
-      </View>
-    );
+    // Auth kontrolü bitene kadar UI çizmiyoruz, çünkü üstte hala Native Splash Screen duruyor
+    return null;
   }
 
   return (

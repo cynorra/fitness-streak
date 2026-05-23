@@ -163,9 +163,9 @@ export default function Feed() {
             <View style={styles.logoRow}>
               <View style={{flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1}}>
                 <View style={styles.logoBox}>
-                  <Text style={styles.logoLetter}>S</Text>
+                  <Text style={styles.logoLetter}>F</Text>
                 </View>
-                <Text style={styles.logoText}>STREAK<Text style={{color: '#ff6b35'}}>FIT</Text></Text>
+                <Text style={styles.logoText}>FIT<Text style={{color: '#ff6b35'}}>BRIDGE</Text></Text>
               </View>
               <TouchableOpacity onPress={() => router.push('/messages' as any)} style={styles.msgBtn}>
                 <Text style={styles.msgIcon}>💬</Text>

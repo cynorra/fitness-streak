@@ -1,0 +1,27 @@
+{
+  "navbar": {
+    "dashboard": "Dashboard",
+    "feed": "Feed",
+    "messages": "Messages",
+    "clients": "Clients",
+    "admin": "Admin",
+    "explore": "Explore",
+    "login": "Login",
+    "start": "Start",
+    "logout": "Logout"
+  },
+  "footer": {
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "contact": "Contact",
+    "copyright": "Community-driven fitness platform."
+  },
+  "home": {
+    "heroBadge": "✨ New: Active Fitness Community & Expert Dietitian Support",
+    "heroTitle1": "The Social Heart of",
+    "heroTitle2": "the Fitness World.",
+    "heroDesc": "Share your workouts, get support from expert dietitians, and grow with the community. Don't just track your progress, share it.",
+    "heroStartBtn": "Start Now ➔",
+    "heroExploreBtn": "Explore"
+  }
+}

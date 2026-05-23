@@ -95,23 +95,23 @@ export default function Profile() {
       </TouchableOpacity>
 
       <View style={styles.legalLinks}>
-        <TouchableOpacity onPress={() => Linking.openURL('https://streak-fit.vercel.app/privacy')}>
+        <TouchableOpacity onPress={() => Linking.openURL('https://vitatribe.com/privacy')}>
           <Text style={styles.legalText}>Gizlilik Politikası</Text>
         </TouchableOpacity>
         <Text style={styles.legalDot}>•</Text>
-        <TouchableOpacity onPress={() => Linking.openURL('https://streak-fit.vercel.app/terms')}>
+        <TouchableOpacity onPress={() => Linking.openURL('https://vitatribe.com/terms')}>
           <Text style={styles.legalText}>Kullanım Şartları</Text>
         </TouchableOpacity>
       </View>
 
       <TouchableOpacity 
         style={styles.deleteBtn} 
-        onPress={() => Alert.alert('Hesabı Sil', 'Hesabınızı silmek için destek@streakfit.com adresine e-posta gönderebilirsiniz. 30 gün içinde tüm verileriniz silinecektir.')}
+        onPress={() => Alert.alert('Hesabı Sil', 'Hesabınızı silmek için destek@vitatribe.com adresine e-posta gönderebilirsiniz. 30 gün içinde tüm verileriniz silinecektir.')}
       >
         <Text style={styles.deleteText}>Hesabımı Sil</Text>
       </TouchableOpacity>
 
-      <Text style={styles.version}>STREAKFIT v1.0.0</Text>
+      <Text style={styles.version}>VITATRIBE v1.0.0</Text>
     </ScrollView>
   );
 }
