@@ -24,6 +24,13 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
+        name="workouts"
+        options={{
+          title: 'Keşfet',
+          tabBarIcon: ({ color }) => <Text style={{ fontSize: 22, color }}>🔥</Text>,
+        }}
+      />
+      <Tabs.Screen
         name="feed"
         options={{
           title: 'Akış',
