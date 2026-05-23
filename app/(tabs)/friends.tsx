@@ -116,7 +116,7 @@ export default function Friends() {
   if (loading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator color="#ff6b35" />
+        <ActivityIndicator color="#10b981" />
       </View>
     );
   }
@@ -129,7 +129,7 @@ export default function Friends() {
             <View style={styles.logoBox}>
               <Text style={styles.logoLetter}>S</Text>
             </View>
-            <Text style={styles.logoText}>STREAK<Text style={{color: '#ff6b35'}}>FIT</Text></Text>
+            <Text style={styles.logoText}>VITA<Text style={{color: '#10b981'}}>TRIBE</Text></Text>
           </View>
           <TouchableOpacity onPress={() => router.push('/messages' as any)} style={styles.msgBtn}>
             <Text style={styles.msgIcon}>💬</Text>
@@ -155,7 +155,7 @@ export default function Friends() {
             <View style={styles.avatar}><Text style={styles.avatarText}>{item.username[0].toUpperCase()}</Text></View>
             <View style={{ flex: 1 }}>
               <Text style={styles.name}>{item.display_name || item.username}</Text>
-              <Text style={styles.handle}>@{item.username} • 🔥 {item.current_streak}</Text>
+              <Text style={styles.handle}>@{item.username} • 🌱 {item.current_streak}</Text>
             </View>
             <TouchableOpacity style={styles.addBtn} onPress={() => sendRequest(item.id)}>
               <Text style={styles.addBtnText}>+ Ekle</Text>
@@ -197,7 +197,7 @@ export default function Friends() {
                     <View style={styles.avatar}><Text style={styles.avatarText}>{f.username[0].toUpperCase()}</Text></View>
                     <View style={{ flex: 1 }}>
                       <Text style={styles.name}>{f.display_name || f.username}</Text>
-                      <Text style={styles.handle}>@{f.username} • 🔥 {f.current_streak}</Text>
+                      <Text style={styles.handle}>@{f.username} • 🌱 {f.current_streak}</Text>
                     </View>
                   </View>
                 ))
@@ -232,7 +232,7 @@ const styles = StyleSheet.create({
   logoRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
   msgBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: '#111', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: '#222' },
   msgIcon: { fontSize: 20 },
-  logoBox: { width: 32, height: 32, backgroundColor: '#ff6b35', borderRadius: 8, justifyContent: 'center', alignItems: 'center' },
+  logoBox: { width: 32, height: 32, backgroundColor: '#10b981', borderRadius: 8, justifyContent: 'center', alignItems: 'center' },
   logoLetter: { color: '#fff', fontWeight: '900', fontSize: 18 },
   logoText: { color: '#fff', fontSize: 24, fontWeight: '900', letterSpacing: -1.5 },
   title: { color: '#666', fontSize: 11, fontWeight: '900', letterSpacing: 2, textTransform: 'uppercase' },
@@ -251,15 +251,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#1a1a1a', borderRadius: 12, gap: 12,
   },
   avatar: {
-    width: 40, height: 40, borderRadius: 20, backgroundColor: '#ff6b35',
+    width: 40, height: 40, borderRadius: 20, backgroundColor: '#10b981',
     justifyContent: 'center', alignItems: 'center',
   },
   avatarText: { color: '#fff', fontWeight: '900' },
   name: { color: '#fff', fontSize: 15, fontWeight: '600' },
   handle: { color: '#888', fontSize: 12, marginTop: 2 },
-  addBtn: { backgroundColor: '#ff6b35', paddingVertical: 8, paddingHorizontal: 14, borderRadius: 8 },
+  addBtn: { backgroundColor: '#10b981', paddingVertical: 8, paddingHorizontal: 14, borderRadius: 8 },
   addBtnText: { color: '#fff', fontWeight: '700', fontSize: 13 },
-  acceptBtn: { backgroundColor: '#ff6b35', paddingVertical: 8, paddingHorizontal: 14, borderRadius: 8 },
+  acceptBtn: { backgroundColor: '#10b981', paddingVertical: 8, paddingHorizontal: 14, borderRadius: 8 },
   acceptBtnText: { color: '#fff', fontWeight: '700', fontSize: 13 },
   rejectBtn: { backgroundColor: '#2a2a2a', paddingVertical: 8, paddingHorizontal: 12, borderRadius: 8 },
   rejectBtnText: { color: '#fff', fontWeight: '700' },

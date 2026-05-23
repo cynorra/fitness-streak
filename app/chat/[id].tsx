@@ -98,7 +98,7 @@ export default function ChatScreen() {
   if (loading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator color="#ff6b35" />
+        <ActivityIndicator color="#10b981" />
       </View>
     );
   }
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
   myRow: { justifyContent: 'flex-end' },
   otherRow: { justifyContent: 'flex-start' },
   bubble: { maxWidth: '80%', padding: 12, borderRadius: 20 },
-  myBubble: { backgroundColor: '#ff6b35', borderBottomRightRadius: 4 },
+  myBubble: { backgroundColor: '#10b981', borderBottomRightRadius: 4 },
   otherBubble: { backgroundColor: '#1a1a1a', borderBottomLeftRadius: 4, borderWidth: 1, borderColor: '#222' },
   content: { fontSize: 15, fontWeight: '600', lineHeight: 22 },
   myContent: { color: '#fff' },
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: '#222', maxHeight: 100
   },
   sendBtn: { 
-    width: 48, height: 48, borderRadius: 24, backgroundColor: '#ff6b35', 
+    width: 48, height: 48, borderRadius: 24, backgroundColor: '#10b981', 
     justifyContent: 'center', alignItems: 'center' 
   },
   sendIcon: { color: '#fff', fontSize: 20, fontWeight: '900' },

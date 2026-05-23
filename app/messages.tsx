@@ -90,7 +90,7 @@ export default function MessagesList() {
   if (loading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator color="#ff6b35" />
+        <ActivityIndicator color="#10b981" />
       </View>
     );
   }
@@ -107,7 +107,7 @@ export default function MessagesList() {
       <FlatList
         data={items}
         keyExtractor={i => i.id}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#ff6b35" />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#10b981" />}
         ListEmptyComponent={
           <View style={styles.empty}>
             <Text style={styles.emptyEmoji}>💬</Text>

@@ -50,7 +50,7 @@ export default function Login() {
     >
       <ScrollView contentContainerStyle={styles.scroll}>
         <View style={styles.brand}>
-          <Text style={styles.flame}>🔥</Text>
+          <Text style={styles.flame}>🌱</Text>
           <Text style={styles.title}>VitaTribe</Text>
           <Text style={styles.tagline}>Her gün bir adım. Streak'in yansın.</Text>
         </View>
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     borderRadius: 12, padding: 16, color: '#fff', fontSize: 16,
   },
   button: {
-    backgroundColor: '#ff6b35', padding: 18, borderRadius: 12,
+    backgroundColor: '#10b981', padding: 18, borderRadius: 12,
     alignItems: 'center', marginTop: 8,
   },
   buttonDisabled: { opacity: 0.5 },

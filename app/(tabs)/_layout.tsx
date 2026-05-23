@@ -12,7 +12,7 @@ export default function TabsLayout() {
           height: 84,
           paddingTop: 8,
         },
-        tabBarActiveTintColor: '#ff6b35',
+        tabBarActiveTintColor: '#10b981',
         tabBarInactiveTintColor: '#666',
       }}
     >
@@ -20,7 +20,7 @@ export default function TabsLayout() {
         name="index"
         options={{
           title: 'Streak',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 22, color }}>🔥</Text>,
+          tabBarIcon: ({ color }) => <Text style={{ fontSize: 22, color }}>🌱</Text>,
         }}
       />
       <Tabs.Screen

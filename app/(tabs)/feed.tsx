@@ -144,7 +144,7 @@ export default function Feed() {
   if (loading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator color="#ff6b35" />
+        <ActivityIndicator color="#10b981" />
       </View>
     );
   }
@@ -165,7 +165,7 @@ export default function Feed() {
                 <View style={styles.logoBox}>
                   <Text style={styles.logoLetter}>F</Text>
                 </View>
-                <Text style={styles.logoText}>FIT<Text style={{color: '#ff6b35'}}>BRIDGE</Text></Text>
+                <Text style={styles.logoText}>VITA<Text style={{color: '#10b981'}}>TRIBE</Text></Text>
               </View>
               <TouchableOpacity onPress={() => router.push('/messages' as any)} style={styles.msgBtn}>
                 <Text style={styles.msgIcon}>💬</Text>
@@ -201,7 +201,7 @@ export default function Feed() {
             </View>
           </View>
         }
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#ff6b35" />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#10b981" />}
         ListEmptyComponent={
           <View style={styles.empty}>
             <Text style={styles.emptyEmoji}>💬</Text>
@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
   logoRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
   msgBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: '#111', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: '#222' },
   msgIcon: { fontSize: 20 },
-  logoBox: { width: 32, height: 32, backgroundColor: '#ff6b35', borderRadius: 8, justifyContent: 'center', alignItems: 'center' },
+  logoBox: { width: 32, height: 32, backgroundColor: '#10b981', borderRadius: 8, justifyContent: 'center', alignItems: 'center' },
   logoLetter: { color: '#fff', fontWeight: '900', fontSize: 18 },
   logoText: { color: '#fff', fontSize: 24, fontWeight: '900', letterSpacing: -1.5 },
   title: { color: '#666', fontSize: 11, fontWeight: '900', letterSpacing: 2, textTransform: 'uppercase' },
@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
     fontWeight: '600'
   },
   postButton: {
-    backgroundColor: '#ff6b35',
+    backgroundColor: '#10b981',
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 12,
@@ -330,7 +330,7 @@ const styles = StyleSheet.create({
     width: 44, height: 44, borderRadius: 22, backgroundColor: '#222',
     justifyContent: 'center', alignItems: 'center', marginRight: 12,
   },
-  avatarText: { color: '#ff6b35', fontWeight: '900', fontSize: 18 },
+  avatarText: { color: '#10b981', fontWeight: '900', fontSize: 18 },
   userName: { color: '#fff', fontSize: 15, fontWeight: '800' },
   userHandle: { color: '#666', fontSize: 12, fontWeight: '600' },
   userMeta: { color: '#888', fontSize: 11, marginTop: 4, textTransform: 'uppercase', fontWeight: '700', letterSpacing: 0.5 },
@@ -351,5 +351,5 @@ const styles = StyleSheet.create({
   },
   actionEmoji: { fontSize: 14 },
   actionCount: { color: '#888', fontSize: 13, fontWeight: '700' },
-  likeCountActive: { color: '#ff6b35' },
+  likeCountActive: { color: '#10b981' },
 });

@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
   content: { padding: 24, paddingTop: 60 },
   profileCard: { alignItems: 'center', marginBottom: 32 },
   avatar: {
-    width: 96, height: 96, borderRadius: 48, backgroundColor: '#ff6b35',
+    width: 96, height: 96, borderRadius: 48, backgroundColor: '#10b981',
     justifyContent: 'center', alignItems: 'center', marginBottom: 16,
   },
   avatarText: { color: '#fff', fontSize: 40, fontWeight: '900' },
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     borderRadius: 16, borderWidth: 1, borderColor: '#2a2a2a',
     alignItems: 'center',
   },
-  statValue: { color: '#ff6b35', fontSize: 40, fontWeight: '900' },
+  statValue: { color: '#10b981', fontSize: 40, fontWeight: '900' },
   statLabel: { color: '#888', fontSize: 10, fontWeight: '700', letterSpacing: 1.5, marginTop: 4 },
   signOutBtn: {
     backgroundColor: '#1a1a1a', padding: 16, borderRadius: 12,
@@ -158,6 +158,6 @@ const styles = StyleSheet.create({
   modalActions: { flexDirection: 'row', gap: 12 },
   cancelBtn: { flex: 1, padding: 16, alignItems: 'center' },
   cancelBtnText: { color: '#666', fontSize: 13, fontWeight: '800' },
-  saveBtn: { flex: 2, backgroundColor: '#ff6b35', padding: 16, borderRadius: 16, alignItems: 'center' },
+  saveBtn: { flex: 2, backgroundColor: '#10b981', padding: 16, borderRadius: 16, alignItems: 'center' },
   saveBtnText: { color: '#fff', fontSize: 13, fontWeight: '900', letterSpacing: 1 },
 });

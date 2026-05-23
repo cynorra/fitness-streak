@@ -49,7 +49,7 @@ export default function LogWorkout() {
     setSelectedType(null);
     setDuration('');
     setNote('');
-    Alert.alert('🔥', 'Antrenman kaydedildi! Streak güncellendi.', [
+    Alert.alert('🌱', 'Antrenman kaydedildi! Streak güncellendi.', [
       { text: 'Tamam', onPress: () => router.push('/') },
     ]);
   };
@@ -62,7 +62,7 @@ export default function LogWorkout() {
             <View style={styles.logoBox}>
               <Text style={styles.logoLetter}>S</Text>
             </View>
-            <Text style={styles.logoText}>STREAK<Text style={{color: '#ff6b35'}}>FIT</Text></Text>
+            <Text style={styles.logoText}>VITA<Text style={{color: '#10b981'}}>TRIBE</Text></Text>
           </View>
           <TouchableOpacity onPress={() => router.push('/messages' as any)} style={styles.msgBtn}>
             <Text style={styles.msgIcon}>💬</Text>
@@ -118,7 +118,7 @@ export default function LogWorkout() {
         disabled={loading}
       >
         <Text style={styles.buttonText}>
-          {loading ? '...' : '🔥 STREAK\'I BÜYÜT'}
+          {loading ? '...' : '🌱 STREAK\'I BÜYÜT'}
         </Text>
       </TouchableOpacity>
     </ScrollView>
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
   logoRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
   msgBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: '#111', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: '#222' },
   msgIcon: { fontSize: 20 },
-  logoBox: { width: 32, height: 32, backgroundColor: '#ff6b35', borderRadius: 8, justifyContent: 'center', alignItems: 'center' },
+  logoBox: { width: 32, height: 32, backgroundColor: '#10b981', borderRadius: 8, justifyContent: 'center', alignItems: 'center' },
   logoLetter: { color: '#fff', fontWeight: '900', fontSize: 18 },
   logoText: { color: '#fff', fontSize: 24, fontWeight: '900', letterSpacing: -1.5 },
   title: { color: '#fff', fontSize: 32, fontWeight: '900', letterSpacing: -1.5 },
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
     borderRadius: 12, justifyContent: 'center', alignItems: 'center',
     borderWidth: 1, borderColor: '#2a2a2a',
   },
-  typeCardSelected: { backgroundColor: '#ff6b35', borderColor: '#ff6b35' },
+  typeCardSelected: { backgroundColor: '#10b981', borderColor: '#10b981' },
   typeEmoji: { fontSize: 28 },
   typeLabel: { color: '#888', fontSize: 10, marginTop: 4, textAlign: 'center' },
   typeLabelSelected: { color: '#fff', fontWeight: '700' },
@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
   },
   textarea: { minHeight: 80, textAlignVertical: 'top' },
   button: {
-    backgroundColor: '#ff6b35', padding: 20, borderRadius: 12,
+    backgroundColor: '#10b981', padding: 20, borderRadius: 12,
     alignItems: 'center', marginTop: 16,
   },
   buttonDisabled: { opacity: 0.5 },

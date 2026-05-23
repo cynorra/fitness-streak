@@ -92,7 +92,7 @@ export default function Notifications() {
   if (loading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator color="#ff6b35" />
+        <ActivityIndicator color="#10b981" />
       </View>
     );
   }
@@ -105,7 +105,7 @@ export default function Notifications() {
             <View style={styles.logoBox}>
               <Text style={styles.logoLetter}>S</Text>
             </View>
-            <Text style={styles.logoText}>STREAK<Text style={{color: '#ff6b35'}}>FIT</Text></Text>
+            <Text style={styles.logoText}>VITA<Text style={{color: '#10b981'}}>TRIBE</Text></Text>
           </View>
           <TouchableOpacity onPress={() => router.push('/messages' as any)} style={styles.msgBtn}>
             <Text style={styles.msgIcon}>💬</Text>
@@ -117,7 +117,7 @@ export default function Notifications() {
       <FlatList
         data={items}
         keyExtractor={i => i.id}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#ff6b35" />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#10b981" />}
         ListEmptyComponent={
           <View style={styles.empty}>
             <Text style={styles.emptyEmoji}>📭</Text>
@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
   logoRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
   msgBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: '#111', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: '#222' },
   msgIcon: { fontSize: 20 },
-  logoBox: { width: 32, height: 32, backgroundColor: '#ff6b35', borderRadius: 8, justifyContent: 'center', alignItems: 'center' },
+  logoBox: { width: 32, height: 32, backgroundColor: '#10b981', borderRadius: 8, justifyContent: 'center', alignItems: 'center' },
   logoLetter: { color: '#fff', fontWeight: '900', fontSize: 18 },
   logoText: { color: '#fff', fontSize: 24, fontWeight: '900', letterSpacing: -1.5 },
   title: { color: '#666', fontSize: 11, fontWeight: '900', letterSpacing: 2, textTransform: 'uppercase' },
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 16, marginBottom: 8, padding: 16,
     backgroundColor: '#111', borderRadius: 24, borderWidth: 1, borderColor: '#222',
   },
-  cardUnread: { borderColor: '#ff6b3533', backgroundColor: '#1a1a1a' },
+  cardUnread: { borderColor: '#10b98133', backgroundColor: '#1a1a1a' },
   iconBox: { width: 48, height: 48, borderRadius: 16, justifyContent: 'center', alignItems: 'center' },
   icon: { fontSize: 20 },
   message: { color: '#fff', fontSize: 14, fontWeight: '700', lineHeight: 20 },

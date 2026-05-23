@@ -51,7 +51,7 @@ export default function WorkoutHistory() {
 
       <ScrollView 
         contentContainerStyle={styles.content}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#ff6b35" />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#10b981" />}
       >
         {Object.entries(groupedWorkouts).map(([month, items]) => (
           <View key={month} style={styles.monthSection}>
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
   workoutInfo: { flex: 1 },
   workoutType: { color: '#fff', fontSize: 15, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 0.5 },
   workoutDate: { color: '#444', fontSize: 11, fontWeight: '700', marginTop: 2 },
-  workoutDuration: { color: '#ff6b35', fontSize: 18, fontWeight: '900', letterSpacing: -0.5 },
+  workoutDuration: { color: '#10b981', fontSize: 18, fontWeight: '900', letterSpacing: -0.5 },
   empty: { paddingTop: 100, alignItems: 'center' },
   emptyText: { color: '#444', fontSize: 12, fontWeight: '900', textTransform: 'uppercase', letterSpacing: 2 },
 });

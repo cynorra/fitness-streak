@@ -52,7 +52,7 @@ export default function StreakHome() {
   return (
     <ScrollView
       style={styles.container}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#ff6b35" />}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#10b981" />}
     >
       <View style={styles.header}>
         <View style={styles.logoRow}>
@@ -60,7 +60,7 @@ export default function StreakHome() {
             <View style={styles.logoBox}>
               <Text style={styles.logoLetter}>S</Text>
             </View>
-            <Text style={styles.logoText}>STREAK<Text style={{color: '#ff6b35'}}>FIT</Text></Text>
+            <Text style={styles.logoText}>VITA<Text style={{color: '#10b981'}}>TRIBE</Text></Text>
           </View>
           <TouchableOpacity onPress={() => router.push('/messages' as any)} style={styles.msgBtn}>
             <Text style={styles.msgIcon}>💬</Text>
@@ -71,7 +71,7 @@ export default function StreakHome() {
 
       <View style={styles.streakCard}>
         <View style={styles.flameContainer}>
-          <Text style={styles.flame}>🔥</Text>
+          <Text style={styles.flame}>🌱</Text>
           <View style={styles.flameGlow} />
         </View>
         <Text style={styles.streakNumber}>{streak}</Text>
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
   logoRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
   msgBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: '#111', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: '#222' },
   msgIcon: { fontSize: 20 },
-  logoBox: { width: 32, height: 32, backgroundColor: '#ff6b35', borderRadius: 8, justifyContent: 'center', alignItems: 'center' },
+  logoBox: { width: 32, height: 32, backgroundColor: '#10b981', borderRadius: 8, justifyContent: 'center', alignItems: 'center' },
   logoLetter: { color: '#fff', fontWeight: '900', fontSize: 18 },
   logoText: { color: '#fff', fontSize: 24, fontWeight: '900', letterSpacing: -1.5 },
   hello: { color: '#666', fontSize: 11, fontWeight: '900', letterSpacing: 2 },
@@ -155,18 +155,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#111', margin: 16, padding: 40,
     borderRadius: 40, alignItems: 'center',
     borderWidth: 1, borderColor: '#222',
-    shadowColor: '#ff6b35', shadowOffset: { width: 0, height: 20 },
+    shadowColor: '#10b981', shadowOffset: { width: 0, height: 20 },
     shadowOpacity: 0.1, shadowRadius: 40,
   },
   flameContainer: { position: 'relative', marginBottom: 8 },
   flame: { fontSize: 80, zIndex: 1 },
   flameGlow: { 
     position: 'absolute', top: -10, left: -10, 
-    width: 60, height: 60, backgroundColor: '#ff6b35', 
+    width: 60, height: 60, backgroundColor: '#10b981', 
     borderRadius: 30, opacity: 0.2 
   },
   streakNumber: {
-    fontSize: 120, fontWeight: '900', color: '#ff6b35',
+    fontSize: 120, fontWeight: '900', color: '#10b981',
     letterSpacing: -6, lineHeight: 120,
   },
   streakLabel: {
@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#111', borderWidth: 1, borderColor: '#222',
     justifyContent: 'center', alignItems: 'center',
   },
-  dayDotActive: { backgroundColor: '#ff6b35', borderColor: '#ff6b35', shadowColor: '#ff6b35', shadowOpacity: 0.3, shadowRadius: 10, shadowOffset: { width: 0, height: 4 } },
+  dayDotActive: { backgroundColor: '#10b981', borderColor: '#10b981', shadowColor: '#10b981', shadowOpacity: 0.3, shadowRadius: 10, shadowOffset: { width: 0, height: 4 } },
   checkmark: { color: '#fff', fontWeight: '900', fontSize: 18 },
   dayNum: { color: '#666', fontSize: 10, fontWeight: '900', marginTop: 6 },
   statsRow: { flexDirection: 'row', paddingHorizontal: 16, gap: 12, marginBottom: 32 },
@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
     color: '#666', fontSize: 10, fontWeight: '900',
     letterSpacing: 3, textTransform: 'uppercase',
   },
-  seeAllText: { color: '#ff6b35', fontSize: 10, fontWeight: '900', letterSpacing: 1 },
+  seeAllText: { color: '#10b981', fontSize: 10, fontWeight: '900', letterSpacing: 1 },
   workoutRow: {
     backgroundColor: '#111', padding: 20, borderRadius: 20,
     marginBottom: 12, flexDirection: 'row',
@@ -217,12 +217,12 @@ const styles = StyleSheet.create({
   },
   workoutType: { color: '#fff', fontSize: 15, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 0.5 },
   workoutDate: { color: '#444', fontSize: 11, fontWeight: '700', marginTop: 2 },
-  workoutDuration: { color: '#ff6b35', fontSize: 18, fontWeight: '900', letterSpacing: -0.5 },
+  workoutDuration: { color: '#10b981', fontSize: 18, fontWeight: '900', letterSpacing: -0.5 },
   fab: {
     position: 'absolute', bottom: 32, right: 24,
     width: 64, height: 64, borderRadius: 32,
-    backgroundColor: '#ff6b35', justifyContent: 'center', alignItems: 'center',
-    shadowColor: '#ff6b35', shadowOpacity: 0.5, shadowRadius: 20,
+    backgroundColor: '#10b981', justifyContent: 'center', alignItems: 'center',
+    shadowColor: '#10b981', shadowOpacity: 0.5, shadowRadius: 20,
     shadowOffset: { width: 0, height: 8 }, elevation: 8,
   },
   fabIcon: { color: '#fff', fontSize: 32, fontWeight: '900', marginTop: -2 },
