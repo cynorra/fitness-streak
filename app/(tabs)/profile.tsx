@@ -2,17 +2,19 @@ import { View, Text, TouchableOpacity, StyleSheet, Alert, ScrollView, Linking, M
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../lib/auth';
 import { useState } from 'react';
+import { useTranslation, supportedLanguages } from '../../lib/i18n/i18n';
 
 export default function Profile() {
   const { profile, session, refreshProfile } = useAuth();
+  const { t, locale, changeLanguage } = useTranslation();
   const [editModal, setEditModal] = useState(false);
   const [newName, setNewName] = useState(profile?.display_name || '');
   const [updating, setUpdating] = useState(false);
 
   const signOut = () => {
-    Alert.alert('Çıkış', 'Emin misin?', [
-      { text: 'İptal', style: 'cancel' },
-      { text: 'Çıkış', style: 'destructive', onPress: () => supabase.auth.signOut() },
+    Alert.alert(t('profile.logout_dialog_title'), t('profile.logout_dialog_message'), [
+      { text: t('common.cancel'), style: 'cancel' },
+      { text: t('profile.logout'), style: 'destructive', onPress: () => supabase.auth.signOut() },
     ]);
   };
 
@@ -25,7 +27,7 @@ export default function Profile() {
       .eq('id', profile.id);
     
     if (error) {
-      Alert.alert('Hata', 'Profil güncellenemedi.');
+      Alert.alert(t('common.error'), t('profile.profile_error'));
     } else {
       await refreshProfile();
       setEditModal(false);
@@ -49,30 +51,30 @@ export default function Profile() {
           setNewName(profile?.display_name || '');
           setEditModal(true);
         }}>
-          <Text style={styles.editBtnText}>PROFİLİ DÜZENLE</Text>
+          <Text style={styles.editBtnText}>{t('profile.edit_profile')}</Text>
         </TouchableOpacity>
       </View>
 
       <Modal visible={editModal} animationType="slide" transparent={true}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>PROFİLİ DÜZENLE</Text>
+            <Text style={styles.modalTitle}>{t('profile.edit_profile')}</Text>
             <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>GÖRÜNÜR AD</Text>
+              <Text style={styles.inputLabel}>{t('profile.display_name')}</Text>
               <TextInput 
                 style={styles.input}
                 value={newName}
                 onChangeText={setNewName}
-                placeholder="Adınız"
+                placeholder={t('profile.your_name')}
                 placeholderTextColor="#444"
               />
             </View>
             <View style={styles.modalActions}>
               <TouchableOpacity style={styles.cancelBtn} onPress={() => setEditModal(false)}>
-                <Text style={styles.cancelBtnText}>İPTAL</Text>
+                <Text style={styles.cancelBtnText}>{t('common.cancel')}</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.saveBtn} onPress={updateProfile} disabled={updating}>
-                <Text style={styles.saveBtnText}>{updating ? 'KAYDEDİLİYOR...' : 'KAYDET'}</Text>
+                <Text style={styles.saveBtnText}>{updating ? t('common.saving') : t('common.save')}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -82,33 +84,59 @@ export default function Profile() {
       <View style={styles.stats}>
         <View style={styles.statBox}>
           <Text style={styles.statValue}>{profile?.current_streak ?? 0}</Text>
-          <Text style={styles.statLabel}>GÜNCEL STREAK</Text>
+          <Text style={styles.statLabel}>{t('profile.current_streak')}</Text>
         </View>
         <View style={styles.statBox}>
           <Text style={styles.statValue}>{profile?.longest_streak ?? 0}</Text>
-          <Text style={styles.statLabel}>EN UZUN</Text>
+          <Text style={styles.statLabel}>{t('profile.longest_streak_title')}</Text>
         </View>
       </View>
 
+      {/* Language Selector Section */}
+      <View style={styles.languageContainer}>
+        <Text style={styles.languageHeader}>{t('profile.select_language')}</Text>
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false} 
+          style={styles.langScroll}
+          contentContainerStyle={styles.langScrollContent}
+        >
+          {supportedLanguages.map((lang) => {
+            const isActive = locale === lang.code;
+            return (
+              <TouchableOpacity
+                key={lang.code}
+                style={[styles.langCard, isActive && styles.langCardActive]}
+                onPress={() => changeLanguage(lang.code)}
+              >
+                <Text style={[styles.langText, isActive && styles.langTextActive]}>
+                  {lang.name}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
+      </View>
+
       <TouchableOpacity style={styles.signOutBtn} onPress={signOut}>
-        <Text style={styles.signOutText}>Çıkış Yap</Text>
+        <Text style={styles.signOutText}>{t('profile.logout')}</Text>
       </TouchableOpacity>
 
       <View style={styles.legalLinks}>
         <TouchableOpacity onPress={() => Linking.openURL('https://vitatribe.com/privacy')}>
-          <Text style={styles.legalText}>Gizlilik Politikası</Text>
+          <Text style={styles.legalText}>{t('profile.privacy_policy')}</Text>
         </TouchableOpacity>
         <Text style={styles.legalDot}>•</Text>
         <TouchableOpacity onPress={() => Linking.openURL('https://vitatribe.com/terms')}>
-          <Text style={styles.legalText}>Kullanım Şartları</Text>
+          <Text style={styles.legalText}>{t('profile.terms_of_use')}</Text>
         </TouchableOpacity>
       </View>
 
       <TouchableOpacity 
         style={styles.deleteBtn} 
-        onPress={() => Alert.alert('Hesabı Sil', 'Hesabınızı silmek için destek@vitatribe.com adresine e-posta gönderebilirsiniz. 30 gün içinde tüm verileriniz silinecektir.')}
+        onPress={() => Alert.alert(t('profile.delete_account'), t('profile.delete_account_confirm'))}
       >
-        <Text style={styles.deleteText}>Hesabımı Sil</Text>
+        <Text style={styles.deleteText}>{t('profile.delete_account')}</Text>
       </TouchableOpacity>
 
       <Text style={styles.version}>VITATRIBE v1.0.0</Text>
@@ -128,7 +156,7 @@ const styles = StyleSheet.create({
   name: { color: '#fff', fontSize: 22, fontWeight: '800' },
   handle: { color: '#888', fontSize: 14, marginTop: 4 },
   email: { color: '#666', fontSize: 12, marginTop: 4 },
-  stats: { flexDirection: 'row', gap: 12, marginBottom: 32 },
+  stats: { flexDirection: 'row', gap: 12, marginBottom: 24 },
   statBox: {
     flex: 1, backgroundColor: '#1a1a1a', padding: 20,
     borderRadius: 16, borderWidth: 1, borderColor: '#2a2a2a',
@@ -136,6 +164,57 @@ const styles = StyleSheet.create({
   },
   statValue: { color: '#10b981', fontSize: 40, fontWeight: '900' },
   statLabel: { color: '#888', fontSize: 10, fontWeight: '700', letterSpacing: 1.5, marginTop: 4 },
+  
+  // Language Selector Styles
+  languageContainer: {
+    marginBottom: 24,
+    backgroundColor: '#111',
+    padding: 20,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: '#222',
+  },
+  languageHeader: {
+    color: '#888',
+    fontSize: 10,
+    fontWeight: '900',
+    letterSpacing: 1.5,
+    marginBottom: 16,
+    textTransform: 'uppercase',
+  },
+  langScroll: {
+    flexDirection: 'row',
+  },
+  langScrollContent: {
+    gap: 8,
+    paddingRight: 16,
+  },
+  langCard: {
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    backgroundColor: '#1a1a1a',
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#2a2a2a',
+  },
+  langCardActive: {
+    backgroundColor: '#10b981',
+    borderColor: '#10b981',
+    shadowColor: '#10b981',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+  },
+  langText: {
+    color: '#888',
+    fontSize: 13,
+    fontWeight: '800',
+  },
+  langTextActive: {
+    color: '#fff',
+    fontWeight: '900',
+  },
+
   signOutBtn: {
     backgroundColor: '#1a1a1a', padding: 16, borderRadius: 12,
     alignItems: 'center', borderWidth: 1, borderColor: '#2a2a2a',
@@ -161,3 +240,4 @@ const styles = StyleSheet.create({
   saveBtn: { flex: 2, backgroundColor: '#10b981', padding: 16, borderRadius: 16, alignItems: 'center' },
   saveBtnText: { color: '#fff', fontSize: 13, fontWeight: '900', letterSpacing: 1 },
 });
+

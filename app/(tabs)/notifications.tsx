@@ -7,7 +7,8 @@ import {
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../lib/auth';
 import { format } from 'date-fns';
-import { tr } from 'date-fns/locale';
+import { useTranslation } from '../../lib/i18n/i18n';
+import { getDateLocale } from '../../lib/i18n/dateUtils';
 
 type Notification = {
   id: string;
@@ -23,10 +24,13 @@ type Notification = {
 
 export default function Notifications() {
   const { profile } = useAuth();
+  const { t, locale } = useTranslation();
   const router = useRouter();
   const [items, setItems] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+
+  const dateLocale = getDateLocale(locale);
 
   const load = useCallback(async () => {
     if (!profile) return;
@@ -79,14 +83,126 @@ export default function Notifications() {
 
   const getMessage = (notif: Notification) => {
     const name = notif.actor.display_name || notif.actor.username;
-    switch (notif.type) {
-      case 'like': return `${name} paylaşımını beğendi.`;
-      case 'comment': return `${name} paylaşımına yorum yaptı.`;
-      case 'dietitian_request': return `${name} seninle çalışmak istiyor!`;
-      case 'dietitian_approved': return `${name} talebini onayladı.`;
-      case 'repost': return `${name} paylaşımını repostladı.`;
-      default: return `${name} bir işlem yaptı.`;
-    }
+    
+    // Dynamic multilingual notification message mapper
+    const messages: Record<string, Record<string, string>> = {
+      tr: {
+        like: "paylaşımını beğendi.",
+        comment: "paylaşımına yorum yaptı.",
+        dietitian_request: "seninle çalışmak istiyor!",
+        dietitian_approved: "talebini onayladı.",
+        repost: "paylaşımını repostladı.",
+        default: "bir işlem yaptı."
+      },
+      en: {
+        like: "liked your post.",
+        comment: "commented on your post.",
+        dietitian_request: "wants to work with you!",
+        dietitian_approved: "approved your request.",
+        repost: "reposted your post.",
+        default: "performed an action."
+      },
+      de: {
+        like: "hat deinen Beitrag geliked.",
+        comment: "hat deinen Beitrag kommentiert.",
+        dietitian_request: "möchte mit dir arbeiten!",
+        dietitian_approved: "hat deine Anfrage bestätigt.",
+        repost: "hat deinen Beitrag geteilt.",
+        default: "hat eine Aktion durchgeführt."
+      },
+      fr: {
+        like: "a aimé votre publication.",
+        comment: "a commenté votre publication.",
+        dietitian_request: "veut travailler avec vous !",
+        dietitian_approved: "a approuvé votre demande.",
+        repost: "a repartagé votre publication.",
+        default: "a effectué une action."
+      },
+      it: {
+        like: "ha messo mi piace al tuo post.",
+        comment: "ha commentato il tuo post.",
+        dietitian_request: "vuole lavorare con te!",
+        dietitian_approved: "ha approvato la tua richiesta.",
+        repost: "ha ricondiviso il tuo post.",
+        default: "ha eseguito un'azione."
+      },
+      es: {
+        like: "le gustó tu publicación.",
+        comment: "comentó tu publicación.",
+        dietitian_request: "quiere trabajar contigo!",
+        dietitian_approved: "aprobó tu solicitud.",
+        repost: "compartió tu publicación.",
+        default: "realizó una acción."
+      },
+      pt: {
+        like: "curtiu sua publicação.",
+        comment: "comentou em sua publicação.",
+        dietitian_request: "quer trabalhar com você!",
+        dietitian_approved: "aprovou sua solicitação.",
+        repost: "recompartilhou sua publicação.",
+        default: "realizou uma ação."
+      },
+      ru: {
+        like: "понравилась ваша публикация.",
+        comment: "прокомментировал вашу публикацию.",
+        dietitian_request: "хочет работать с вами!",
+        dietitian_approved: "одобрил ваш запрос.",
+        repost: "поделился вашей публикацией.",
+        default: "выполнил действие."
+      },
+      uk: {
+        like: "сподобалась ваша публікація.",
+        comment: "прокоментував вашу публікацію.",
+        dietitian_request: "хоче працювати з вами!",
+        dietitian_approved: "схвалив ваш запит.",
+        repost: "поділився вашою публікацією.",
+        default: "виконав дію."
+      },
+      zh: {
+        like: "赞了你的动态。",
+        comment: "评论了你的动态。",
+        dietitian_request: "想和你合作！",
+        dietitian_approved: "批准 your 请求。",
+        repost: "转发了你的动态。",
+        default: "进行了操作。"
+      },
+      ja: {
+        like: "があなたの投稿にいいねしました。",
+        comment: "があなたの投稿にコメントしました。",
+        dietitian_request: "があなたと一緒に働きたいと言っています！",
+        dietitian_approved: "があなたのリクエストを承認しました。",
+        repost: "があなたの投稿をリポストしました。",
+        default: "がアクションを実行しました。"
+      },
+      ko: {
+        like: "님이 회원님의 게시물을 좋아합니다.",
+        comment: "님이 회원님의 게시물에 댓글을 남겼습니다.",
+        dietitian_request: "님이 회원님과 함께 일하고 싶어 합니다!",
+        dietitian_approved: "님이 회원님의 요청을 승인했습니다.",
+        repost: "님이 회원님의 게시물을 공유했습니다.",
+        default: "님이 작업을 수행했습니다."
+      },
+      hi: {
+        like: "ने आपकी पोस्ट पसंद की।",
+        comment: "ने आपकी पोस्ट पर टिप्पणी की।",
+        dietitian_request: "आपके साथ काम करना चाहता है!",
+        dietitian_approved: "ने आपके अनुरोध को मंजूरी दी।",
+        repost: "ने आपकी पोस्ट को रीपोस्ट किया।",
+        default: "ने एक क्रिया की।"
+      },
+      el: {
+        like: "του άρεσε η δημοσίευσή σας.",
+        comment: "σχολίασε τη δημοσίευσή σας.",
+        dietitian_request: "θέλει να συνεργαστεί μαζί σας!",
+        dietitian_approved: "ενέκρινε το αίτημά σας.",
+        repost: "αναδημοσίευσε τη δημοσίευσή σας.",
+        default: "έκανε μια ενέργεια."
+      }
+    };
+    
+    const msgs = messages[locale] || messages['en'];
+    const msg = msgs[notif.type] || msgs['default'];
+    return `${name} ${msg}`;
   };
 
   if (loading) {
@@ -111,7 +227,7 @@ export default function Notifications() {
             <Text style={styles.msgIcon}>💬</Text>
           </TouchableOpacity>
         </View>
-        <Text style={styles.title}>BİLDİRİMLER</Text>
+        <Text style={styles.title}>{t('notifications.title')}</Text>
       </View>
 
       <FlatList
@@ -121,7 +237,7 @@ export default function Notifications() {
         ListEmptyComponent={
           <View style={styles.empty}>
             <Text style={styles.emptyEmoji}>📭</Text>
-            <Text style={styles.emptyText}>Henüz bir bildirim yok.</Text>
+            <Text style={styles.emptyText}>{t('notifications.no_notifications')}</Text>
           </View>
         }
         renderItem={({ item }) => (
@@ -132,7 +248,7 @@ export default function Notifications() {
             <View style={{ flex: 1 }}>
               <Text style={styles.message}>{getMessage(item)}</Text>
               <Text style={styles.date}>
-                {format(new Date(item.created_at), 'd MMM HH:mm', { locale: tr }).toUpperCase()}
+                {format(new Date(item.created_at), 'd MMM HH:mm', { locale: dateLocale }).toUpperCase()}
               </Text>
             </View>
           </View>

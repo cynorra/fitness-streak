@@ -1,0 +1,54 @@
+{
+  "common": {
+    "hello": "HELLO",
+    "cancel": "CANCEL",
+    "save": "SAVE",
+    "saving": "SAVING...",
+    "error": "Error",
+    "success": "Success",
+    "minutes_abbr": "min"
+  },
+  "dashboard": {
+    "day_streak": "DAY STREAK",
+    "day": "DAY",
+    "streak_start": "Let's start! Log your first workout.",
+    "streak_continue": "Doing great, keep it up!",
+    "streak_serious": "You are getting serious now.",
+    "streak_legend": "Legendary! This streak is scary.",
+    "longest_streak": "Longest streak",
+    "weekly_workouts": "Workouts this week",
+    "recent_workouts": "RECENT WORKOUTS",
+    "see_all": "SEE ALL"
+  },
+  "profile": {
+    "edit_profile": "EDIT PROFILE",
+    "display_name": "DISPLAY NAME",
+    "your_name": "Your Name",
+    "current_streak": "CURRENT STREAK",
+    "longest_streak_title": "LONGEST",
+    "logout": "Log Out",
+    "privacy_policy": "Privacy Policy",
+    "terms_of_use": "Terms of Use",
+    "delete_account": "Delete Account",
+    "delete_account_confirm": "To delete your account, you can send an email to support@vitatribe.com. All your data will be deleted within 30 days.",
+    "logout_dialog_title": "Log Out",
+    "logout_dialog_message": "Are you sure?",
+    "profile_error": "Failed to update profile.",
+    "select_language": "SELECT LANGUAGE"
+  },
+  "feed": {
+    "title": "FEED",
+    "like": "Like",
+    "liked": "Liked",
+    "comment": "Comment",
+    "comments": "Comments",
+    "post_button": "Share",
+    "post_placeholder": "How was your workout?...",
+    "no_posts": "No posts yet."
+  },
+  "notifications": {
+    "title": "NOTIFICATIONS",
+    "clear_all": "CLEAR",
+    "no_notifications": "You have no notifications."
+  }
+}

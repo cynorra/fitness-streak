@@ -4,13 +4,17 @@ import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'expo-router';
 import { supabase, Workout } from '../../lib/supabase';
 import { format, parseISO, subDays } from 'date-fns';
-import { tr } from 'date-fns/locale';
+import { useTranslation } from '../../lib/i18n/i18n';
+import { getDateLocale } from '../../lib/i18n/dateUtils';
 
 export default function StreakHome() {
   const { profile, refreshProfile } = useAuth();
+  const { t, locale } = useTranslation();
   const router = useRouter();
   const [weekWorkouts, setWeekWorkouts] = useState<Workout[]>([]);
   const [refreshing, setRefreshing] = useState(false);
+
+  const dateLocale = getDateLocale(locale);
 
   const loadWeek = useCallback(async () => {
     if (!profile) return;
@@ -42,12 +46,12 @@ export default function StreakHome() {
 
   const streak = profile?.current_streak ?? 0;
   const greeting = streak === 0
-    ? 'Hadi başla, ilk antrenmanını logla.'
+    ? t('dashboard.streak_start')
     : streak < 7
-    ? 'İyi gidiyorsun, devam!'
+    ? t('dashboard.streak_continue')
     : streak < 30
-    ? 'Sen ciddi bir adamsın artık.'
-    : 'Efsanesin. Bu streak korkutucu.';
+    ? t('dashboard.streak_serious')
+    : t('dashboard.streak_legend');
 
   return (
     <ScrollView
@@ -66,7 +70,7 @@ export default function StreakHome() {
             <Text style={styles.msgIcon}>💬</Text>
           </TouchableOpacity>
         </View>
-        <Text style={styles.hello}>SELAM, {profile?.display_name?.toUpperCase() || profile?.username?.toUpperCase()}</Text>
+        <Text style={styles.hello}>{t('common.hello')}, {profile?.display_name?.toUpperCase() || profile?.username?.toUpperCase()}</Text>
       </View>
 
       <View style={styles.streakCard}>
@@ -76,7 +80,7 @@ export default function StreakHome() {
         </View>
         <Text style={styles.streakNumber}>{streak}</Text>
         <Text style={styles.streakLabel}>
-          {streak === 1 ? 'GÜN' : 'GÜNLÜK STREAK'}
+          {streak === 1 ? t('dashboard.day') : t('dashboard.day_streak')}
         </Text>
         <View style={styles.greetingBox}>
           <Text style={styles.greeting}>{greeting.toUpperCase()}</Text>
@@ -87,7 +91,7 @@ export default function StreakHome() {
         {last7Days.map(({ date, dateStr, hasWorkout }) => (
           <View key={dateStr} style={styles.dayCol}>
             <Text style={styles.dayLabel}>
-              {format(date, 'EEEEE', { locale: tr })}
+              {format(date, 'EEEEE', { locale: dateLocale })}
             </Text>
             <View style={[styles.dayDot, hasWorkout && styles.dayDotActive]}>
               {hasWorkout && <Text style={styles.checkmark}>✓</Text>}
@@ -100,20 +104,20 @@ export default function StreakHome() {
       <View style={styles.statsRow}>
         <View style={styles.statCard}>
           <Text style={styles.statValue}>{profile?.longest_streak ?? 0}</Text>
-          <Text style={styles.statLabel}>En uzun streak</Text>
+          <Text style={styles.statLabel}>{t('dashboard.longest_streak')}</Text>
         </View>
         <View style={styles.statCard}>
           <Text style={styles.statValue}>{weekWorkouts.length}</Text>
-          <Text style={styles.statLabel}>Bu hafta antrenman</Text>
+          <Text style={styles.statLabel}>{t('dashboard.weekly_workouts')}</Text>
         </View>
       </View>
 
       {weekWorkouts.length > 0 && (
         <View style={styles.recentSection}>
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>SON ANTRENMANLAR</Text>
+          <Text style={styles.sectionTitle}>{t('dashboard.recent_workouts')}</Text>
           <TouchableOpacity onPress={() => router.push('/history' as any)}>
-            <Text style={styles.seeAllText}>TÜMÜNÜ GÖR</Text>
+            <Text style={styles.seeAllText}>{t('dashboard.see_all')}</Text>
           </TouchableOpacity>
         </View>
           {weekWorkouts.slice(0, 5).map(w => (
@@ -121,10 +125,10 @@ export default function StreakHome() {
               <View>
                 <Text style={styles.workoutType}>{w.workout_type}</Text>
                 <Text style={styles.workoutDate}>
-                  {format(parseISO(w.logged_at), 'd MMM • HH:mm', { locale: tr })}
+                  {format(parseISO(w.logged_at), 'd MMM • HH:mm', { locale: dateLocale })}
                 </Text>
               </View>
-              <Text style={styles.workoutDuration}>{w.duration_minutes} dk</Text>
+              <Text style={styles.workoutDuration}>{w.duration_minutes} {t('common.minutes_abbr')}</Text>
             </View>
           ))}
         </View>

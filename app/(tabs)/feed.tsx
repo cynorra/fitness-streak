@@ -7,7 +7,8 @@ import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../lib/auth';
 import { format, parseISO } from 'date-fns';
 import { useRouter } from 'expo-router';
-import { tr } from 'date-fns/locale';
+import { useTranslation } from '../../lib/i18n/i18n';
+import { getDateLocale } from '../../lib/i18n/dateUtils';
 
 type PostItem = {
   id: string;
@@ -25,12 +26,15 @@ type PostItem = {
 
 export default function Feed() {
   const { profile } = useAuth();
+  const { t, locale } = useTranslation();
   const router = useRouter();
   const [items, setItems] = useState<PostItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [newPostContent, setNewPostContent] = useState('');
   const [isPosting, setIsPosting] = useState(false);
+
+  const dateLocale = getDateLocale(locale);
 
   const load = useCallback(async () => {
     if (!profile) return;
@@ -111,7 +115,7 @@ export default function Feed() {
     setIsPosting(false);
     
     if (error) {
-      Alert.alert('Hata', 'Paylaşım yapılamadı. Lütfen tekrar deneyin.');
+      Alert.alert(t('common.error'), t('common.error') + ': Failed to publish post.');
     } else {
       setNewPostContent('');
       onRefresh(); // Refresh feed
@@ -171,13 +175,13 @@ export default function Feed() {
                 <Text style={styles.msgIcon}>💬</Text>
               </TouchableOpacity>
             </View>
-            <Text style={styles.title}>TOPLULUK AKIŞI</Text>
+            <Text style={styles.title}>{t('feed.title')}</Text>
 
             {/* Create Post Section */}
             <View style={styles.createPostContainer}>
               <TextInput
                 style={styles.postInput}
-                placeholder="Bugün antrenman nasıl geçti? 🏋️‍♂️"
+                placeholder={t('feed.post_placeholder')}
                 placeholderTextColor="#555"
                 multiline
                 maxLength={500}
@@ -194,7 +198,7 @@ export default function Feed() {
                   {isPosting ? (
                     <ActivityIndicator color="#fff" size="small" />
                   ) : (
-                    <Text style={styles.postButtonText}>Paylaş ✨</Text>
+                    <Text style={styles.postButtonText}>{t('feed.post_button')} ✨</Text>
                   )}
                 </TouchableOpacity>
               </View>
@@ -206,8 +210,7 @@ export default function Feed() {
           <View style={styles.empty}>
             <Text style={styles.emptyEmoji}>💬</Text>
             <Text style={styles.emptyText}>
-              Henüz akışta bir paylaşım yok.{'\n'}
-              İlk gönderiyi sen paylaş!
+              {t('feed.no_posts')}
             </Text>
           </View>
         }
@@ -227,7 +230,7 @@ export default function Feed() {
                   <Text style={styles.userHandle}>@{item.profile?.username}</Text>
                 </View>
                 <Text style={styles.userMeta}>
-                  {format(parseISO(item.created_at), 'd MMM HH:mm', { locale: tr })}
+                  {format(parseISO(item.created_at), 'd MMM HH:mm', { locale: dateLocale })}
                 </Text>
               </View>
             </View>

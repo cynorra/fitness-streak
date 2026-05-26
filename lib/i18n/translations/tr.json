@@ -1,0 +1,54 @@
+{
+  "common": {
+    "hello": "SELAM",
+    "cancel": "İPTAL",
+    "save": "KAYDET",
+    "saving": "KAYDEDİLİYOR...",
+    "error": "Hata",
+    "success": "Başarılı",
+    "minutes_abbr": "dk"
+  },
+  "dashboard": {
+    "day_streak": "GÜNLÜK STREAK",
+    "day": "GÜN",
+    "streak_start": "Hadi başla, ilk antrenmanını logla.",
+    "streak_continue": "İyi gidiyorsun, devam!",
+    "streak_serious": "Sen ciddi bir adamsın artık.",
+    "streak_legend": "Efsanesin. Bu streak korkutucu.",
+    "longest_streak": "En uzun streak",
+    "weekly_workouts": "Bu hafta antrenman",
+    "recent_workouts": "SON ANTRENMANLAR",
+    "see_all": "TÜMÜNÜ GÖR"
+  },
+  "profile": {
+    "edit_profile": "PROFİLİ DÜZENLE",
+    "display_name": "GÖRÜNÜR AD",
+    "your_name": "Adınız",
+    "current_streak": "GÜNCEL STREAK",
+    "longest_streak_title": "EN UZUN",
+    "logout": "Çıkış Yap",
+    "privacy_policy": "Gizlilik Politikası",
+    "terms_of_use": "Kullanım Şartları",
+    "delete_account": "Hesabımı Sil",
+    "delete_account_confirm": "Hesabınızı silmek için destek@vitatribe.com adresine e-posta gönderebilirsiniz. 30 gün içinde tüm verileriniz silinecektir.",
+    "logout_dialog_title": "Çıkış",
+    "logout_dialog_message": "Emin misin?",
+    "profile_error": "Profil güncellenemedi.",
+    "select_language": "DİL SEÇİMİ"
+  },
+  "feed": {
+    "title": "AKIŞ",
+    "like": "Beğen",
+    "liked": "Beğendin",
+    "comment": "Yorum",
+    "comments": "Yorumlar",
+    "post_button": "Paylaş",
+    "post_placeholder": "Antrenmanın nasıl geçti?...",
+    "no_posts": "Henüz gönderi yok."
+  },
+  "notifications": {
+    "title": "BİLDİRİMLER",
+    "clear_all": "TEMİZLE",
+    "no_notifications": "Hiç bildiriminiz yok."
+  }
+}

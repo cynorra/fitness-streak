@@ -61,7 +61,8 @@
         {
           "locationAlwaysAndWhenInUsePermission": "VitaTribe uygulamasını kapatsanız dahi konumunuzu arka planda takip ederek aktivitelerinizi ölçer."
         }
-      ]
+      ],
+      "expo-localization"
     ],
     "experiments": {
       "typedRoutes": true

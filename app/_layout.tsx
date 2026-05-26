@@ -2,6 +2,7 @@ import 'react-native-url-polyfill/auto';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { useEffect } from 'react';
 import { AuthProvider, useAuth } from '../lib/auth';
+import { I18nProvider } from '../lib/i18n/i18n';
 import { View, ActivityIndicator } from 'react-native';
 
 import * as SplashScreen from 'expo-splash-screen';
@@ -49,7 +50,10 @@ function RootLayoutNav() {
 export default function RootLayout() {
   return (
     <AuthProvider>
-      <RootLayoutNav />
+      <I18nProvider>
+        <RootLayoutNav />
+      </I18nProvider>
     </AuthProvider>
   );
 }
+
