@@ -96,11 +96,11 @@ android {
         versionName "1.0.0"
 
         buildConfigField "String", "REACT_NATIVE_RELEASE_LEVEL", "\"${findProperty('reactNativeReleaseLevel') ?: 'stable'}\""
+    }
 
-        externalNativeBuild {
-            cmake {
-                buildArgs "-j1"
-            }
+    externalNativeBuild {
+        cmake {
+            buildArgs "-j1"
         }
     }
     signingConfigs {
