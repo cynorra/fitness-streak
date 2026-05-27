@@ -99,7 +99,7 @@ android {
 
         externalNativeBuild {
             cmake {
-                arguments "-DCMAKE_BUILD_PARALLEL_LEVEL=1"
+                buildArgs "-j1"
             }
         }
     }
