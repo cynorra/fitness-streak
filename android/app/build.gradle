@@ -87,9 +87,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.streakfit.mvp'
+    namespace 'com.vitatribe.fitness.spor.diyet.diyetisyen'
     defaultConfig {
-        applicationId 'com.streakfit.mvp'
+        applicationId 'com.vitatribe.fitness.spor.diyet.diyetisyen'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "VitaTribe: Sosyal Fitness & Diyetisyen",
+    "name": "VitaTribe: Fitness & Diyet",
     "displayName": "VitaTribe",
     "slug": "vitatribe",
     "version": "1.0.0",
@@ -28,7 +28,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0a0a0a"
       },
-      "package": "com.streakfit.mvp",
+      "package": "com.vitatribe.fitness.spor.diyet.diyetisyen",
       "versionCode": 1,
       "permissions": [
         "INTERNET",
