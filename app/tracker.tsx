@@ -6,11 +6,13 @@ import { useLocationTracking } from '../lib/useLocationTracking';
 import MapTracker from '../components/MapTracker';
 import { StatusBar } from 'expo-status-bar';
 import * as Haptics from 'expo-haptics';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const { width } = Dimensions.get('window');
 
 export default function TrackerScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const {
     isTracking,
     locations,
@@ -79,7 +81,7 @@ export default function TrackerScreen() {
       </SafeAreaView>
 
       {/* Bottom Panel */}
-      <View style={styles.panelContainer}>
+      <View style={[styles.panelContainer, { paddingBottom: 30 + insets.bottom }]}>
         {/* Metrics */}
         <View style={styles.metricsRow}>
           <View style={styles.metricCard}>
