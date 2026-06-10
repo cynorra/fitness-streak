@@ -11,6 +11,7 @@ import { format, parseISO } from 'date-fns';
 import { useRouter } from 'expo-router';
 import { useTranslation } from '../../lib/i18n/i18n';
 import { getDateLocale } from '../../lib/i18n/dateUtils';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type PostItem = {
   id: string;
@@ -30,6 +31,7 @@ export default function Feed() {
   const { profile } = useAuth();
   const { t, locale } = useTranslation();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [items, setItems] = useState<PostItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -156,16 +158,17 @@ export default function Feed() {
   }
 
   return (
-    <KeyboardAvoidingView 
-      style={styles.container} 
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <FlatList
         data={items}
         keyExtractor={i => i.id}
         keyboardShouldPersistTaps="handled"
+        contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
         ListHeaderComponent={
-          <Animated.View entering={FadeInDown.duration(400).springify()} style={styles.header}>
+          <Animated.View entering={FadeInDown.duration(400).springify()} style={[styles.header, { paddingTop: insets.top + 20 }]}>
             <View style={styles.logoRow}>
               <View style={{flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1}}>
                 <View style={styles.logoBox}>
@@ -267,7 +270,7 @@ export default function Feed() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0a0a0a' },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#0a0a0a' },
-  header: { padding: 24, paddingTop: 60, gap: 12, paddingBottom: 16 },
+  header: { padding: 24, gap: 12, paddingBottom: 16 },
   logoRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
   msgBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: '#111', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: '#222' },
   msgIcon: { fontSize: 20 },

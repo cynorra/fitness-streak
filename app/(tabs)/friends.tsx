@@ -6,6 +6,7 @@ import {
 import { supabase } from '../../lib/supabase';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../../lib/auth';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type FriendRow = {
   id: string;
@@ -19,6 +20,7 @@ type FriendRow = {
 export default function Friends() {
   const { profile } = useAuth();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [query, setQuery] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [friends, setFriends] = useState<FriendRow[]>([]);
@@ -123,7 +125,7 @@ export default function Friends() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: insets.top + 24 }]}>
         <View style={styles.logoRow}>
           <View style={{flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1}}>
             <View style={styles.logoBox}>
@@ -150,6 +152,7 @@ export default function Friends() {
       <FlatList
         data={searchResults.length > 0 ? searchResults : []}
         keyExtractor={i => i.id}
+        contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
         renderItem={({ item }) => (
           <View style={styles.row}>
             <View style={styles.avatar}><Text style={styles.avatarText}>{item.username[0].toUpperCase()}</Text></View>
@@ -228,7 +231,7 @@ export default function Friends() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0a0a0a' },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#0a0a0a' },
-  header: { padding: 24, paddingTop: 60, gap: 12 },
+  header: { padding: 24, gap: 12 },
   logoRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
   msgBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: '#111', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: '#222' },
   msgIcon: { fontSize: 20 },

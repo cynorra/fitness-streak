@@ -8,6 +8,7 @@ import { useAuth } from '../lib/auth';
 import { useRouter } from 'expo-router';
 import { format } from 'date-fns';
 import { tr } from 'date-fns/locale';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type Conversation = {
   id: string;
@@ -23,6 +24,7 @@ type Conversation = {
 export default function MessagesList() {
   const { profile } = useAuth();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [items, setItems] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -97,7 +99,7 @@ export default function MessagesList() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
           <Text style={styles.backText}>←</Text>
         </TouchableOpacity>
@@ -107,6 +109,7 @@ export default function MessagesList() {
       <FlatList
         data={items}
         keyExtractor={i => i.id}
+        contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#10b981" />}
         ListEmptyComponent={
           <View style={styles.empty}>
@@ -145,7 +148,7 @@ export default function MessagesList() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0a0a0a' },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#0a0a0a' },
-  header: { padding: 24, paddingTop: 60, flexDirection: 'row', alignItems: 'center', gap: 16 },
+  header: { padding: 24, flexDirection: 'row', alignItems: 'center', gap: 16 },
   backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#1a1a1a', justifyContent: 'center', alignItems: 'center' },
   backText: { color: '#fff', fontSize: 24, fontWeight: '900' },
   title: { color: '#fff', fontSize: 28, fontWeight: '900', letterSpacing: -1 },

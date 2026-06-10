@@ -3,10 +3,12 @@ import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../lib/auth';
 import { useState } from 'react';
 import { useTranslation, supportedLanguages } from '../../lib/i18n/i18n';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function Profile() {
   const { profile, session, refreshProfile } = useAuth();
   const { t, locale, changeLanguage } = useTranslation();
+  const insets = useSafeAreaInsets();
   const [editModal, setEditModal] = useState(false);
   const [newName, setNewName] = useState(profile?.display_name || '');
   const [updating, setUpdating] = useState(false);
@@ -36,7 +38,7 @@ export default function Profile() {
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <ScrollView style={styles.container} contentContainerStyle={[styles.content, { paddingTop: insets.top + 20, paddingBottom: insets.bottom + 40 }]}>
       <View style={styles.profileCard}>
         <View style={styles.avatar}>
           <Text style={styles.avatarText}>
@@ -146,7 +148,7 @@ export default function Profile() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0a0a0a' },
-  content: { padding: 24, paddingTop: 60 },
+  content: { padding: 24 },
   profileCard: { alignItems: 'center', marginBottom: 32 },
   avatar: {
     width: 96, height: 96, borderRadius: 48, backgroundColor: '#10b981',

@@ -9,6 +9,7 @@ import { useAuth } from '../../lib/auth';
 import { format } from 'date-fns';
 import { useTranslation } from '../../lib/i18n/i18n';
 import { getDateLocale } from '../../lib/i18n/dateUtils';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type Notification = {
   id: string;
@@ -26,6 +27,7 @@ export default function Notifications() {
   const { profile } = useAuth();
   const { t, locale } = useTranslation();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [items, setItems] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -215,7 +217,7 @@ export default function Notifications() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: insets.top + 24 }]}>
         <View style={styles.logoRow}>
           <View style={{flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1}}>
             <View style={styles.logoBox}>
@@ -233,6 +235,7 @@ export default function Notifications() {
       <FlatList
         data={items}
         keyExtractor={i => i.id}
+        contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#10b981" />}
         ListEmptyComponent={
           <View style={styles.empty}>
@@ -261,7 +264,7 @@ export default function Notifications() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0a0a0a' },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#0a0a0a' },
-  header: { padding: 24, paddingTop: 60, gap: 12 },
+  header: { padding: 24, gap: 12 },
   logoRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
   msgBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: '#111', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: '#222' },
   msgIcon: { fontSize: 20 },

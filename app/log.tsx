@@ -6,10 +6,12 @@ import {
 import { useRouter } from 'expo-router';
 import { supabase, WORKOUT_TYPES } from '../lib/supabase';
 import { useAuth } from '../lib/auth';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function LogWorkout() {
   const { profile, refreshProfile } = useAuth();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [duration, setDuration] = useState('');
   const [note, setNote] = useState('');
@@ -55,7 +57,7 @@ export default function LogWorkout() {
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <ScrollView style={styles.container} contentContainerStyle={[styles.content, { paddingTop: insets.top + 20, paddingBottom: insets.bottom + 32 }]}>
       <View style={styles.header}>
         <View style={styles.logoRow}>
           <View style={{flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1}}>
@@ -127,7 +129,7 @@ export default function LogWorkout() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0a0a0a' },
-  content: { padding: 24, paddingTop: 60 },
+  content: { padding: 24 },
   header: { gap: 12, marginBottom: 32 },
   logoRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
   msgBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: '#111', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: '#222' },

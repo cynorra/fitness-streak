@@ -19,6 +19,7 @@ import { useTranslation } from '../../lib/i18n/i18n';
 import { getDateLocale } from '../../lib/i18n/dateUtils';
 import AnimatedStreakNumber from '../../components/AnimatedStreakNumber';
 import * as Haptics from 'expo-haptics';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
 
@@ -26,6 +27,7 @@ export default function StreakHome() {
   const { profile, refreshProfile } = useAuth();
   const { t, locale } = useTranslation();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [weekWorkouts, setWeekWorkouts] = useState<Workout[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   const dateLocale = getDateLocale(locale);
@@ -56,13 +58,13 @@ export default function StreakHome() {
   const loadWeek = useCallback(async () => {
     if (!profile) return;
     const since = subDays(new Date(), 7).toISOString();
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('workouts')
       .select('*')
       .eq('user_id', profile.id)
       .gte('logged_at', since)
       .order('logged_at', { ascending: false });
-    setWeekWorkouts((data as Workout[]) || []);
+    if (!error) setWeekWorkouts((data as Workout[]) || []);
   }, [profile]);
 
   useEffect(() => { loadWeek(); }, [loadWeek]);
@@ -97,7 +99,7 @@ export default function StreakHome() {
         showsVerticalScrollIndicator={false}
       >
         {/* Header */}
-        <Animated.View entering={FadeInDown.duration(400).springify()} style={styles.header}>
+        <Animated.View entering={FadeInDown.duration(400).springify()} style={[styles.header, { paddingTop: insets.top + 20 }]}>
           <View style={styles.logoRow}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1 }}>
               <View style={styles.logoBox}>
@@ -219,7 +221,7 @@ export default function StreakHome() {
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: '#0a0a0a' },
   container: { flex: 1, backgroundColor: '#0a0a0a' },
-  header: { padding: 24, paddingTop: 60, gap: 12 },
+  header: { padding: 24, gap: 12 },
   logoRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
   msgBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: '#111', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: '#222' },
   msgIcon: { fontSize: 20 },

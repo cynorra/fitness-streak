@@ -9,6 +9,7 @@ import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../lib/auth';
 import { format } from 'date-fns';
 import { tr } from 'date-fns/locale';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type Message = {
   id: string;
@@ -21,6 +22,7 @@ export default function ChatScreen() {
   const { id } = useLocalSearchParams();
   const { profile } = useAuth();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
   const [loading, setLoading] = useState(true);
@@ -45,13 +47,13 @@ export default function ChatScreen() {
     };
 
     const fetchMessages = async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('messages')
         .select('*')
         .eq('conversation_id', id)
         .order('created_at', { ascending: true });
-      
-      if (data) setMessages(data as any);
+
+      if (!error && data) setMessages(data as any);
       setLoading(false);
     };
 
@@ -104,12 +106,12 @@ export default function ChatScreen() {
   }
 
   return (
-    <KeyboardAvoidingView 
-      style={styles.container} 
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? insets.top : 0}
     >
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
           <Text style={styles.backText}>←</Text>
         </TouchableOpacity>
@@ -142,7 +144,7 @@ export default function ChatScreen() {
         }}
       />
 
-      <View style={styles.inputArea}>
+      <View style={[styles.inputArea, { paddingBottom: insets.bottom + 12 }]}>
         <TextInput
           style={styles.input}
           placeholder="Mesaj yaz..."
@@ -162,9 +164,9 @@ export default function ChatScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0a0a0a' },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#0a0a0a' },
-  header: { 
-    padding: 24, paddingTop: 60, flexDirection: 'row', alignItems: 'center', gap: 16,
-    borderBottomWidth: 1, borderBottomColor: '#111'
+  header: {
+    padding: 24, flexDirection: 'row', alignItems: 'center', gap: 16,
+    borderBottomWidth: 1, borderBottomColor: '#111',
   },
   backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#1a1a1a', justifyContent: 'center', alignItems: 'center' },
   backText: { color: '#fff', fontSize: 24, fontWeight: '900' },
@@ -182,10 +184,10 @@ const styles = StyleSheet.create({
   myContent: { color: '#fff' },
   otherContent: { color: '#eee' },
   time: { fontSize: 8, color: 'rgba(255,255,255,0.4)', alignSelf: 'flex-end', marginTop: 4, fontWeight: '800' },
-  inputArea: { 
-    padding: 16, paddingBottom: Platform.OS === 'ios' ? 40 : 16, 
+  inputArea: {
+    padding: 16,
     flexDirection: 'row', gap: 12, alignItems: 'flex-end',
-    borderTopWidth: 1, borderTopColor: '#111'
+    borderTopWidth: 1, borderTopColor: '#111',
   },
   input: {
     flex: 1, backgroundColor: '#111', borderRadius: 24, padding: 14, 

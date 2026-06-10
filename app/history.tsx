@@ -5,21 +5,23 @@ import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'expo-router';
 import { format, parseISO } from 'date-fns';
 import { tr } from 'date-fns/locale';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function WorkoutHistory() {
   const { profile } = useAuth();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [workouts, setWorkouts] = useState<Workout[]>([]);
   const [refreshing, setRefreshing] = useState(false);
 
   const loadHistory = useCallback(async () => {
     if (!profile) return;
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('workouts')
       .select('*')
       .eq('user_id', profile.id)
       .order('logged_at', { ascending: false });
-    setWorkouts((data as Workout[]) || []);
+    if (!error) setWorkouts((data as Workout[]) || []);
   }, [profile]);
 
   useEffect(() => {
@@ -41,7 +43,7 @@ export default function WorkoutHistory() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
           <Text style={styles.backText}>←</Text>
         </TouchableOpacity>
@@ -49,8 +51,8 @@ export default function WorkoutHistory() {
         <View style={{ width: 40 }} />
       </View>
 
-      <ScrollView 
-        contentContainerStyle={styles.content}
+      <ScrollView
+        contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 32 }]}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#10b981" />}
       >
         {Object.entries(groupedWorkouts).map(([month, items]) => (
@@ -82,10 +84,10 @@ export default function WorkoutHistory() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0a0a0a' },
-  header: { 
+  header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingTop: 60, paddingHorizontal: 20, paddingBottom: 20,
-    backgroundColor: '#0a0a0a', borderBottomWidth: 1, borderBottomColor: '#1a1a1a'
+    paddingHorizontal: 20, paddingBottom: 20,
+    backgroundColor: '#0a0a0a', borderBottomWidth: 1, borderBottomColor: '#1a1a1a',
   },
   backBtn: { width: 40, height: 40, justifyContent: 'center' },
   backText: { color: '#fff', fontSize: 24, fontWeight: '900' },
