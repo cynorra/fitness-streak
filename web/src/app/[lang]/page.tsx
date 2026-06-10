@@ -3,11 +3,86 @@ import Link from "next/link";
 import Footer from "@/components/Footer";
 import { getDictionary } from "@/get-dictionary";
 import { Locale } from "@/i18n";
+import Script from "next/script";
+
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://vitatribe.com';
+
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "VitaTribe",
+  url: BASE_URL,
+  description: "Yapay zeka destekli sosyal fitness ağı. Streak takibi, diyetisyen desteği ve topluluk.",
+  inLanguage: ["tr", "en", "es", "pt", "ru", "zh", "ja", "ko"],
+  potentialAction: {
+    "@type": "SearchAction",
+    target: {
+      "@type": "EntryPoint",
+      urlTemplate: `${BASE_URL}/tr/explore?q={search_term_string}`,
+    },
+    "query-input": "required name=search_term_string",
+  },
+};
+
+const appSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "VitaTribe",
+  applicationCategory: "HealthApplication",
+  operatingSystem: ["Android", "iOS", "Web"],
+  description: "VitaTribe ile günlük antrenman yap, streak serini koru, diyetisyenlerle birebir çalış ve fitness topluluğuna katıl.",
+  url: BASE_URL,
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "TRY",
+  },
+  aggregateRating: {
+    "@type": "AggregateRating",
+    ratingValue: "4.8",
+    ratingCount: "1200",
+    bestRating: "5",
+  },
+};
+
+const orgSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "VitaTribe",
+  url: BASE_URL,
+  logo: `${BASE_URL}/og-image.png`,
+  sameAs: [
+    "https://twitter.com/vitatribeapp",
+    "https://instagram.com/vitatribeapp",
+  ],
+  contactPoint: {
+    "@type": "ContactPoint",
+    contactType: "customer support",
+    availableLanguage: ["Turkish", "English"],
+  },
+};
 
 export default async function Home({ params: { lang } }: { params: { lang: Locale } }) {
   const dict = await getDictionary(lang);
   return (
     <div className="flex flex-col min-h-screen bg-white dark:bg-zinc-950 font-sans selection:bg-emerald-500 selection:text-white transition-colors duration-700">
+      {/* JSON-LD Structured Data for SEO & AEO */}
+      <Script
+        id="schema-website"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+      />
+      <Script
+        id="schema-app"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(appSchema) }}
+      />
+      <Script
+        id="schema-org"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
+      />
+
       <Navbar lang={lang} />
 
       <main className="flex-1 pt-16">

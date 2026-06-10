@@ -1,4 +1,15 @@
-import { View, Text, StyleSheet, ScrollView, RefreshControl, TouchableOpacity } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, RefreshControl } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withTiming,
+  withDelay,
+  Easing,
+  FadeInDown,
+  FadeInUp,
+  ZoomIn,
+} from 'react-native-reanimated';
 import { useAuth } from '../../lib/auth';
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'expo-router';
@@ -6,6 +17,10 @@ import { supabase, Workout } from '../../lib/supabase';
 import { format, parseISO, subDays } from 'date-fns';
 import { useTranslation } from '../../lib/i18n/i18n';
 import { getDateLocale } from '../../lib/i18n/dateUtils';
+import AnimatedStreakNumber from '../../components/AnimatedStreakNumber';
+import * as Haptics from 'expo-haptics';
+
+const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
 
 export default function StreakHome() {
   const { profile, refreshProfile } = useAuth();
@@ -13,8 +28,30 @@ export default function StreakHome() {
   const router = useRouter();
   const [weekWorkouts, setWeekWorkouts] = useState<Workout[]>([]);
   const [refreshing, setRefreshing] = useState(false);
-
   const dateLocale = getDateLocale(locale);
+
+  // FAB animasyonu
+  const fabScale = useSharedValue(0);
+  const fabRotate = useSharedValue(0);
+
+  useEffect(() => {
+    fabScale.value = withDelay(400, withSpring(1, { damping: 12, stiffness: 150 }));
+  }, []);
+
+  const fabStyle = useAnimatedStyle(() => ({
+    transform: [
+      { scale: fabScale.value },
+      { rotate: `${fabRotate.value}deg` },
+    ],
+  }));
+
+  const handleFabPress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    fabRotate.value = withSpring(45, { damping: 8 }, () => {
+      fabRotate.value = withSpring(0, { damping: 8 });
+    });
+    router.push('/log' as any);
+  };
 
   const loadWeek = useCallback(async () => {
     if (!profile) return;
@@ -36,7 +73,6 @@ export default function StreakHome() {
     setRefreshing(false);
   };
 
-  // Son 7 gün için işaretleme
   const last7Days = Array.from({ length: 7 }, (_, i) => {
     const date = subDays(new Date(), 6 - i);
     const dateStr = format(date, 'yyyy-MM-dd');
@@ -54,98 +90,134 @@ export default function StreakHome() {
     : t('dashboard.streak_legend');
 
   return (
-    <ScrollView
-      style={styles.container}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#10b981" />}
-    >
-      <View style={styles.header}>
-        <View style={styles.logoRow}>
-          <View style={{flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1}}>
-            <View style={styles.logoBox}>
-              <Text style={styles.logoLetter}>S</Text>
-            </View>
-            <Text style={styles.logoText}>VITA<Text style={{color: '#10b981'}}>TRIBE</Text></Text>
-          </View>
-          <TouchableOpacity onPress={() => router.push('/messages' as any)} style={styles.msgBtn}>
-            <Text style={styles.msgIcon}>💬</Text>
-          </TouchableOpacity>
-        </View>
-        <Text style={styles.hello}>{t('common.hello')}, {profile?.display_name?.toUpperCase() || profile?.username?.toUpperCase()}</Text>
-      </View>
-
-      <View style={styles.streakCard}>
-        <View style={styles.flameContainer}>
-          <Text style={styles.flame}>🌱</Text>
-          <View style={styles.flameGlow} />
-        </View>
-        <Text style={styles.streakNumber}>{streak}</Text>
-        <Text style={styles.streakLabel}>
-          {streak === 1 ? t('dashboard.day') : t('dashboard.day_streak')}
-        </Text>
-        <View style={styles.greetingBox}>
-          <Text style={styles.greeting}>{greeting.toUpperCase()}</Text>
-        </View>
-      </View>
-
-      <View style={styles.weekStrip}>
-        {last7Days.map(({ date, dateStr, hasWorkout }) => (
-          <View key={dateStr} style={styles.dayCol}>
-            <Text style={styles.dayLabel}>
-              {format(date, 'EEEEE', { locale: dateLocale })}
-            </Text>
-            <View style={[styles.dayDot, hasWorkout && styles.dayDotActive]}>
-              {hasWorkout && <Text style={styles.checkmark}>✓</Text>}
-            </View>
-            <Text style={styles.dayNum}>{format(date, 'd')}</Text>
-          </View>
-        ))}
-      </View>
-
-      <View style={styles.statsRow}>
-        <View style={styles.statCard}>
-          <Text style={styles.statValue}>{profile?.longest_streak ?? 0}</Text>
-          <Text style={styles.statLabel}>{t('dashboard.longest_streak')}</Text>
-        </View>
-        <View style={styles.statCard}>
-          <Text style={styles.statValue}>{weekWorkouts.length}</Text>
-          <Text style={styles.statLabel}>{t('dashboard.weekly_workouts')}</Text>
-        </View>
-      </View>
-
-      {weekWorkouts.length > 0 && (
-        <View style={styles.recentSection}>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>{t('dashboard.recent_workouts')}</Text>
-          <TouchableOpacity onPress={() => router.push('/history' as any)}>
-            <Text style={styles.seeAllText}>{t('dashboard.see_all')}</Text>
-          </TouchableOpacity>
-        </View>
-          {weekWorkouts.slice(0, 5).map(w => (
-            <View key={w.id} style={styles.workoutRow}>
-              <View>
-                <Text style={styles.workoutType}>{w.workout_type}</Text>
-                <Text style={styles.workoutDate}>
-                  {format(parseISO(w.logged_at), 'd MMM • HH:mm', { locale: dateLocale })}
-                </Text>
-              </View>
-              <Text style={styles.workoutDuration}>{w.duration_minutes} {t('common.minutes_abbr')}</Text>
-            </View>
-          ))}
-        </View>
-      )}
-
-      {/* Floating Log Button */}
-      <TouchableOpacity 
-        style={styles.fab} 
-        onPress={() => router.push('/log' as any)}
+    <View style={styles.root}>
+      <ScrollView
+        style={styles.container}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#10b981" />}
+        showsVerticalScrollIndicator={false}
       >
+        {/* Header */}
+        <Animated.View entering={FadeInDown.duration(400).springify()} style={styles.header}>
+          <View style={styles.logoRow}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1 }}>
+              <View style={styles.logoBox}>
+                <Text style={styles.logoLetter}>S</Text>
+              </View>
+              <Text style={styles.logoText}>
+                VITA<Text style={{ color: '#10b981' }}>TRIBE</Text>
+              </Text>
+            </View>
+            <TouchableOpacity
+              onPress={() => {
+                Haptics.selectionAsync();
+                router.push('/messages' as any);
+              }}
+              style={styles.msgBtn}
+            >
+              <Text style={styles.msgIcon}>💬</Text>
+            </TouchableOpacity>
+          </View>
+          <Text style={styles.hello}>
+            {t('common.hello')}, {profile?.display_name?.toUpperCase() || profile?.username?.toUpperCase()}
+          </Text>
+        </Animated.View>
+
+        {/* Streak Kartı */}
+        <Animated.View
+          entering={FadeInUp.delay(100).duration(500).springify()}
+          style={styles.streakCard}
+        >
+          <AnimatedStreakNumber streak={streak} />
+          <Animated.View
+            entering={FadeInDown.delay(300).duration(400)}
+            style={styles.greetingBox}
+          >
+            <Text style={styles.greeting}>{greeting.toUpperCase()}</Text>
+          </Animated.View>
+        </Animated.View>
+
+        {/* Haftalık Şerit */}
+        <Animated.View
+          entering={FadeInUp.delay(200).duration(450).springify()}
+          style={styles.weekStrip}
+        >
+          {last7Days.map(({ date, dateStr, hasWorkout }, idx) => (
+            <Animated.View
+              key={dateStr}
+              entering={ZoomIn.delay(250 + idx * 50).springify()}
+              style={styles.dayCol}
+            >
+              <Text style={styles.dayLabel}>
+                {format(date, 'EEEEE', { locale: dateLocale })}
+              </Text>
+              <View style={[styles.dayDot, hasWorkout && styles.dayDotActive]}>
+                {hasWorkout && <Text style={styles.checkmark}>✓</Text>}
+              </View>
+              <Text style={styles.dayNum}>{format(date, 'd')}</Text>
+            </Animated.View>
+          ))}
+        </Animated.View>
+
+        {/* Stat Kartları */}
+        <Animated.View
+          entering={FadeInUp.delay(300).duration(450).springify()}
+          style={styles.statsRow}
+        >
+          <View style={styles.statCard}>
+            <Text style={styles.statValue}>{profile?.longest_streak ?? 0}</Text>
+            <Text style={styles.statLabel}>{t('dashboard.longest_streak')}</Text>
+          </View>
+          <View style={styles.statCard}>
+            <Text style={styles.statValue}>{weekWorkouts.length}</Text>
+            <Text style={styles.statLabel}>{t('dashboard.weekly_workouts')}</Text>
+          </View>
+        </Animated.View>
+
+        {/* Son Antrenmanlar */}
+        {weekWorkouts.length > 0 && (
+          <Animated.View
+            entering={FadeInUp.delay(400).duration(450).springify()}
+            style={styles.recentSection}
+          >
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>{t('dashboard.recent_workouts')}</Text>
+              <TouchableOpacity onPress={() => router.push('/history' as any)}>
+                <Text style={styles.seeAllText}>{t('dashboard.see_all')}</Text>
+              </TouchableOpacity>
+            </View>
+            {weekWorkouts.slice(0, 5).map((w, idx) => (
+              <Animated.View
+                key={w.id}
+                entering={FadeInDown.delay(450 + idx * 60).duration(350).springify()}
+                style={styles.workoutRow}
+              >
+                <View>
+                  <Text style={styles.workoutType}>{w.workout_type}</Text>
+                  <Text style={styles.workoutDate}>
+                    {format(parseISO(w.logged_at), 'd MMM • HH:mm', { locale: dateLocale })}
+                  </Text>
+                </View>
+                <Text style={styles.workoutDuration}>
+                  {w.duration_minutes} {t('common.minutes_abbr')}
+                </Text>
+              </Animated.View>
+            ))}
+          </Animated.View>
+        )}
+
+        <View style={{ height: 120 }} />
+      </ScrollView>
+
+      {/* Floating Action Button — animasyonlu */}
+      <AnimatedTouchable style={[styles.fab, fabStyle]} onPress={handleFabPress}>
         <Text style={styles.fabIcon}>+</Text>
-      </TouchableOpacity>
-    </ScrollView>
+      </AnimatedTouchable>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  root: { flex: 1, backgroundColor: '#0a0a0a' },
   container: { flex: 1, backgroundColor: '#0a0a0a' },
   header: { padding: 24, paddingTop: 60, gap: 12 },
   logoRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
@@ -160,32 +232,14 @@ const styles = StyleSheet.create({
     borderRadius: 40, alignItems: 'center',
     borderWidth: 1, borderColor: '#222',
     shadowColor: '#10b981', shadowOffset: { width: 0, height: 20 },
-    shadowOpacity: 0.1, shadowRadius: 40,
+    shadowOpacity: 0.15, shadowRadius: 40,
   },
-  flameContainer: { position: 'relative', marginBottom: 8 },
-  flame: { fontSize: 80, zIndex: 1 },
-  flameGlow: { 
-    position: 'absolute', top: -10, left: -10, 
-    width: 60, height: 60, backgroundColor: '#10b981', 
-    borderRadius: 30, opacity: 0.2 
-  },
-  streakNumber: {
-    fontSize: 120, fontWeight: '900', color: '#10b981',
-    letterSpacing: -6, lineHeight: 120,
-  },
-  streakLabel: {
-    color: '#666', fontSize: 11, fontWeight: '900',
-    letterSpacing: 3, marginTop: -4,
-  },
-  greetingBox: { 
-    marginTop: 24, paddingVertical: 8, paddingHorizontal: 16, 
-    backgroundColor: '#1a1a1a', borderRadius: 12, borderWidth: 1, borderColor: '#2a2a2a' 
+  greetingBox: {
+    marginTop: 24, paddingVertical: 8, paddingHorizontal: 16,
+    backgroundColor: '#1a1a1a', borderRadius: 12, borderWidth: 1, borderColor: '#2a2a2a',
   },
   greeting: { color: '#fff', fontSize: 10, fontWeight: '900', letterSpacing: 1, textAlign: 'center' },
-  weekStrip: {
-    flexDirection: 'row', justifyContent: 'space-between',
-    paddingHorizontal: 16, marginBottom: 24,
-  },
+  weekStrip: { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 16, marginBottom: 24 },
   dayCol: { alignItems: 'center', flex: 1 },
   dayLabel: { color: '#444', fontSize: 10, fontWeight: '900', marginBottom: 8, textTransform: 'uppercase', letterSpacing: 1 },
   dayDot: {
@@ -193,7 +247,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#111', borderWidth: 1, borderColor: '#222',
     justifyContent: 'center', alignItems: 'center',
   },
-  dayDotActive: { backgroundColor: '#10b981', borderColor: '#10b981', shadowColor: '#10b981', shadowOpacity: 0.3, shadowRadius: 10, shadowOffset: { width: 0, height: 4 } },
+  dayDotActive: {
+    backgroundColor: '#10b981', borderColor: '#10b981',
+    shadowColor: '#10b981', shadowOpacity: 0.4, shadowRadius: 12, shadowOffset: { width: 0, height: 4 },
+  },
   checkmark: { color: '#fff', fontWeight: '900', fontSize: 18 },
   dayNum: { color: '#666', fontSize: 10, fontWeight: '900', marginTop: 6 },
   statsRow: { flexDirection: 'row', paddingHorizontal: 16, gap: 12, marginBottom: 32 },
@@ -204,14 +261,8 @@ const styles = StyleSheet.create({
   statValue: { color: '#fff', fontSize: 36, fontWeight: '900', letterSpacing: -2 },
   statLabel: { color: '#444', fontSize: 9, fontWeight: '900', marginTop: 4, textTransform: 'uppercase', letterSpacing: 1.5 },
   recentSection: { paddingHorizontal: 16, paddingBottom: 40 },
-  sectionHeader: { 
-    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', 
-    marginBottom: 16 
-  },
-  sectionTitle: {
-    color: '#666', fontSize: 10, fontWeight: '900',
-    letterSpacing: 3, textTransform: 'uppercase',
-  },
+  sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
+  sectionTitle: { color: '#666', fontSize: 10, fontWeight: '900', letterSpacing: 3, textTransform: 'uppercase' },
   seeAllText: { color: '#10b981', fontSize: 10, fontWeight: '900', letterSpacing: 1 },
   workoutRow: {
     backgroundColor: '#111', padding: 20, borderRadius: 20,
@@ -226,8 +277,8 @@ const styles = StyleSheet.create({
     position: 'absolute', bottom: 32, right: 24,
     width: 64, height: 64, borderRadius: 32,
     backgroundColor: '#10b981', justifyContent: 'center', alignItems: 'center',
-    shadowColor: '#10b981', shadowOpacity: 0.5, shadowRadius: 20,
-    shadowOffset: { width: 0, height: 8 }, elevation: 8,
+    shadowColor: '#10b981', shadowOpacity: 0.6, shadowRadius: 24,
+    shadowOffset: { width: 0, height: 8 }, elevation: 10,
   },
   fabIcon: { color: '#fff', fontSize: 32, fontWeight: '900', marginTop: -2 },
 });

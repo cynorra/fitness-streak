@@ -3,11 +3,14 @@ import { notFound, redirect } from 'next/navigation'
 import Navbar from '@/components/Navbar'
 import Link from 'next/link'
 import { requestDietitian, startConversation } from './actions'
-import PostInteractions from '@/app/feed/PostInteractions'
+import PostInteractions from '@/app/[lang]/feed/PostInteractions'
 import { Metadata } from 'next'
+import Script from 'next/script'
 
-export async function generateMetadata({ params }: { params: Promise<{ username: string }> }): Promise<Metadata> {
-  const { username } = await params
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://vitatribe.com'
+
+export async function generateMetadata({ params }: { params: Promise<{ username: string; lang: string }> }): Promise<Metadata> {
+  const { username, lang } = await params
   const supabase = await createClient()
   
   const { data: profile } = await supabase
@@ -20,21 +23,41 @@ export async function generateMetadata({ params }: { params: Promise<{ username:
 
   const name = profile.display_name || profile.username
   const streak = profile.current_streak || 0
+  const profileUrl = `${BASE_URL}/${lang}/u/${username}`
 
   return {
-    title: `${name} (@${profile.username}) | ${streak} Günlük Seri - VitaTribe`,
-    description: profile.bio || `${name} kullanıcısının fitness profilini ve antrenman serisini VitaTribe üzerinde takip et.`,
+    metadataBase: new URL(BASE_URL),
+    title: `${name} (@${profile.username}) | ${streak} Günlük Seri`,
+    description: profile.bio || `${name} kullanıcısının fitness profilini ve antrenman serisini VitaTribe üzerinde takip et. ${streak} günlük aktif serisi var!`,
+    alternates: {
+      canonical: profileUrl,
+    },
     openGraph: {
-      title: `${name} | ${streak} Günlük Seri`,
-      description: profile.bio || `${name} kullanıcısının gelişimini takip et.`,
+      title: `${name} | ${streak} Günlük Seri 🔥`,
+      description: profile.bio || `${name} kullanıcısının gelişimini takip et. ${streak} günlük aktif serisi var!`,
+      url: profileUrl,
+      siteName: 'VitaTribe',
       type: 'profile',
-      username: profile.username,
-    }
+      images: [
+        {
+          url: '/og-image.png',
+          width: 1200,
+          height: 630,
+          alt: `${name} — VitaTribe Profili`,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${name} | ${streak} Günlük Seri 🔥`,
+      description: profile.bio || `${name} kullanıcısının VitaTribe fitness profilini takip et.`,
+      images: ['/og-image.png'],
+    },
   }
 }
 
-export default async function UserProfile({ params }: { params: Promise<{ username: string }> }) {
-  const { username } = await params
+export default async function UserProfile({ params }: { params: Promise<{ username: string; lang: string }> }) {
+  const { username, lang } = await params
   const supabase = await createClient()
   
   const { data: { user: currentUser } } = await supabase.auth.getUser()
@@ -126,9 +149,31 @@ export default async function UserProfile({ params }: { params: Promise<{ userna
     workouts = workoutData || []
   }
 
+  // Build Person JSON-LD schema
+  const personSchema = {
+    '@context': 'https://schema.org',
+    '@type': profile.role === 'dietitian' ? ['Person', 'MedicalBusiness'] : ['Person', 'Athlete'],
+    name: profile.display_name || profile.username,
+    alternateName: `@${profile.username}`,
+    description: profile.bio || `${profile.display_name || profile.username} kullanıcısının fitness profili.`,
+    url: `${BASE_URL}/tr/u/${profile.username}`,
+    image: `${BASE_URL}/og-image.png`,
+    sameAs: [`${BASE_URL}/tr/u/${profile.username}`],
+    ...(profile.role === 'dietitian' && {
+      jobTitle: 'Diyetisyen',
+      worksFor: { '@type': 'Organization', name: 'VitaTribe' },
+    }),
+  };
+
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 font-sans transition-colors duration-500">
-      <Navbar />
+      {/* JSON-LD Person Schema */}
+      <Script
+        id="schema-person"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+      />
+      <Navbar lang={lang as any} />
       <main className="max-w-6xl mx-auto pt-32 pb-20 px-6">
         
         {/* Header Section */}

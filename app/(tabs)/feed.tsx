@@ -3,6 +3,8 @@ import {
   View, Text, StyleSheet, FlatList, TouchableOpacity,
   RefreshControl, ActivityIndicator, TextInput, KeyboardAvoidingView, Platform, Keyboard, Alert
 } from 'react-native';
+import Animated, { FadeInDown, FadeInUp, ZoomIn } from 'react-native-reanimated';
+import * as Haptics from 'expo-haptics';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../lib/auth';
 import { format, parseISO } from 'date-fns';
@@ -115,7 +117,7 @@ export default function Feed() {
     setIsPosting(false);
     
     if (error) {
-      Alert.alert(t('common.error'), t('common.error') + ': Failed to publish post.');
+      Alert.alert(t('common.error'), `${t('common.error')}: Failed to publish post. (${error.message})`);
     } else {
       setNewPostContent('');
       onRefresh(); // Refresh feed
@@ -163,7 +165,7 @@ export default function Feed() {
         keyExtractor={i => i.id}
         keyboardShouldPersistTaps="handled"
         ListHeaderComponent={
-          <View style={styles.header}>
+          <Animated.View entering={FadeInDown.duration(400).springify()} style={styles.header}>
             <View style={styles.logoRow}>
               <View style={{flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1}}>
                 <View style={styles.logoBox}>
@@ -171,14 +173,14 @@ export default function Feed() {
                 </View>
                 <Text style={styles.logoText}>VITA<Text style={{color: '#10b981'}}>TRIBE</Text></Text>
               </View>
-              <TouchableOpacity onPress={() => router.push('/messages' as any)} style={styles.msgBtn}>
+              <TouchableOpacity onPress={() => { Haptics.selectionAsync(); router.push('/messages' as any); }} style={styles.msgBtn}>
                 <Text style={styles.msgIcon}>💬</Text>
               </TouchableOpacity>
             </View>
             <Text style={styles.title}>{t('feed.title')}</Text>
 
             {/* Create Post Section */}
-            <View style={styles.createPostContainer}>
+            <Animated.View entering={FadeInUp.delay(150).duration(400).springify()} style={styles.createPostContainer}>
               <TextInput
                 style={styles.postInput}
                 placeholder={t('feed.post_placeholder')}
@@ -202,8 +204,8 @@ export default function Feed() {
                   )}
                 </TouchableOpacity>
               </View>
-            </View>
-          </View>
+            </Animated.View>
+          </Animated.View>
         }
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#10b981" />}
         ListEmptyComponent={
@@ -214,8 +216,11 @@ export default function Feed() {
             </Text>
           </View>
         }
-        renderItem={({ item }) => (
-          <View style={styles.card}>
+        renderItem={({ item, index }) => (
+          <Animated.View
+            entering={FadeInDown.delay(index * 60).duration(350).springify()}
+            style={styles.card}
+          >
             <View style={styles.cardHeader}>
               <View style={styles.avatar}>
                 <Text style={styles.avatarText}>
@@ -240,25 +245,19 @@ export default function Feed() {
             <View style={styles.actions}>
               <TouchableOpacity
                 style={styles.actionBtn}
-                onPress={() => toggleLike(item)}
+                onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); toggleLike(item); }}
               >
-                <Text style={styles.actionEmoji}>
-                  {item.user_liked ? '❤️' : '🤍'}
-                </Text>
-                <Text style={[
-                  styles.actionCount,
-                  item.user_liked && styles.likeCountActive,
-                ]}>
+                <Text style={styles.actionEmoji}>{item.user_liked ? '❤️' : '🤍'}</Text>
+                <Text style={[styles.actionCount, item.user_liked && styles.likeCountActive]}>
                   {item.like_count}
                 </Text>
               </TouchableOpacity>
-              
               <View style={styles.actionBtn}>
                 <Text style={styles.actionEmoji}>💬</Text>
                 <Text style={styles.actionCount}>{item.comment_count}</Text>
               </View>
             </View>
-          </View>
+          </Animated.View>
         )}
       />
     </KeyboardAvoidingView>
