@@ -4,9 +4,11 @@ import { useAuth } from '../../lib/auth';
 import { useState } from 'react';
 import { useTranslation, supportedLanguages } from '../../lib/i18n/i18n';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 
 export default function Profile() {
   const { profile, session, refreshProfile } = useAuth();
+  const router = useRouter();
   const { t, locale, changeLanguage } = useTranslation();
   const insets = useSafeAreaInsets();
   const [editModal, setEditModal] = useState(false);
@@ -94,6 +96,44 @@ export default function Profile() {
         </View>
       </View>
 
+      {/* Appointments Link */}
+      <TouchableOpacity 
+        style={styles.menuBtn} 
+        onPress={() => router.push('/appointments' as any)}
+      >
+        <Text style={styles.menuBtnIcon}>📅</Text>
+        <Text style={styles.menuBtnText}>Randevularım</Text>
+      </TouchableOpacity>
+
+      {/* Nutrition Log Link */}
+      <TouchableOpacity 
+        style={styles.menuBtn} 
+        onPress={() => router.push('/nutrition/log' as any)}
+      >
+        <Text style={styles.menuBtnIcon}>🥗</Text>
+        <Text style={styles.menuBtnText}>Beslenme Günlüğü</Text>
+      </TouchableOpacity>
+
+      {/* Measurements Link */}
+      <TouchableOpacity 
+        style={styles.menuBtn} 
+        onPress={() => router.push('/measurements' as any)}
+      >
+        <Text style={styles.menuBtnIcon}>📏</Text>
+        <Text style={styles.menuBtnText}>Vücut Ölçüleri</Text>
+      </TouchableOpacity>
+
+      {/* Dietitian Link */}
+      {profile?.role === 'dietitian' && (
+        <TouchableOpacity 
+          style={styles.menuBtn} 
+          onPress={() => router.push('/dietitian/create-plan' as any)}
+        >
+          <Text style={styles.menuBtnIcon}>📋</Text>
+          <Text style={styles.menuBtnText}>Beslenme Planı Oluştur</Text>
+        </TouchableOpacity>
+      )}
+
       {/* Language Selector Section */}
       <View style={styles.languageContainer}>
         <Text style={styles.languageHeader}>{t('profile.select_language')}</Text>
@@ -167,6 +207,20 @@ const styles = StyleSheet.create({
   statValue: { color: '#10b981', fontSize: 40, fontWeight: '900' },
   statLabel: { color: '#888', fontSize: 10, fontWeight: '700', letterSpacing: 1.5, marginTop: 4 },
   
+  menuBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#111',
+    padding: 16,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#222',
+    marginBottom: 24,
+    gap: 16,
+  },
+  menuBtnIcon: { fontSize: 24 },
+  menuBtnText: { color: '#fff', fontSize: 16, fontWeight: '800' },
+
   // Language Selector Styles
   languageContainer: {
     marginBottom: 24,

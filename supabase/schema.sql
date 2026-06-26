@@ -25,6 +25,8 @@ create table public.profiles (
   current_streak int default 0,
   longest_streak int default 0,
   last_workout_date date,
+  onboarding_completed boolean default false,
+  push_token text,
   created_at timestamptz default now()
 );
 
@@ -482,6 +484,177 @@ create policy "Repost yap" on public.reposts for insert with check (user_id = au
 create policy "Repost sil" on public.reposts for delete using (user_id = auth.uid());
 
 -- ============================================================
+-- 1.5 FAZ 1 EKLENTILERI (YENI TABLOLAR)
+-- ============================================================
+
+-- BESLENME PLANLARI VE OGUNLER
+create table public.nutrition_plans (
+  id uuid default gen_random_uuid() primary key,
+  dietitian_id uuid references public.profiles(id) on delete cascade not null,
+  client_id uuid references public.profiles(id) on delete cascade not null,
+  title text,
+  start_date date,
+  end_date date,
+  status text default 'active' check (status in ('active', 'completed', 'cancelled')),
+  created_at timestamptz default now()
+);
+
+create table public.nutrition_meals (
+  id uuid default gen_random_uuid() primary key,
+  plan_id uuid references public.nutrition_plans(id) on delete cascade not null,
+  day_of_week int check (day_of_week between 1 and 7),
+  meal_type text not null check (meal_type in ('breakfast', 'lunch', 'dinner', 'snack')),
+  content text not null,
+  calories int,
+  macros jsonb,
+  created_at timestamptz default now()
+);
+
+-- GUNLUK BESLENME LOGLARI (Makro/Kalori Takibi)
+create table public.daily_nutrition_logs (
+  id uuid default gen_random_uuid() primary key,
+  user_id uuid references public.profiles(id) on delete cascade not null,
+  log_date date not null,
+  meal_type text not null check (meal_type in ('breakfast', 'lunch', 'dinner', 'snack')),
+  content text not null,
+  calories int,
+  protein_g numeric,
+  carbs_g numeric,
+  fat_g numeric,
+  created_at timestamptz default now()
+);
+
+-- VUCUT OLCULERI
+create table public.body_measurements (
+  id uuid default gen_random_uuid() primary key,
+  user_id uuid references public.profiles(id) on delete cascade not null,
+  date date not null,
+  weight_kg numeric,
+  waist_cm numeric,
+  hips_cm numeric,
+  neck_cm numeric,
+  body_fat_percentage numeric,
+  created_at timestamptz default now()
+);
+
+-- RANDEVU SISTEMI
+create table public.appointments (
+  id uuid default gen_random_uuid() primary key,
+  dietitian_id uuid references public.profiles(id) on delete cascade not null,
+  client_id uuid references public.profiles(id) on delete cascade not null,
+  appointment_time timestamptz not null,
+  status text default 'pending' check (status in ('pending', 'confirmed', 'cancelled', 'completed')),
+  created_at timestamptz default now()
+);
+
+-- SEANS NOTLARI
+create table public.session_notes (
+  id uuid default gen_random_uuid() primary key,
+  dietitian_id uuid references public.profiles(id) on delete cascade not null,
+  client_id uuid references public.profiles(id) on delete cascade not null,
+  appointment_id uuid references public.appointments(id) on delete set null,
+  note text not null,
+  is_private boolean default false,
+  created_at timestamptz default now()
+);
+
+-- MEYDAN OKUMALAR (CHALLENGES)
+create table public.challenges (
+  id uuid default gen_random_uuid() primary key,
+  creator_id uuid references public.profiles(id) on delete cascade not null,
+  title text not null,
+  description text,
+  start_date date,
+  end_date date,
+  goal_type text not null,
+  goal_value numeric not null,
+  created_at timestamptz default now()
+);
+
+create table public.user_challenges (
+  id uuid default gen_random_uuid() primary key,
+  challenge_id uuid references public.challenges(id) on delete cascade not null,
+  user_id uuid references public.profiles(id) on delete cascade not null,
+  status text default 'pending' check (status in ('pending', 'accepted', 'rejected', 'completed')),
+  progress numeric default 0,
+  joined_at timestamptz default now(),
+  unique(challenge_id, user_id)
+);
+
+-- ANTRENMAN SABLONLARI
+create table public.workout_templates (
+  id uuid default gen_random_uuid() primary key,
+  creator_id uuid references public.profiles(id) on delete cascade not null,
+  title text not null,
+  description text,
+  exercises jsonb not null,
+  is_public boolean default true,
+  created_at timestamptz default now()
+);
+
+-- ============================================================
+-- 1.6 FAZ 1 EKLENTILERI IÇIN RLS AKTIF ET VE POLITIKALAR
+-- ============================================================
+alter table public.nutrition_plans enable row level security;
+alter table public.nutrition_meals enable row level security;
+alter table public.daily_nutrition_logs enable row level security;
+alter table public.body_measurements enable row level security;
+alter table public.appointments enable row level security;
+alter table public.session_notes enable row level security;
+alter table public.challenges enable row level security;
+alter table public.user_challenges enable row level security;
+alter table public.workout_templates enable row level security;
+
+create policy "Plan okuma" on public.nutrition_plans for select using (dietitian_id = auth.uid() or client_id = auth.uid());
+create policy "Diyetisyen plan ekler" on public.nutrition_plans for insert with check (dietitian_id = auth.uid());
+create policy "Diyetisyen plan gunceller" on public.nutrition_plans for update using (dietitian_id = auth.uid());
+
+create policy "Meals okuma" on public.nutrition_meals for select using (
+  exists(select 1 from public.nutrition_plans p where p.id = plan_id and (p.dietitian_id = auth.uid() or p.client_id = auth.uid()))
+);
+create policy "Diyetisyen meal ekler" on public.nutrition_meals for insert with check (
+  exists(select 1 from public.nutrition_plans p where p.id = plan_id and p.dietitian_id = auth.uid())
+);
+create policy "Diyetisyen meal gunceller" on public.nutrition_meals for update using (
+  exists(select 1 from public.nutrition_plans p where p.id = plan_id and p.dietitian_id = auth.uid())
+);
+
+create policy "Beslenme log oku" on public.daily_nutrition_logs for select using (
+  user_id = auth.uid() or 
+  exists(select 1 from public.dietitian_clients c where c.client_id = user_id and c.dietitian_id = auth.uid() and c.status = 'approved')
+);
+create policy "Beslenme log ekle" on public.daily_nutrition_logs for insert with check (user_id = auth.uid());
+
+create policy "Olcum oku" on public.body_measurements for select using (
+  user_id = auth.uid() or 
+  exists(select 1 from public.dietitian_clients c where c.client_id = user_id and c.dietitian_id = auth.uid() and c.status = 'approved')
+);
+create policy "Olcum ekle" on public.body_measurements for insert with check (user_id = auth.uid());
+
+create policy "Randevu oku" on public.appointments for select using (dietitian_id = auth.uid() or client_id = auth.uid());
+create policy "Randevu ekle" on public.appointments for insert with check (client_id = auth.uid() or dietitian_id = auth.uid());
+create policy "Randevu guncelle" on public.appointments for update using (client_id = auth.uid() or dietitian_id = auth.uid());
+
+create policy "Not oku" on public.session_notes for select using (
+  dietitian_id = auth.uid() or (client_id = auth.uid() and is_private = false)
+);
+create policy "Not ekle" on public.session_notes for insert with check (dietitian_id = auth.uid());
+create policy "Not guncelle" on public.session_notes for update using (dietitian_id = auth.uid());
+
+create policy "Challenge oku" on public.challenges for select using (true);
+create policy "Challenge ekle" on public.challenges for insert with check (creator_id = auth.uid());
+
+create policy "UserChallenge oku" on public.user_challenges for select using (
+  user_id = auth.uid() or 
+  exists(select 1 from public.challenges c where c.id = challenge_id and c.creator_id = auth.uid())
+);
+create policy "UserChallenge ekle" on public.user_challenges for insert with check (user_id = auth.uid());
+create policy "UserChallenge guncelle" on public.user_challenges for update using (user_id = auth.uid());
+
+create policy "Template oku" on public.workout_templates for select using (is_public = true or creator_id = auth.uid());
+create policy "Template ekle" on public.workout_templates for insert with check (creator_id = auth.uid());
+
+-- ============================================================
 -- 7. VARSAYILAN VERILER
 -- ============================================================
 
@@ -502,5 +675,8 @@ begin;
   create publication supabase_realtime for table
     public.notifications,
     public.messages,
-    public.conversations;
+    public.conversations,
+    public.appointments,
+    public.challenges,
+    public.user_challenges;
 commit;

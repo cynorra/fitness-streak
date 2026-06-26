@@ -29,6 +29,8 @@ export type Profile = {
   current_streak: number;
   longest_streak: number;
   last_workout_date: string | null;
+  role: 'user' | 'dietitian' | 'admin';
+  onboarding_completed: boolean;
 };
 
 export type Workout = {

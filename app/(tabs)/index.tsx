@@ -175,6 +175,27 @@ export default function StreakHome() {
           </View>
         </Animated.View>
 
+        {/* Gamification Links */}
+        <Animated.View
+          entering={FadeInUp.delay(350).duration(450).springify()}
+          style={styles.gamificationRow}
+        >
+          <TouchableOpacity 
+            style={styles.gamificationCard}
+            onPress={() => router.push('/leaderboard' as any)}
+          >
+            <Text style={styles.gamificationIcon}>🏆</Text>
+            <Text style={styles.gamificationLabel}>Liderlik Tablosu</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={styles.gamificationCard}
+            onPress={() => router.push('/challenges' as any)}
+          >
+            <Text style={styles.gamificationIcon}>🎯</Text>
+            <Text style={styles.gamificationLabel}>Görevler</Text>
+          </TouchableOpacity>
+        </Animated.View>
+
         {/* Son Antrenmanlar */}
         {weekWorkouts.length > 0 && (
           <Animated.View
@@ -262,6 +283,16 @@ const styles = StyleSheet.create({
   },
   statValue: { color: '#fff', fontSize: 36, fontWeight: '900', letterSpacing: -2 },
   statLabel: { color: '#444', fontSize: 9, fontWeight: '900', marginTop: 4, textTransform: 'uppercase', letterSpacing: 1.5 },
+  
+  gamificationRow: { flexDirection: 'row', paddingHorizontal: 16, gap: 12, marginBottom: 32 },
+  gamificationCard: {
+    flex: 1, backgroundColor: '#10b98120', padding: 20,
+    borderRadius: 20, borderWidth: 1, borderColor: '#10b98150',
+    alignItems: 'center', justifyContent: 'center',
+  },
+  gamificationIcon: { fontSize: 28, marginBottom: 8 },
+  gamificationLabel: { color: '#10b981', fontSize: 11, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 1, textAlign: 'center' },
+
   recentSection: { paddingHorizontal: 16, paddingBottom: 40 },
   sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
   sectionTitle: { color: '#666', fontSize: 10, fontWeight: '900', letterSpacing: 3, textTransform: 'uppercase' },

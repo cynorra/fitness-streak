@@ -8,24 +8,36 @@ import { I18nProvider } from '../lib/i18n/i18n';
 import { View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as SplashScreen from 'expo-splash-screen';
+import { registerForPushNotificationsAsync } from '../lib/notifications';
 
 SplashScreen.preventAutoHideAsync();
 
 function RootLayoutNav() {
-  const { session, loading } = useAuth();
+  const { session, profile, loading } = useAuth();
   const segments = useSegments();
   const router = useRouter();
 
   useEffect(() => {
     if (loading) return;
     const inAuthGroup = segments[0] === '(auth)';
-    if (!session && !inAuthGroup) {
+    const isOnboarding = segments[0] === 'onboarding';
+
+    if (!session && !inAuthGroup && !isOnboarding) {
       router.replace('/(auth)/login');
-    } else if (session && inAuthGroup) {
-      router.replace('/(tabs)');
+    } else if (session) {
+      if (!profile?.onboarding_completed && !isOnboarding) {
+        router.replace('/onboarding');
+      } else if (profile?.onboarding_completed && (inAuthGroup || isOnboarding)) {
+        router.replace('/(tabs)');
+      }
     }
+    
+    if (session?.user && profile) {
+      registerForPushNotificationsAsync(session.user.id);
+    }
+    
     SplashScreen.hideAsync();
-  }, [session, loading, segments]);
+  }, [session, loading, segments, profile?.onboarding_completed]);
 
   if (loading) return null;
 
