@@ -293,7 +293,7 @@ export default function Feed() {
                 onPress={() => {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                   Share.share({
-                    message: `🔥 StreakFit Spor Serisi Paylaşımı: "${item.content}" - Sen de katıl! #StreakFit #Fitness`,
+                    message: `🔥 VitaTribe Spor Serisi Paylaşımı: "${item.content}" - Sen de katıl! #VitaTribe #Fitness #Diyet`,
                   });
                 }}
               >

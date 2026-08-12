@@ -157,7 +157,7 @@ export default function BlogScreen() {
         >
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>STREAKFIT BLOG</Text>
+        <Text style={styles.headerTitle}>VITATRIBE BLOG</Text>
 
         {profile?.role === 'dietitian' ? (
           <TouchableOpacity

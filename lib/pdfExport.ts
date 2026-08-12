@@ -20,7 +20,7 @@ const PDF_LOCALIZATIONS: Record<string, LocalizationStrings> = {
     mealsHeading: 'Öğünler',
     noMeals: 'Öğün bulunmuyor.',
     calorieLabel: 'Kalori:',
-    footerNotice: 'Bu plan StreakFit / VitaTribe uygulaması üzerinden otomatik oluşturulmuştur.',
+    footerNotice: 'Bu plan VitaTribe uygulaması üzerinden otomatik oluşturulmuştur.',
     mealTypes: {
       breakfast: 'Kahvaltı 🍳',
       lunch: 'Öğle Yemeği 🥗',
@@ -35,7 +35,7 @@ const PDF_LOCALIZATIONS: Record<string, LocalizationStrings> = {
     mealsHeading: 'Meals',
     noMeals: 'No meals specified.',
     calorieLabel: 'Calories:',
-    footerNotice: 'This plan was generated automatically via StreakFit App.',
+    footerNotice: 'This plan was generated automatically via VitaTribe App.',
     mealTypes: {
       breakfast: 'Breakfast 🍳',
       lunch: 'Lunch 🥗',
@@ -50,7 +50,7 @@ const PDF_LOCALIZATIONS: Record<string, LocalizationStrings> = {
     mealsHeading: 'Mahlzeiten',
     noMeals: 'Keine Mahlzeiten angegeben.',
     calorieLabel: 'Kalorien:',
-    footerNotice: 'Dieser Plan wurde automatisch über die StreakFit-App erstellt.',
+    footerNotice: 'Dieser Plan wurde automatisch über die VitaTribe-App erstellt.',
     mealTypes: {
       breakfast: 'Frühstück 🍳',
       lunch: 'Mittagessen 🥗',
@@ -65,7 +65,7 @@ const PDF_LOCALIZATIONS: Record<string, LocalizationStrings> = {
     mealsHeading: 'Comidas',
     noMeals: 'No hay comidas especificadas.',
     calorieLabel: 'Calorías:',
-    footerNotice: 'Este plan fue generado automáticamente a través de StreakFit App.',
+    footerNotice: 'Este plan fue generado automáticamente a través de VitaTribe App.',
     mealTypes: {
       breakfast: 'Desayuno 🍳',
       lunch: 'Almuerzo 🥗',
@@ -106,7 +106,7 @@ export const exportNutritionPlanToPDF = async (
         </div>
         
         <div class="meta">
-          <p style="margin: 4px 0;"><strong>${loc.planTitleLabel}</strong> ${plan.title || 'StreakFit Plan'}</p>
+          <p style="margin: 4px 0;"><strong>${loc.planTitleLabel}</strong> ${plan.title || 'VitaTribe Plan'}</p>
           <p style="margin: 4px 0;"><strong>${loc.dateLabel}</strong> ${plan.start_date ? new Date(plan.start_date).toLocaleDateString() : '-'}</p>
         </div>
         

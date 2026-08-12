@@ -271,7 +271,7 @@ export default function StreakHome() {
               }}
             >
               <Text style={styles.moduleIcon}>📖</Text>
-              <Text style={styles.moduleTitle}>StreakFit Blog</Text>
+              <Text style={styles.moduleTitle}>VitaTribe Blog</Text>
               <Text style={styles.moduleSub}>Rehber & Yazılar</Text>
             </TouchableOpacity>
 

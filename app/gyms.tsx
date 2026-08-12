@@ -83,7 +83,7 @@ export default function GymsScreen() {
             facilities: Array.isArray(g.facilities)
               ? g.facilities
               : ['Serbest Ağırlık', 'Sauna'],
-            discount_code: g.discount_code || 'STREAKFIT20',
+            discount_code: g.discount_code || 'VITATRIBE20',
             image_emoji: g.image_emoji || '🏋️‍♂️',
           }))
         );
@@ -132,7 +132,7 @@ export default function GymsScreen() {
         district: newDistrict || 'Merkez',
         phone: newPhone,
         address: newAddress,
-        discount_code: newDiscount || 'STREAKFIT15',
+        discount_code: newDiscount || 'VITATRIBE15',
         rating: 4.9,
         image_emoji: '🏋️‍♂️',
         facilities: ['Serbest Ağırlık', 'Sauna', 'PT'],
@@ -285,7 +285,7 @@ export default function GymsScreen() {
                 <View style={styles.discountBanner}>
                   <Ionicons name="pricetag" size={14} color="#10b981" />
                   <Text style={styles.discountText}>
-                    StreakFit Özel İndirim Kodu: <Text style={styles.codeText}>{gym.discount_code}</Text>
+                    VitaTribe Özel İndirim Kodu: <Text style={styles.codeText}>{gym.discount_code}</Text>
                   </Text>
                 </View>
               )}
@@ -368,7 +368,7 @@ export default function GymsScreen() {
               <Text style={styles.label}>İNDİRİM KODU (İSTEĞE BAĞLI):</Text>
               <TextInput
                 style={styles.input}
-                placeholder="STREAKFIT20"
+                placeholder="VITATRIBE20"
                 placeholderTextColor="#64748b"
                 value={newDiscount}
                 onChangeText={setNewDiscount}

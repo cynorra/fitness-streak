@@ -3,6 +3,8 @@ import * as Localization from 'expo-localization';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { translations, TranslationType } from './translations';
 
+import { syncNotificationSchedules } from '../notifications';
+
 const LANGUAGE_KEY = '@app_language';
 
 export const supportedLanguages = [
@@ -71,6 +73,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
       setLocale(code);
       try {
         await AsyncStorage.setItem(LANGUAGE_KEY, code);
+        syncNotificationSchedules();
       } catch (e) {
         console.warn('Error saving language', e);
       }

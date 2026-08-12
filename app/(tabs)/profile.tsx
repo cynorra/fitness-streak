@@ -13,8 +13,8 @@ export default function Profile() {
   const insets = useSafeAreaInsets();
   const [editModal, setEditModal] = useState(false);
   const [newName, setNewName] = useState(profile?.display_name || '');
-  const [instagram, setInstagram] = useState((profile as any)?.instagram_handle || 'streakfit_user');
-  const [tiktok, setTiktok] = useState((profile as any)?.tiktok_handle || 'streakfit_user');
+  const [instagram, setInstagram] = useState((profile as any)?.instagram_handle || 'vitatribe_user');
+  const [tiktok, setTiktok] = useState((profile as any)?.tiktok_handle || 'vitatribe_user');
   const [updating, setUpdating] = useState(false);
 
   const signOut = () => {
@@ -131,6 +131,15 @@ export default function Profile() {
           <Text style={styles.statLabel}>{t('profile.longest_streak_title')}</Text>
         </View>
       </View>
+
+      {/* Notifications Settings Link */}
+      <TouchableOpacity 
+        style={styles.menuBtn} 
+        onPress={() => router.push('/notification-settings' as any)}
+      >
+        <Text style={styles.menuBtnIcon}>🔔</Text>
+        <Text style={styles.menuBtnText}>Bildirim & Hatırlatıcı Ayarları</Text>
+      </TouchableOpacity>
 
       {/* Analytics Link */}
       <TouchableOpacity 

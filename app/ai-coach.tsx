@@ -36,7 +36,7 @@ export default function AICoachScreen() {
     {
       id: '1',
       sender: 'ai',
-      text: 'Merhaba Eren! Ben senin kişisel StreakFit AI Koçunum. Bugün antrenman ya da beslenme hedeflerinle ilgili nasıl yardımcı olabilirim?',
+      text: 'Merhaba! Ben senin kişisel VitaTribe AI Koçunum. Bugün antrenman ya da beslenme hedeflerinle ilgili nasıl yardımcı olabilirim?',
     },
   ]);
   const [inputText, setInputText] = useState('');

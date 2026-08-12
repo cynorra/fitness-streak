@@ -8,7 +8,8 @@ import { I18nProvider } from '../lib/i18n/i18n';
 import { View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as SplashScreen from 'expo-splash-screen';
-import { registerForPushNotificationsAsync } from '../lib/notifications';
+import * as Notifications from 'expo-notifications';
+import { registerForPushNotificationsAsync, syncNotificationSchedules } from '../lib/notifications';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -34,10 +35,22 @@ function RootLayoutNav() {
     
     if (session?.user && profile) {
       registerForPushNotificationsAsync(session.user.id);
+      syncNotificationSchedules();
     }
     
     SplashScreen.hideAsync();
   }, [session, loading, segments, profile?.onboarding_completed]);
+
+  useEffect(() => {
+    const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
+      const data = response.notification.request.content.data;
+      if (data?.screen) {
+        router.push(`/${data.screen}` as any);
+      }
+    });
+
+    return () => subscription.remove();
+  }, []);
 
   if (loading) return null;
 
@@ -156,6 +169,15 @@ function RootLayoutNav() {
       {/* Blog & İçerikler: sağdan sola */}
       <Stack.Screen
         name="blog"
+        options={{
+          animation: 'slide_from_right',
+          animationDuration: 300,
+        }}
+      />
+
+      {/* Bildirim & Hatırlatıcı Ayarları: sağdan sola */}
+      <Stack.Screen
+        name="notification-settings"
         options={{
           animation: 'slide_from_right',
           animationDuration: 300,
