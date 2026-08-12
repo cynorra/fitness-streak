@@ -13,6 +13,8 @@ export default function Profile() {
   const insets = useSafeAreaInsets();
   const [editModal, setEditModal] = useState(false);
   const [newName, setNewName] = useState(profile?.display_name || '');
+  const [instagram, setInstagram] = useState((profile as any)?.instagram_handle || 'streakfit_user');
+  const [tiktok, setTiktok] = useState((profile as any)?.tiktok_handle || 'streakfit_user');
   const [updating, setUpdating] = useState(false);
 
   const signOut = () => {
@@ -51,6 +53,18 @@ export default function Profile() {
         <Text style={styles.handle}>@{profile?.username}</Text>
         <Text style={styles.email}>{session?.user?.email}</Text>
         
+        {/* Social Badges */}
+        <View style={styles.socialRow}>
+          <TouchableOpacity style={styles.socialChip} onPress={() => Linking.openURL(`https://instagram.com/${instagram}`)}>
+            <Text style={styles.socialIcon}>📸</Text>
+            <Text style={styles.socialText}>@{instagram}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.socialChip} onPress={() => Linking.openURL(`https://tiktok.com/@${tiktok}`)}>
+            <Text style={styles.socialIcon}>🎵</Text>
+            <Text style={styles.socialText}>@{tiktok}</Text>
+          </TouchableOpacity>
+        </View>
+
         <TouchableOpacity style={styles.editBtn} onPress={() => {
           setNewName(profile?.display_name || '');
           setEditModal(true);
@@ -70,6 +84,28 @@ export default function Profile() {
                 value={newName}
                 onChangeText={setNewName}
                 placeholder={t('profile.your_name')}
+                placeholderTextColor="#444"
+              />
+            </View>
+
+            <View style={styles.inputGroup}>
+              <Text style={styles.inputLabel}>INSTAGRAM KULLANICI ADI</Text>
+              <TextInput 
+                style={styles.input}
+                value={instagram}
+                onChangeText={setInstagram}
+                placeholder="kullanici_adi"
+                placeholderTextColor="#444"
+              />
+            </View>
+
+            <View style={styles.inputGroup}>
+              <Text style={styles.inputLabel}>TIKTOK KULLANICI ADI</Text>
+              <TextInput 
+                style={styles.input}
+                value={tiktok}
+                onChangeText={setTiktok}
+                placeholder="kullanici_adi"
                 placeholderTextColor="#444"
               />
             </View>
@@ -95,6 +131,42 @@ export default function Profile() {
           <Text style={styles.statLabel}>{t('profile.longest_streak_title')}</Text>
         </View>
       </View>
+
+      {/* Analytics Link */}
+      <TouchableOpacity 
+        style={styles.menuBtn} 
+        onPress={() => router.push('/analytics' as any)}
+      >
+        <Text style={styles.menuBtnIcon}>📊</Text>
+        <Text style={styles.menuBtnText}>Performans ve Analiz</Text>
+      </TouchableOpacity>
+
+      {/* Water Tracking Link */}
+      <TouchableOpacity 
+        style={styles.menuBtn} 
+        onPress={() => router.push('/water' as any)}
+      >
+        <Text style={styles.menuBtnIcon}>💧</Text>
+        <Text style={styles.menuBtnText}>Su Takibi (Hidrasyon)</Text>
+      </TouchableOpacity>
+
+      {/* Fasting Link */}
+      <TouchableOpacity 
+        style={styles.menuBtn} 
+        onPress={() => router.push('/fasting' as any)}
+      >
+        <Text style={styles.menuBtnIcon}>⏱️</Text>
+        <Text style={styles.menuBtnText}>Aralıklı Oruç Takibi</Text>
+      </TouchableOpacity>
+
+      {/* Streak Store Link */}
+      <TouchableOpacity 
+        style={styles.menuBtn} 
+        onPress={() => router.push('/store' as any)}
+      >
+        <Text style={styles.menuBtnIcon}>🛡️</Text>
+        <Text style={styles.menuBtnText}>Streak Mağazası & Kalkan</Text>
+      </TouchableOpacity>
 
       {/* Appointments Link */}
       <TouchableOpacity 
@@ -198,6 +270,20 @@ const styles = StyleSheet.create({
   name: { color: '#fff', fontSize: 22, fontWeight: '800' },
   handle: { color: '#888', fontSize: 14, marginTop: 4 },
   email: { color: '#666', fontSize: 12, marginTop: 4 },
+  socialRow: { flexDirection: 'row', gap: 10, marginTop: 12, marginBottom: 8 },
+  socialChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: '#1a1a1a',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#2a2a2a',
+  },
+  socialIcon: { fontSize: 14 },
+  socialText: { color: '#10b981', fontSize: 12, fontWeight: '700' },
   stats: { flexDirection: 'row', gap: 12, marginBottom: 24 },
   statBox: {
     flex: 1, backgroundColor: '#1a1a1a', padding: 20,

@@ -6,20 +6,22 @@ import { translations, TranslationType } from './translations';
 const LANGUAGE_KEY = '@app_language';
 
 export const supportedLanguages = [
-  { code: 'tr', name: 'Türkçe' },
-  { code: 'en', name: 'English' },
-  { code: 'de', name: 'Deutsch' },
-  { code: 'fr', name: 'Français' },
-  { code: 'it', name: 'Italiano' },
-  { code: 'es', name: 'Español' },
-  { code: 'pt', name: 'Português' },
-  { code: 'ru', name: 'Русский' },
-  { code: 'uk', name: 'Українська' },
-  { code: 'zh', name: '简体中文' },
-  { code: 'ja', name: '日本語' },
-  { code: 'ko', name: '한국어' },
-  { code: 'hi', name: 'हिन्दी' },
-  { code: 'el', name: 'Ελληνικά' },
+  { code: 'tr', name: 'Türkçe 🇹🇷' },
+  { code: 'en', name: 'English 🇺🇸' },
+  { code: 'ar', name: 'العربية 🇸🇦' },
+  { code: 'de', name: 'Deutsch 🇩🇪' },
+  { code: 'fr', name: 'Français 🇫🇷' },
+  { code: 'es', name: 'Español 🇪🇸' },
+  { code: 'pt', name: 'Português 🇧🇷' },
+  { code: 'it', name: 'Italiano 🇮🇹' },
+  { code: 'ru', name: 'Русский 🇷🇺' },
+  { code: 'uk', name: 'Українська 🇺🇦' },
+  { code: 'zh', name: '简体中文 🇨🇳' },
+  { code: 'ja', name: '日本語 🇯🇵' },
+  { code: 'ko', name: '한국어 🇰🇷' },
+  { code: 'hi', name: 'हिन्दी 🇮🇳' },
+  { code: 'el', name: 'Ελληνικά 🇬🇷' },
+  { code: 'nl', name: 'Nederlands 🇳🇱' },
 ];
 
 type I18nContextType = {

@@ -809,5 +809,113 @@ export const translations: Record<string, TranslationType> = {
       clear_all: "ΚΑΘΑΡΙΣΜΟΣ",
       no_notifications: "Δεν έχετε ειδοποιήσεις."
     }
+  },
+  ar: {
+    common: {
+      hello: "مرحباً",
+      cancel: "إلغاء",
+      save: "حفظ",
+      saving: "جاري الحفظ...",
+      error: "خطأ",
+      success: "نجاح",
+      minutes_abbr: "دقيقة"
+    },
+    dashboard: {
+      day_streak: "سلسلة الأيام",
+      day: "يوم",
+      streak_start: "ابدأ الآن! سجّل تمرينك الأول.",
+      streak_continue: "أنت تبلي بلاءً حسناً، واصل!",
+      streak_serious: "أنت تأخذ الأمر بجدية الآن.",
+      streak_legend: "أسطوري! هذه السلسلة مذهلة.",
+      longest_streak: "أطول سلسلة",
+      weekly_workouts: "تمارين هذا الأسبوع",
+      recent_workouts: "التمارين الأخيرة",
+      see_all: "عرض الكل"
+    },
+    profile: {
+      edit_profile: "تعديل الملف الشخصي",
+      display_name: "الاسم المعروض",
+      your_name: "اسمك",
+      current_streak: "السلسلة الحالية",
+      longest_streak_title: "الأطول",
+      logout: "تسجيل الخروج",
+      privacy_policy: "سياسة الخصوصية",
+      terms_of_use: "شروط الاستخدام",
+      delete_account: "حذف الحساب",
+      delete_account_confirm: "لحذف حسابك، يرجى مراسلتنا عبر support@vitatribe.com.",
+      logout_dialog_title: "تسجيل الخروج",
+      logout_dialog_message: "هل أنت تأكد؟",
+      profile_error: "فشل تحديث الملف الشخصي.",
+      select_language: "اختر اللغة"
+    },
+    feed: {
+      title: "المنشورات",
+      like: "إعجاب",
+      liked: "أعجبك",
+      comment: "تعليق",
+      comments: "تعليقات",
+      post_button: "نشر",
+      post_placeholder: "كيف كان تمرينك اليوم؟...",
+      no_posts: "لا توجد منشورات حتى الآن."
+    },
+    notifications: {
+      title: "الإشعارات",
+      clear_all: "مسح الكل",
+      no_notifications: "لا توجد إشعارات لديك."
+    }
+  },
+  nl: {
+    common: {
+      hello: "HALLO",
+      cancel: "ANNULEREN",
+      save: "OPSLAAN",
+      saving: "OPSLAAN...",
+      error: "Fout",
+      success: "Succes",
+      minutes_abbr: "min"
+    },
+    dashboard: {
+      day_streak: "DAGELIJKSE REEKS",
+      day: "DAG",
+      streak_start: "Laten we beginnen! Log je eerste workout.",
+      streak_continue: "Ga zo door!",
+      streak_serious: "Je bent nu echt serieus bezig.",
+      streak_legend: "Legendarisch! Wat een reeks.",
+      longest_streak: "Langste reeks",
+      weekly_workouts: "Workouts deze week",
+      recent_workouts: "RECENTE WORKOUTS",
+      see_all: "ALLES BEKIJKEN"
+    },
+    profile: {
+      edit_profile: "PROFIEL BEWERKEN",
+      display_name: "WEERGAVENAAM",
+      your_name: "Jouw Naam",
+      current_streak: "HUIDIGE REEKS",
+      longest_streak_title: "LANGSTE",
+      logout: "Uitloggen",
+      privacy_policy: "Privacybeleid",
+      terms_of_use: "Gebruiksvoorwaarden",
+      delete_account: "Account Verwijderen",
+      delete_account_confirm: "Stuur een e-mail naar support@vitatribe.com om je account te verwijderen.",
+      logout_dialog_title: "Uitloggen",
+      logout_dialog_message: "Weet je het zeker?",
+      profile_error: "Profiel bijwerken mislukt.",
+      select_language: "TAAL SELECTEREN"
+    },
+    feed: {
+      title: "FEED",
+      like: "Vind ik leuk",
+      liked: "Vind je leuk",
+      comment: "Reactie",
+      comments: "Reacties",
+      post_button: "Delen",
+      post_placeholder: "Hoe ging je workout?...",
+      no_posts: "Nog geen berichten."
+    },
+    notifications: {
+      title: "MELDINGEN",
+      clear_all: "ALLES WISSEN",
+      no_notifications: "Geen meldingen."
+    }
   }
 };

@@ -19,14 +19,14 @@ function RootLayoutNav() {
 
   useEffect(() => {
     if (loading) return;
-    const inAuthGroup = segments[0] === '(auth)';
-    const isOnboarding = segments[0] === 'onboarding';
+    const inAuthGroup = (segments[0] as string) === '(auth)';
+    const isOnboarding = (segments[0] as string) === 'onboarding';
 
     if (!session && !inAuthGroup && !isOnboarding) {
       router.replace('/(auth)/login');
     } else if (session) {
       if (!profile?.onboarding_completed && !isOnboarding) {
-        router.replace('/onboarding');
+        router.replace('/onboarding' as any);
       } else if (profile?.onboarding_completed && (inAuthGroup || isOnboarding)) {
         router.replace('/(tabs)');
       }
@@ -101,6 +101,61 @@ function RootLayoutNav() {
       {/* Tracker: sağdan sola */}
       <Stack.Screen
         name="tracker"
+        options={{
+          animation: 'slide_from_right',
+          animationDuration: 300,
+        }}
+      />
+
+      {/* Su Takibi: alttan yukarı */}
+      <Stack.Screen
+        name="water"
+        options={{
+          animation: 'slide_from_bottom',
+          animationDuration: 350,
+        }}
+      />
+
+      {/* Oruç Takibi: sağdan sola */}
+      <Stack.Screen
+        name="fasting"
+        options={{
+          animation: 'slide_from_right',
+          animationDuration: 300,
+        }}
+      />
+
+      {/* Streak Mağazası: modal */}
+      <Stack.Screen
+        name="store"
+        options={{
+          presentation: 'modal',
+          animation: 'slide_from_bottom',
+          animationDuration: 380,
+        }}
+      />
+
+      {/* Analiz & Grafikler: sağdan sola */}
+      <Stack.Screen
+        name="analytics"
+        options={{
+          animation: 'slide_from_right',
+          animationDuration: 300,
+        }}
+      />
+
+      {/* AI Koç: sağdan sola */}
+      <Stack.Screen
+        name="ai-coach"
+        options={{
+          animation: 'slide_from_right',
+          animationDuration: 300,
+        }}
+      />
+
+      {/* Blog & İçerikler: sağdan sola */}
+      <Stack.Screen
+        name="blog"
         options={{
           animation: 'slide_from_right',
           animationDuration: 300,

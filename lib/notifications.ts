@@ -8,6 +8,8 @@ Notifications.setNotificationHandler({
     shouldShowAlert: true,
     shouldPlaySound: true,
     shouldSetBadge: true,
+    shouldShowBanner: true,
+    shouldShowList: true,
   }),
 });
 
@@ -24,24 +26,26 @@ export async function registerForPushNotificationsAsync(userId: string) {
   }
 
   if (Device.isDevice) {
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
-    
-    if (existingStatus !== 'granted') {
-      const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
+    const perm: any = await Notifications.getPermissionsAsync();
+    let finalStatus = perm.status || (perm.granted ? 'granted' : 'denied');
+
+    if (finalStatus !== 'granted') {
+      const reqPerm: any = await Notifications.requestPermissionsAsync();
+      finalStatus = reqPerm.status || (reqPerm.granted ? 'granted' : 'denied');
     }
-    
+
     if (finalStatus !== 'granted') {
       console.log('Push notification permission not granted');
       return;
     }
 
     try {
-      token = (await Notifications.getExpoPushTokenAsync({
-        projectId: process.env.EXPO_PUBLIC_PROJECT_ID,
-      })).data;
-      
+      token = (
+        await Notifications.getExpoPushTokenAsync({
+          projectId: process.env.EXPO_PUBLIC_PROJECT_ID,
+        })
+      ).data;
+
       // Save token to Supabase profiles
       if (token && userId) {
         await supabase
@@ -49,7 +53,6 @@ export async function registerForPushNotificationsAsync(userId: string) {
           .update({ push_token: token })
           .eq('id', userId);
       }
-      
     } catch (e) {
       console.log('Error getting push token', e);
     }

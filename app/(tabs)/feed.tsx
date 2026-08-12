@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import {
   View, Text, StyleSheet, FlatList, TouchableOpacity,
-  RefreshControl, ActivityIndicator, TextInput, KeyboardAvoidingView, Platform, Keyboard, Alert
+  RefreshControl, ActivityIndicator, TextInput, KeyboardAvoidingView, Platform, Keyboard, Alert, Share
 } from 'react-native';
 import Animated, { FadeInDown, FadeInUp, ZoomIn } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
@@ -12,6 +12,7 @@ import { useRouter } from 'expo-router';
 import { useTranslation } from '../../lib/i18n/i18n';
 import { getDateLocale } from '../../lib/i18n/dateUtils';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { checkContentModeration } from '../../lib/profanityFilter';
 
 type PostItem = {
   id: string;
@@ -21,6 +22,8 @@ type PostItem = {
   profile: {
     username: string;
     display_name: string | null;
+    role?: string;
+    current_streak?: number;
   };
   like_count: number;
   user_liked: boolean;
@@ -65,7 +68,7 @@ export default function Feed() {
       { data: likesData },
       { data: commentsData }
     ] = await Promise.all([
-      supabase.from('profiles').select('id, username, display_name').in('id', userIds),
+      supabase.from('profiles').select('id, username, display_name, role, current_streak').in('id', userIds),
       supabase.from('post_likes').select('post_id, user_id').in('post_id', postIds),
       supabase.from('post_comments').select('post_id, id').in('post_id', postIds),
     ]);
@@ -108,6 +111,15 @@ export default function Feed() {
 
   const handlePost = async () => {
     if (!profile || !newPostContent.trim()) return;
+
+    // Profanity & Spam Filter check
+    const modResult = checkContentModeration(newPostContent.trim());
+    if (!modResult.isClean) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      Alert.alert('Topluluk Kuralları Engeli 🛑', modResult.reason);
+      return;
+    }
+
     setIsPosting(true);
     Keyboard.dismiss();
 
@@ -121,6 +133,7 @@ export default function Feed() {
     if (error) {
       Alert.alert(t('common.error'), `${t('common.error')}: Failed to publish post. (${error.message})`);
     } else {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       setNewPostContent('');
       onRefresh(); // Refresh feed
     }
@@ -231,10 +244,26 @@ export default function Feed() {
                 </Text>
               </View>
               <View style={{ flex: 1 }}>
-                <View style={{flexDirection: 'row', alignItems: 'center', gap: 6}}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
                   <Text style={styles.userName}>
                     {item.profile?.display_name || item.profile?.username}
                   </Text>
+                  
+                  {/* Role Badges */}
+                  {item.profile?.role === 'dietitian' ? (
+                    <View style={styles.dietitianBadge}>
+                      <Text style={styles.dietitianBadgeText}>🩺 Diyetisyen</Text>
+                    </View>
+                  ) : (item.profile?.current_streak || 0) >= 30 ? (
+                    <View style={styles.proBadge}>
+                      <Text style={styles.proBadgeText}>🏆 Pro Sporcu</Text>
+                    </View>
+                  ) : (
+                    <View style={styles.userBadge}>
+                      <Text style={styles.userBadgeText}>💪 Üye</Text>
+                    </View>
+                  )}
+
                   <Text style={styles.userHandle}>@{item.profile?.username}</Text>
                 </View>
                 <Text style={styles.userMeta}>
@@ -259,6 +288,18 @@ export default function Feed() {
                 <Text style={styles.actionEmoji}>💬</Text>
                 <Text style={styles.actionCount}>{item.comment_count}</Text>
               </View>
+              <TouchableOpacity
+                style={styles.actionBtn}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  Share.share({
+                    message: `🔥 StreakFit Spor Serisi Paylaşımı: "${item.content}" - Sen de katıl! #StreakFit #Fitness`,
+                  });
+                }}
+              >
+                <Text style={styles.actionEmoji}>📸</Text>
+                <Text style={styles.actionCount}>Hikayede Paylaş</Text>
+              </TouchableOpacity>
             </View>
           </Animated.View>
         )}
@@ -337,6 +378,33 @@ const styles = StyleSheet.create({
   },
   avatarText: { color: '#10b981', fontWeight: '900', fontSize: 18 },
   userName: { color: '#fff', fontSize: 15, fontWeight: '800' },
+  dietitianBadge: {
+    backgroundColor: '#10b98120',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#10b981',
+  },
+  dietitianBadgeText: { color: '#10b981', fontSize: 10, fontWeight: '900' },
+  proBadge: {
+    backgroundColor: '#f59e0b20',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#f59e0b',
+  },
+  proBadgeText: { color: '#f59e0b', fontSize: 10, fontWeight: '900' },
+  userBadge: {
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  userBadgeText: { color: '#94a3b8', fontSize: 10, fontWeight: '800' },
   userHandle: { color: '#666', fontSize: 12, fontWeight: '600' },
   userMeta: { color: '#888', fontSize: 11, marginTop: 4, textTransform: 'uppercase', fontWeight: '700', letterSpacing: 0.5 },
   

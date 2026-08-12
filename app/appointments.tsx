@@ -65,6 +65,30 @@ export default function Appointments() {
         <View style={{ width: 44 }} />
       </View>
 
+      <View style={styles.quickHubRow}>
+        <TouchableOpacity
+          style={styles.quickHubCard}
+          onPress={() => router.push('/dietitian/clients' as any)}
+        >
+          <Text style={styles.quickHubIcon}>🩺</Text>
+          <View>
+            <Text style={styles.quickHubTitle}>DANIŞAN KONTROL</Text>
+            <Text style={styles.quickHubSub}>BMR & Uyum Takibi</Text>
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.quickHubCard}
+          onPress={() => router.push('/dietitian/packages' as any)}
+        >
+          <Text style={styles.quickHubIcon}>💎</Text>
+          <View>
+            <Text style={styles.quickHubTitle}>DİYET PAKETLERİ</Text>
+            <Text style={styles.quickHubSub}>Hizmetler & Ücretler</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+
       <ScrollView
         contentContainerStyle={styles.content}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#10b981" />}
@@ -72,7 +96,13 @@ export default function Appointments() {
         {appointments.length === 0 ? (
           <View style={styles.empty}>
             <Text style={styles.emptyIcon}>📅</Text>
-            <Text style={styles.emptyText}>Henüz bir randevun bulunmuyor.</Text>
+            <Text style={styles.emptyText}>Henüz aktif bir randevun bulunmuyor.</Text>
+            <TouchableOpacity 
+              style={styles.connectBtn}
+              onPress={() => router.push('/messages' as any)}
+            >
+              <Text style={styles.connectBtnText}>💬 DİYETİSYENİNLE İLETİŞİME GEÇ</Text>
+            </TouchableOpacity>
           </View>
         ) : (
           appointments.map((apt, index) => {
@@ -145,6 +175,21 @@ export default function Appointments() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0a0a0a' },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingBottom: 20 },
+  quickHubRow: { flexDirection: 'row', gap: 12, paddingHorizontal: 20, marginBottom: 16 },
+  quickHubCard: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    backgroundColor: '#161e2e',
+    padding: 12,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#10b98140',
+  },
+  quickHubIcon: { fontSize: 24 },
+  quickHubTitle: { color: '#fff', fontSize: 11, fontWeight: '900', letterSpacing: 0.5 },
+  quickHubSub: { color: '#10b981', fontSize: 10, fontWeight: '700', marginTop: 2 },
   backBtn: { width: 44, height: 44, justifyContent: 'center', alignItems: 'flex-start' },
   backText: { color: '#fff', fontSize: 28 },
   title: { color: '#fff', fontSize: 18, fontWeight: '900', letterSpacing: 1 },
@@ -152,6 +197,14 @@ const styles = StyleSheet.create({
   empty: { alignItems: 'center', marginTop: 100 },
   emptyIcon: { fontSize: 64, marginBottom: 16 },
   emptyText: { color: '#666', fontSize: 14, fontWeight: '700' },
+  connectBtn: {
+    marginTop: 20,
+    backgroundColor: '#10b981',
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    borderRadius: 16,
+  },
+  connectBtnText: { color: '#fff', fontSize: 12, fontWeight: '900', letterSpacing: 1 },
   
   card: {
     backgroundColor: '#111',

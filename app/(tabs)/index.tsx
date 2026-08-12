@@ -196,6 +196,99 @@ export default function StreakHome() {
           </TouchableOpacity>
         </Animated.View>
 
+        {/* Quick Feature Modules Grid */}
+        <Animated.View
+          entering={FadeInUp.delay(380).duration(450).springify()}
+          style={styles.quickModulesSection}
+        >
+          <Text style={styles.sectionTitle}>HIZLI ERİŞİM VE ARAÇLAR</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.modulesScroll}>
+            <TouchableOpacity
+              style={[styles.moduleCard, { borderColor: '#38bdf840' }]}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                router.push('/water' as any);
+              }}
+            >
+              <Text style={styles.moduleIcon}>💧</Text>
+              <Text style={styles.moduleTitle}>Su Takibi</Text>
+              <Text style={styles.moduleSub}>Hidrasyon</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.moduleCard, { borderColor: '#f9731640' }]}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                router.push('/fasting' as any);
+              }}
+            >
+              <Text style={styles.moduleIcon}>⏱️</Text>
+              <Text style={styles.moduleTitle}>Aralıklı Oruç</Text>
+              <Text style={styles.moduleSub}>Zamanlayıcı</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.moduleCard, { borderColor: '#3b82f640' }]}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                router.push('/analytics' as any);
+              }}
+            >
+              <Text style={styles.moduleIcon}>📊</Text>
+              <Text style={styles.moduleTitle}>Analiz & Grafikler</Text>
+              <Text style={styles.moduleSub}>Performans</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.moduleCard, { borderColor: '#a855f740' }]}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                router.push('/store' as any);
+              }}
+            >
+              <Text style={styles.moduleIcon}>🛡️</Text>
+              <Text style={styles.moduleTitle}>Streak Mağazası</Text>
+              <Text style={styles.moduleSub}>Koruma & XP</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.moduleCard, { borderColor: '#10b98140' }]}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                router.push('/tracker' as any);
+              }}
+            >
+              <Text style={styles.moduleIcon}>📍</Text>
+              <Text style={styles.moduleTitle}>GPS Harita</Text>
+              <Text style={styles.moduleSub}>Koşu/Yürüyüş</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.moduleCard, { borderColor: '#ec489940' }]}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                router.push('/blog' as any);
+              }}
+            >
+              <Text style={styles.moduleIcon}>📖</Text>
+              <Text style={styles.moduleTitle}>StreakFit Blog</Text>
+              <Text style={styles.moduleSub}>Rehber & Yazılar</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.moduleCard, { borderColor: '#eab30840' }]}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                router.push('/gyms' as any);
+              }}
+            >
+              <Text style={styles.moduleIcon}>🏋️‍♂️</Text>
+              <Text style={styles.moduleTitle}>Fitness Salonları</Text>
+              <Text style={styles.moduleSub}>Harita & İndirimler</Text>
+            </TouchableOpacity>
+          </ScrollView>
+        </Animated.View>
+
         {/* Son Antrenmanlar */}
         {weekWorkouts.length > 0 && (
           <Animated.View
@@ -294,6 +387,21 @@ const styles = StyleSheet.create({
   gamificationLabel: { color: '#10b981', fontSize: 11, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 1, textAlign: 'center' },
 
   recentSection: { paddingHorizontal: 16, paddingBottom: 40 },
+  quickModulesSection: { paddingHorizontal: 16, marginBottom: 32 },
+  modulesScroll: { gap: 12, paddingRight: 16 },
+  moduleCard: {
+    width: 120,
+    height: 120,
+    backgroundColor: '#111',
+    borderRadius: 24,
+    borderWidth: 1,
+    padding: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  moduleIcon: { fontSize: 32, marginBottom: 6 },
+  moduleTitle: { color: '#fff', fontSize: 12, fontWeight: '900', textAlign: 'center' },
+  moduleSub: { color: '#666', fontSize: 9, fontWeight: '700', marginTop: 2, textAlign: 'center' },
   sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
   sectionTitle: { color: '#666', fontSize: 10, fontWeight: '900', letterSpacing: 3, textTransform: 'uppercase' },
   seeAllText: { color: '#10b981', fontSize: 10, fontWeight: '900', letterSpacing: 1 },
