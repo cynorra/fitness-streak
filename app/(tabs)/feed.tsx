@@ -13,6 +13,7 @@ import { useTranslation } from '../../lib/i18n/i18n';
 import { getDateLocale } from '../../lib/i18n/dateUtils';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { checkContentModeration } from '../../lib/profanityFilter';
+import AdMobBanner from '../../components/AdMobBanner';
 
 type PostItem = {
   id: string;
@@ -221,6 +222,11 @@ export default function Feed() {
                 </TouchableOpacity>
               </View>
             </Animated.View>
+
+            {/* AdMob Banner in Feed */}
+            <View style={{ marginTop: 12 }}>
+              <AdMobBanner />
+            </View>
           </Animated.View>
         }
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#10b981" />}

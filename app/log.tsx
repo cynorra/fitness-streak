@@ -7,6 +7,8 @@ import { useRouter } from 'expo-router';
 import { supabase, WORKOUT_TYPES } from '../lib/supabase';
 import { useAuth } from '../lib/auth';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { loadInterstitialAd, showInterstitialAd } from '../lib/admob';
+import { useEffect } from 'react';
 
 export default function LogWorkout() {
   const { profile, refreshProfile } = useAuth();
@@ -16,6 +18,10 @@ export default function LogWorkout() {
   const [duration, setDuration] = useState('');
   const [note, setNote] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    loadInterstitialAd();
+  }, []);
 
   const submit = async () => {
     if (!selectedType) {
@@ -51,6 +57,10 @@ export default function LogWorkout() {
     setSelectedType(null);
     setDuration('');
     setNote('');
+
+    // AdMob Interstitial Reklam Göster
+    showInterstitialAd();
+
     Alert.alert('🌱', 'Antrenman kaydedildi! Streak güncellendi.', [
       { text: 'Tamam', onPress: () => router.push('/') },
     ]);

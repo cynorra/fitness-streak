@@ -18,6 +18,7 @@ import { format, parseISO, subDays } from 'date-fns';
 import { useTranslation } from '../../lib/i18n/i18n';
 import { getDateLocale } from '../../lib/i18n/dateUtils';
 import AnimatedStreakNumber from '../../components/AnimatedStreakNumber';
+import AdMobBanner from '../../components/AdMobBanner';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -174,6 +175,11 @@ export default function StreakHome() {
             <Text style={styles.statLabel}>{t('dashboard.weekly_workouts')}</Text>
           </View>
         </Animated.View>
+
+        {/* AdMob Banner */}
+        <View style={{ paddingHorizontal: 16, marginBottom: 16 }}>
+          <AdMobBanner />
+        </View>
 
         {/* Gamification Links */}
         <Animated.View

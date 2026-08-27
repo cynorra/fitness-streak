@@ -40,6 +40,7 @@
     "react-native-url-polyfill": "^3.0.0",
     "react-native-webview": "^13.16.0",
     "react-native-worklets": "^0.7.4",
+    "react-native-google-mobile-ads": "^15.1.0",
     "react-native-youtube-iframe": "^2.4.1"
   },
   "devDependencies": {

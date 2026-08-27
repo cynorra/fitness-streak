@@ -1,30 +1,55 @@
-import React from 'react';
-import { StyleSheet, Text, View, ViewStyle } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, ViewStyle, Platform } from 'react-native';
+import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
 import { LinearGradient } from 'expo-linear-gradient';
+import { ADMOB_CONFIG } from '../lib/admob';
 
 interface AdMobBannerProps {
   style?: ViewStyle;
-  adUnitID?: string;
+  unitId?: string;
+  size?: BannerAdSize;
 }
 
-/**
- * Google AdMob Banner Component
- * Configured for AdMob App ID & Banner Unit ID.
- */
-export default function AdMobBanner({ style, adUnitID }: AdMobBannerProps) {
+export default function AdMobBanner({ style, unitId, size = BannerAdSize.ANCHORED_ADAPTIVE_BANNER }: AdMobBannerProps) {
+  const [adLoaded, setAdLoaded] = useState(false);
+  const [adFailed, setAdFailed] = useState(false);
+
+  const adUnitId = unitId || ADMOB_CONFIG.BANNER_ID;
+
+  if (Platform.OS === 'web' || adFailed) {
+    return (
+      <View style={[styles.container, style]}>
+        <LinearGradient
+          colors={['rgba(255, 255, 255, 0.05)', 'rgba(255, 255, 255, 0.02)']}
+          style={styles.gradient}
+        >
+          <View style={styles.adHeader}>
+            <View style={styles.adBadge}>
+              <Text style={styles.adBadgeText}>SPONSORLU</Text>
+            </View>
+          </View>
+          <Text style={styles.adText}>🎯 VitaTribe Premium & Fitness İpuçları</Text>
+        </LinearGradient>
+      </View>
+    );
+  }
+
   return (
     <View style={[styles.container, style]}>
-      <LinearGradient
-        colors={['rgba(255, 255, 255, 0.05)', 'rgba(255, 255, 255, 0.02)']}
-        style={styles.gradient}
-      >
-        <View style={styles.adHeader}>
-          <View style={styles.adBadge}>
-            <Text style={styles.adBadgeText}>SPONSORLU • ADMOB</Text>
-          </View>
-        </View>
-        <Text style={styles.adText}>🎯 Fitness & Sağlıklı Beslenme İpuçları</Text>
-      </LinearGradient>
+      <BannerAd
+        unitId={adUnitId}
+        size={size}
+        requestOptions={{
+          requestNonPersonalizedAdsOnly: true,
+        }}
+        onAdLoaded={() => {
+          setAdLoaded(true);
+        }}
+        onAdFailedToLoad={(error) => {
+          console.log('[AdMob Banner] Yüklenemedi:', error);
+          setAdFailed(true);
+        }}
+      />
     </View>
   );
 }
@@ -32,17 +57,21 @@ export default function AdMobBanner({ style, adUnitID }: AdMobBannerProps) {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    marginVertical: 12,
-    borderRadius: 16,
+    marginVertical: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 12,
     overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
   },
   gradient: {
-    padding: 14,
+    padding: 12,
+    width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: 12,
   },
   adHeader: {
     flexDirection: 'row',
