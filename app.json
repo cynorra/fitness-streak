@@ -1,9 +1,9 @@
 {
   "expo": {
-    "name": "VitaTribe: Fitness & Streak Tracker",
+    "name": "VitaTribe: Fitness, Diet & Streak",
     "slug": "vitatribe",
     "version": "1.0.0",
-    "description": "Share workout streaks with friends, track habits & stay motivated together!",
+    "description": "Share workout & diet streaks with friends and dietitians, track habits & stay motivated!",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
@@ -26,7 +26,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0a0a0a"
       },
-      "package": "com.vitatribe.fitness.streak",
+      "package": "com.vitatribe.fitness.diet",
       "versionCode": 1,
       "permissions": [
         "INTERNET",

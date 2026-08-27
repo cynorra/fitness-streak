@@ -87,9 +87,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.vitatribe.fitness.streak'
+    namespace 'com.vitatribe.fitness.diet'
     defaultConfig {
-        applicationId 'com.vitatribe.fitness.streak'
+        applicationId 'com.vitatribe.fitness.diet'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
