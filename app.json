@@ -1,9 +1,9 @@
 {
   "expo": {
-    "name": "VitaTribe: Fitness & Diyet",
+    "name": "VitaTribe: Fitness & Streak Tracker",
     "slug": "vitatribe",
     "version": "1.0.0",
-    "description": "Arkadaşlarınla antrenman serilerini (streak) paylaş, motivasyonunu yüksek tut!",
+    "description": "Share workout streaks with friends, track habits & stay motivated together!",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
@@ -26,7 +26,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0a0a0a"
       },
-      "package": "com.vitatribe.fitness.spor.diyet.diyetisyen",
+      "package": "com.vitatribe.fitness.streak",
       "versionCode": 1,
       "permissions": [
         "INTERNET",
