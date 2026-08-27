@@ -3,16 +3,16 @@ import { Platform } from 'react-native';
 
 // AdMob Unit IDs (Geliştirme / Test ID'leri - Canlıya alırken kendi AdMob ID'lerinizle değiştirin)
 export const ADMOB_CONFIG = {
-  // Test IDs
-  BANNER_ID: __DEV__ || Platform.OS !== 'android'
+  // Real AdMob Unit IDs with TestIds fallback in DEV mode
+  BANNER_ID: __DEV__
     ? TestIds.BANNER 
-    : (process.env.EXPO_PUBLIC_ADMOB_BANNER_ID || TestIds.BANNER),
+    : (process.env.EXPO_PUBLIC_ADMOB_BANNER_ID || 'ca-app-pub-4674211063760769/3783071528'),
   
-  INTERSTITIAL_ID: __DEV__ || Platform.OS !== 'android'
+  INTERSTITIAL_ID: __DEV__
     ? TestIds.INTERSTITIAL 
     : (process.env.EXPO_PUBLIC_ADMOB_INTERSTITIAL_ID || TestIds.INTERSTITIAL),
 
-  REWARDED_ID: __DEV__ || Platform.OS !== 'android'
+  REWARDED_ID: __DEV__
     ? TestIds.REWARDED 
     : (process.env.EXPO_PUBLIC_ADMOB_REWARDED_ID || TestIds.REWARDED),
 };
