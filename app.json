@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "VitaTribe: Fitness, Diet & Streak",
+    "name": "VitaTribe",
     "slug": "vitatribe",
     "version": "1.0.0",
     "description": "Share workout & diet streaks with friends and dietitians, track habits & stay motivated!",
@@ -57,7 +57,7 @@
       [
         "expo-location",
         {
-          "locationAlwaysAndWhenInUsePermission": "VitaTribe uygulamasını kapatsanız dahi konumunuzu arka planda takip ederek aktivitelerinizi ölçer."
+          "locationAlwaysAndWhenInUsePermission": "VitaTribe tracks your location in the background to measure your activities even when the app is closed."
         }
       ],
       "expo-localization",
