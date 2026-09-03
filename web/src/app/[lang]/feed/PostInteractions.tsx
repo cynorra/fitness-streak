@@ -3,13 +3,20 @@
 import { useState } from 'react'
 import { toggleLike, addComment, toggleRepost } from './actions'
 
+interface Comment {
+  id: string
+  content: string
+  created_at: string
+  profiles: { display_name: string } | null
+}
+
 interface Props {
   postId: string
   initialLikes: number
   initialReposts: number
   isLiked: boolean
   isReposted: boolean
-  comments: any[]
+  comments: Comment[]
 }
 
 export default function PostInteractions({ postId, initialLikes, initialReposts, isLiked, isReposted, comments }: Props) {
@@ -87,11 +94,11 @@ export default function PostInteractions({ postId, initialLikes, initialReposts,
             {comments.map((comment) => (
               <div key={comment.id} className="flex gap-4 items-start">
                 <div className="w-8 h-8 bg-zinc-200 dark:bg-zinc-800 rounded-lg flex items-center justify-center text-[10px] font-black shrink-0">
-                  {comment.profiles.display_name?.[0] || 'U'}
+                  {comment.profiles?.display_name?.[0] || 'U'}
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-[10px] font-black text-zinc-900 dark:text-zinc-50">{comment.profiles.display_name}</span>
+                    <span className="text-[10px] font-black text-zinc-900 dark:text-zinc-50">{comment.profiles?.display_name}</span>
                     <span className="text-[8px] font-bold text-zinc-400 uppercase tracking-widest">{new Date(comment.created_at).toLocaleDateString('tr-TR')}</span>
                   </div>
                   <p className="text-xs text-zinc-600 dark:text-zinc-300 font-medium leading-relaxed">

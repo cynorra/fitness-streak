@@ -2,15 +2,30 @@ import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import Navbar from '@/components/Navbar'
 import Link from 'next/link'
+import { Locale } from '@/i18n'
 
-export default async function NotificationsPage() {
+interface Props {
+  params: Promise<{ lang: Locale }>
+}
+
+interface NotificationRow {
+  id: string
+  type: string
+  is_read: boolean
+  created_at: string
+  post_id: string | null
+  actor: { display_name: string | null; username: string } | null
+}
+
+export default async function NotificationsPage({ params }: Props) {
+  const { lang } = await params
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) redirect('/login')
 
   // Fetch notifications with actor profiles
-  const { data: notifications } = await supabase
+  const { data } = await supabase
     .from('notifications')
     .select(`
       id,
@@ -24,6 +39,8 @@ export default async function NotificationsPage() {
     .order('created_at', { ascending: false })
     .limit(50)
 
+  const notifications = data as NotificationRow[] | null
+
   // Mark all as read when page is opened
   if (notifications && notifications.some(n => !n.is_read)) {
     await supabase
@@ -35,7 +52,7 @@ export default async function NotificationsPage() {
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 font-sans transition-colors duration-500">
-      <Navbar />
+      <Navbar lang={lang} />
       <main className="max-w-2xl mx-auto pt-32 pb-20 px-6">
         <div className="mb-10">
           <h1 className="text-4xl font-black tracking-tight text-zinc-900 dark:text-zinc-50 mb-2">Bildirimler</h1>
@@ -44,7 +61,7 @@ export default async function NotificationsPage() {
 
         <div className="space-y-4">
           {notifications && notifications.length > 0 ? (
-            notifications.map((notif: any) => (
+            notifications.map((notif) => (
               <div key={notif.id} className={`p-6 rounded-[2.5rem] shadow-xl border flex items-center gap-4 group transition-all ${notif.is_read ? 'bg-white dark:bg-zinc-900 border-zinc-100 dark:border-zinc-800' : 'bg-orange-50 dark:bg-orange-500/5 border-orange-100 dark:border-orange-500/20'}`}>
                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-xl shadow-inner ${
                    notif.type === 'like' ? 'bg-rose-500/10 text-rose-500' : 
@@ -56,7 +73,7 @@ export default async function NotificationsPage() {
                 </div>
                 <div className="flex-1">
                    <p className="text-sm font-bold text-zinc-800 dark:text-zinc-200">
-                      <span className="text-zinc-900 dark:text-zinc-50 font-black">{(notif.actor as any)?.display_name}</span> 
+                      <span className="text-zinc-900 dark:text-zinc-50 font-black">{notif.actor?.display_name}</span>
                       {notif.type === 'like' ? ' paylaşımını beğendi.' : 
                        notif.type === 'comment' ? ' paylaşımına yorum yaptı.' : 
                        notif.type === 'dietitian_request' ? ' seninle çalışmak istiyor!' :

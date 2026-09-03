@@ -2,8 +2,23 @@ import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import Navbar from '@/components/Navbar'
 import Link from 'next/link'
+import { Locale } from '@/i18n'
 
-export default async function MessagesPage() {
+interface Props {
+  params: Promise<{ lang: Locale }>
+}
+
+interface ConversationRow {
+  id: string
+  participant_1: string
+  participant_2: string
+  updated_at: string
+  p1: { id: string; display_name: string | null; username: string } | null
+  p2: { id: string; display_name: string | null; username: string } | null
+}
+
+export default async function MessagesPage({ params }: Props) {
+  const { lang } = await params
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -11,7 +26,7 @@ export default async function MessagesPage() {
 
   // Fetch conversations where user is participant 1 or 2
   // We use a complex query to get the participants' details
-  const { data: conversations } = await supabase
+  const { data } = await supabase
     .from('conversations')
     .select(`
       id,
@@ -24,9 +39,11 @@ export default async function MessagesPage() {
     .or(`participant_1.eq.${user.id},participant_2.eq.${user.id}`)
     .order('updated_at', { ascending: false })
 
+  const conversations = data as ConversationRow[] | null
+
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 font-sans transition-colors duration-500">
-      <Navbar />
+      <Navbar lang={lang} />
       <main className="max-w-4xl mx-auto pt-32 pb-20 px-6">
         <div className="mb-10">
           <h1 className="text-4xl font-black tracking-tight text-zinc-900 dark:text-zinc-50 mb-2">Mesajlar</h1>
@@ -35,7 +52,7 @@ export default async function MessagesPage() {
 
         <div className="grid grid-cols-1 gap-4">
           {conversations && conversations.length > 0 ? (
-            conversations.map((conv: any) => {
+            conversations.map((conv) => {
               const otherUser = conv.participant_1 === user.id ? conv.p2 : conv.p1
               
               return (

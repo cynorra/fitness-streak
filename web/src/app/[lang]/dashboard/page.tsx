@@ -3,12 +3,15 @@ import { redirect } from 'next/navigation'
 import { addWorkout } from './actions'
 import Navbar from '@/components/Navbar'
 import Link from 'next/link'
+import { Locale } from '@/i18n'
 
 interface Props {
+  params: Promise<{ lang: Locale }>
   searchParams: Promise<{ message: string; error: string }>
 }
 
-export default async function DashboardPage({ searchParams }: Props) {
+export default async function DashboardPage({ params, searchParams }: Props) {
+  const { lang } = await params
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -33,8 +36,8 @@ export default async function DashboardPage({ searchParams }: Props) {
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 font-sans transition-colors duration-500">
-      <Navbar />
-      
+      <Navbar lang={lang} />
+
       <main className="max-w-7xl mx-auto pt-32 pb-20 px-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
@@ -65,7 +68,7 @@ export default async function DashboardPage({ searchParams }: Props) {
             <div className="bg-zinc-900 dark:bg-white p-8 rounded-[2.5rem] shadow-xl text-white dark:text-zinc-900 transition-colors duration-500">
                <h3 className="text-lg font-black mb-2 tracking-tight">Motivasyon</h3>
                <p className="text-sm text-zinc-400 dark:text-zinc-500 font-medium leading-relaxed italic">
-                  "Bugün yaptığın her antrenman, yarınki seni inşa ediyor. Serini bozma, hedefine odaklan."
+                  &quot;Bugün yaptığın her antrenman, yarınki seni inşa ediyor. Serini bozma, hedefine odaklan.&quot;
                </p>
             </div>
           </div>

@@ -1,10 +1,16 @@
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
+import { Locale } from "@/i18n";
 
-export default function TermsPage() {
+interface Props {
+  params: Promise<{ lang: Locale }>
+}
+
+export default async function TermsPage({ params }: Props) {
+  const { lang } = await params
   return (
     <div className="flex flex-col min-h-screen bg-white dark:bg-zinc-950">
-      <Navbar />
+      <Navbar lang={lang} />
       <main className="flex-1 max-w-4xl mx-auto px-6 py-32">
         <h1 className="text-4xl font-black text-zinc-900 dark:text-zinc-50 tracking-tight mb-8">Kullanım Şartları ve Sorumluluk Reddi (KVKK)</h1>
         
@@ -28,7 +34,7 @@ export default function TermsPage() {
             <section>
                <h2 className="text-2xl font-black text-zinc-900 dark:text-zinc-50 mb-4">2. Sağlık, Diyet ve Sakatlık Beyanı</h2>
                <p className="text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed">
-               Uygulama içerisinde diyetisyenler, koçlar veya diğer kullanıcılar tarafından verilen tavsiyeler tamamen "bilgi" amaçlıdır. Hiçbir tavsiye tıbbi bir teşhis veya tedavi yerine geçmez. Sağlık ve spor faaliyetleri sırasında oluşabilecek sakatlıklardan, hastalık veya sağlık sorunlarından VitaTribe (veya VitaTribe geliştiricileri) KESİNLİKLE sorumlu tutulamaz. Herhangi bir diyet programına veya egzersize başlamadan önce mutlaka uzman bir tıp doktoruna danışmanız zorunludur. Tüm risk size aittir.
+               Uygulama içerisinde diyetisyenler, koçlar veya diğer kullanıcılar tarafından verilen tavsiyeler tamamen &quot;bilgi&quot; amaçlıdır. Hiçbir tavsiye tıbbi bir teşhis veya tedavi yerine geçmez. Sağlık ve spor faaliyetleri sırasında oluşabilecek sakatlıklardan, hastalık veya sağlık sorunlarından VitaTribe (veya VitaTribe geliştiricileri) KESİNLİKLE sorumlu tutulamaz. Herhangi bir diyet programına veya egzersize başlamadan önce mutlaka uzman bir tıp doktoruna danışmanız zorunludur. Tüm risk size aittir.
                </p>
             </section>
 
@@ -48,7 +54,7 @@ export default function TermsPage() {
           </div>
         </div>
       </main>
-      <Footer />
+      <Footer lang={lang} />
     </div>
   );
 }

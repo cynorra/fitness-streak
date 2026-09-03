@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import "./globals.css";
+import "../globals.css";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://vitatribe.com';
 
@@ -66,13 +66,14 @@ export const metadata: Metadata = {
 
 import MobileNav from "@/components/MobileNav";
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
-  params: { lang },
+  params,
 }: Readonly<{
   children: React.ReactNode;
-  params: { lang: string };
+  params: Promise<{ lang: string }>;
 }>) {
+  const { lang } = await params;
   return (
     <html lang={lang}>
       <body className="min-h-full flex flex-col">

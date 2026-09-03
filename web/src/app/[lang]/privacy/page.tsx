@@ -1,15 +1,21 @@
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
+import { Locale } from "@/i18n";
 
-export default function PrivacyPage() {
+interface Props {
+  params: Promise<{ lang: Locale }>
+}
+
+export default async function PrivacyPage({ params }: Props) {
+  const { lang } = await params
   return (
     <div className="flex flex-col min-h-screen bg-white dark:bg-zinc-950">
-      <Navbar />
+      <Navbar lang={lang} />
       <main className="flex-1 max-w-4xl mx-auto px-6 py-32">
         <h1 className="text-4xl font-black text-zinc-900 dark:text-zinc-50 tracking-tight mb-8">Gizlilik ve Çerez Politikası</h1>
         <div className="prose prose-zinc dark:prose-invert max-w-none space-y-6 text-zinc-600 dark:text-zinc-400 font-medium leading-relaxed">
           <p>
-            VitaTribe ("Uygulama") olarak gizliliğinize önem veriyoruz ancak dijital ortamda sıfır riskin mümkün olmadığını hatırlatırız. Bu politika, uygulamamızı kullandığınızda verilerinizin nasıl toplandığını açıklar.
+            VitaTribe (&quot;Uygulama&quot;) olarak gizliliğinize önem veriyoruz ancak dijital ortamda sıfır riskin mümkün olmadığını hatırlatırız. Bu politika, uygulamamızı kullandığınızda verilerinizin nasıl toplandığını açıklar.
           </p>
           
           <h2 className="text-2xl font-black text-zinc-900 dark:text-zinc-50 mt-12 mb-4">1. Toplanan Veriler ve Kullanımı</h2>
@@ -23,7 +29,7 @@ export default function PrivacyPage() {
             Bu üçüncü taraf sağlayıcılar (Google dahil), önceki ziyaretlerinize veya internet üzerindeki diğer sitelere yaptığınız ziyaretlere dayalı olarak kişiselleştirilmiş reklamlar sunmak için tarayıcı çerezlerinizi ve mobil reklam kimliklerinizi (IDFA, AAID vb.) kullanabilir.
           </p>
           <ul className="list-disc pl-6 space-y-2 mt-4">
-            <li>Google'ın reklam çerezlerini kullanması, Google ve iş ortaklarının (third-party vendors) sitemize veya internetteki diğer sitelere yaptığınız ziyaretleri temel alarak size özel reklamlar (personalized ads) göstermesine olanak tanır.</li>
+            <li>Google&apos;ın reklam çerezlerini kullanması, Google ve iş ortaklarının (third-party vendors) sitemize veya internetteki diğer sitelere yaptığınız ziyaretleri temel alarak size özel reklamlar (personalized ads) göstermesine olanak tanır.</li>
             <li>Kullanıcılar, <a href="https://myadcenter.google.com/" target="_blank" rel="noopener noreferrer" className="text-emerald-500 hover:underline">Google Reklam Ayarları</a> sayfasını ziyaret ederek kişiselleştirilmiş reklamcılığı devre dışı bırakabilirler.</li>
             <li>Üçüncü taraf reklam ağlarının cihazınızda topladığı veriler ve kullanım şekli tamamen bu firmaların kendi gizlilik politikalarına tabidir. VitaTribe, üçüncü taraf reklam ağlarının veri işleme pratiklerinden dolayı hiçbir sorumluluk kabul etmez.</li>
           </ul>
@@ -34,7 +40,7 @@ export default function PrivacyPage() {
           </p>
         </div>
       </main>
-      <Footer />
+      <Footer lang={lang} />
     </div>
   );
 }

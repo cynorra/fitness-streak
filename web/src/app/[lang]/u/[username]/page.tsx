@@ -1,15 +1,27 @@
 import { createClient } from '@/utils/supabase/server'
-import { notFound, redirect } from 'next/navigation'
+import { notFound } from 'next/navigation'
 import Navbar from '@/components/Navbar'
-import Link from 'next/link'
 import { requestDietitian, startConversation } from './actions'
 import PostInteractions from '@/app/[lang]/feed/PostInteractions'
 import { Metadata } from 'next'
 import Script from 'next/script'
+import { Locale } from '@/i18n'
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://vitatribe.com'
 
-export async function generateMetadata({ params }: { params: Promise<{ username: string; lang: string }> }): Promise<Metadata> {
+interface UserBadge {
+  id: string
+  awarded_at: string
+  badge: { name: string; description: string; icon: string } | null
+}
+
+interface Workout {
+  id: string
+  workout_type: string
+  duration_minutes: number
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ username: string; lang: Locale }> }): Promise<Metadata> {
   const { username, lang } = await params
   const supabase = await createClient()
   
@@ -56,7 +68,7 @@ export async function generateMetadata({ params }: { params: Promise<{ username:
   }
 }
 
-export default async function UserProfile({ params }: { params: Promise<{ username: string; lang: string }> }) {
+export default async function UserProfile({ params }: { params: Promise<{ username: string; lang: Locale }> }) {
   const { username, lang } = await params
   const supabase = await createClient()
   
@@ -71,7 +83,7 @@ export default async function UserProfile({ params }: { params: Promise<{ userna
   if (!profile) notFound()
 
   // Fetch badges
-  const { data: userBadges } = await supabase
+  const { data: userBadgesData } = await supabase
     .from('user_badges')
     .select(`
       id,
@@ -79,6 +91,8 @@ export default async function UserProfile({ params }: { params: Promise<{ userna
       badge:badge_id(name, description, icon)
     `)
     .eq('user_id', profile.id)
+
+  const userBadges = userBadgesData as UserBadge[] | null
 
   // Fetch posts and reposts
   const { data: posts } = await supabase
@@ -138,7 +152,7 @@ export default async function UserProfile({ params }: { params: Promise<{ userna
   }
 
   // Fetch workouts if authorized
-  let workouts = []
+  let workouts: Workout[] = []
   if (currentUser?.id === profile.id || isDietitianClient) {
     const { data: workoutData } = await supabase
       .from('workouts')
@@ -146,7 +160,7 @@ export default async function UserProfile({ params }: { params: Promise<{ userna
       .eq('user_id', profile.id)
       .order('logged_at', { ascending: false })
       .limit(10)
-    workouts = workoutData || []
+    workouts = (workoutData || []) as Workout[]
   }
 
   // Build Person JSON-LD schema
@@ -173,7 +187,7 @@ export default async function UserProfile({ params }: { params: Promise<{ userna
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
       />
-      <Navbar lang={lang as any} />
+      <Navbar lang={lang} />
       <main className="max-w-6xl mx-auto pt-32 pb-20 px-6">
         
         {/* Header Section */}
@@ -251,11 +265,11 @@ export default async function UserProfile({ params }: { params: Promise<{ userna
                  </h2>
                  <div className="grid grid-cols-2 gap-4">
                     {userBadges && userBadges.length > 0 ? (
-                       userBadges.map((ub: any) => (
+                       userBadges.map((ub) => (
                           <div key={ub.id} className="bg-white dark:bg-zinc-900 p-6 rounded-[2.5rem] border border-zinc-100 dark:border-zinc-800 flex flex-col items-center text-center group hover:scale-105 transition-all shadow-sm">
-                             <div className="text-4xl mb-3 group-hover:rotate-12 transition-transform">{(ub.badge as any)?.icon}</div>
-                             <h4 className="text-[10px] font-black text-zinc-900 dark:text-zinc-50 uppercase tracking-tighter leading-tight mb-1">{(ub.badge as any)?.name}</h4>
-                             <p className="text-[8px] text-zinc-400 font-bold uppercase">{(ub.badge as any)?.description}</p>
+                             <div className="text-4xl mb-3 group-hover:rotate-12 transition-transform">{ub.badge?.icon}</div>
+                             <h4 className="text-[10px] font-black text-zinc-900 dark:text-zinc-50 uppercase tracking-tighter leading-tight mb-1">{ub.badge?.name}</h4>
+                             <p className="text-[8px] text-zinc-400 font-bold uppercase">{ub.badge?.description}</p>
                           </div>
                        ))
                     ) : (
@@ -273,7 +287,7 @@ export default async function UserProfile({ params }: { params: Promise<{ userna
                        <span className="h-px flex-1 bg-zinc-100 dark:bg-zinc-800"></span>
                     </h2>
                     <div className="space-y-3">
-                       {workouts.map((w: any) => (
+                       {workouts.map((w) => (
                           <div key={w.id} className="bg-white dark:bg-zinc-900 p-4 rounded-2xl border border-zinc-50 dark:border-zinc-800/50 flex items-center justify-between">
                              <span className="text-xl">{w.workout_type === 'run' ? '🏃' : '🏋️'}</span>
                              <span className="text-[10px] font-black text-zinc-500 dark:text-zinc-400 uppercase">{w.workout_type}</span>
@@ -292,7 +306,7 @@ export default async function UserProfile({ params }: { params: Promise<{ userna
                  <span className="h-px flex-1 bg-zinc-100 dark:bg-zinc-800"></span>
               </h2>
               <div className="space-y-12">
-                 {profileFeedItems.map((item: any) => {
+                 {profileFeedItems.map((item) => {
                     const isRepost = item.type === 'repost'
                     const post = isRepost ? item.post : item
                     if (!post || (isRepost && post.moderation_status !== 'approved')) return null
@@ -325,7 +339,7 @@ export default async function UserProfile({ params }: { params: Promise<{ userna
                              </div>
 
                              <p className="text-lg text-zinc-800 dark:text-zinc-100 font-bold leading-relaxed mb-8 italic">
-                                "{post.content}"
+                                &quot;{post.content}&quot;
                              </p>
 
                              <PostInteractions 

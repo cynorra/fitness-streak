@@ -1,12 +1,25 @@
 import { createClient } from '@/utils/supabase/server'
 import Navbar from '@/components/Navbar'
 import Link from 'next/link'
+import { Locale } from '@/i18n'
 
 interface Props {
+  params: Promise<{ lang: Locale }>
   searchParams: Promise<{ q: string; role: string }>
 }
 
-export default async function ExplorePage({ searchParams }: Props) {
+interface ExploreProfile {
+  id: string
+  username: string
+  display_name: string | null
+  specialty: string | null
+  role: string
+  current_streak: number
+  longest_streak: number
+}
+
+export default async function ExplorePage({ params, searchParams }: Props) {
+  const { lang } = await params
   const { q, role } = await searchParams
   const supabase = await createClient()
 
@@ -24,11 +37,12 @@ export default async function ExplorePage({ searchParams }: Props) {
     query = query.eq('role', role)
   }
 
-  const { data: users } = await query
+  const { data } = await query
+  const users = data as ExploreProfile[] | null
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 font-sans transition-colors duration-500">
-      <Navbar />
+      <Navbar lang={lang} />
       <main className="max-w-4xl mx-auto pt-32 pb-20 px-6">
         <div className="mb-12">
            <h1 className="text-4xl font-black text-zinc-900 dark:text-zinc-50 tracking-tight mb-2">Keşfet</h1>
@@ -79,7 +93,7 @@ export default async function ExplorePage({ searchParams }: Props) {
         {/* Results Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
            {users && users.length > 0 ? (
-              users.map((user: any) => (
+              users.map((user) => (
                 <Link 
                   key={user.id} 
                   href={`/u/${user.username}`}

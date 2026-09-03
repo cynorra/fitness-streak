@@ -62,7 +62,8 @@ const orgSchema = {
   },
 };
 
-export default async function Home({ params: { lang } }: { params: { lang: Locale } }) {
+export default async function Home({ params }: { params: Promise<{ lang: Locale }> }) {
+  const { lang } = await params;
   const dict = await getDictionary(lang);
   return (
     <div className="flex flex-col min-h-screen bg-white dark:bg-zinc-950 font-sans selection:bg-emerald-500 selection:text-white transition-colors duration-700">

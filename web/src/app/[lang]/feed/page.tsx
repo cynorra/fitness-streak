@@ -3,8 +3,14 @@ import { redirect } from 'next/navigation'
 import Navbar from '@/components/Navbar'
 import { addPost } from './actions'
 import PostInteractions from './PostInteractions'
+import { Locale } from '@/i18n'
 
-export default async function FeedPage() {
+interface Props {
+  params: Promise<{ lang: Locale }>
+}
+
+export default async function FeedPage({ params }: Props) {
+  const { lang } = await params
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -54,9 +60,9 @@ export default async function FeedPage() {
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 font-sans transition-colors duration-500">
-      <Navbar />
+      <Navbar lang={lang} />
       <main className="max-w-4xl mx-auto pt-32 pb-20 px-6">
-        
+
         {/* Create Post Card */}
         <div className="bg-white dark:bg-zinc-900 p-8 rounded-[3rem] shadow-2xl border border-zinc-100 dark:border-zinc-800 mb-12 group transition-all hover:border-orange-500/20">
            <h2 className="text-sm font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.3em] mb-6 flex items-center gap-4">
@@ -83,7 +89,7 @@ export default async function FeedPage() {
 
         {/* Feed List */}
         <div className="space-y-12">
-          {allFeedItems.map((item: any) => {
+          {allFeedItems.map((item) => {
             const isRepost = item.type === 'repost'
             const post = isRepost ? item.post : item
             if (!post || (isRepost && post.moderation_status !== 'approved')) return null
@@ -116,7 +122,7 @@ export default async function FeedPage() {
                    </div>
 
                    <p className="text-xl text-zinc-800 dark:text-zinc-100 font-bold leading-relaxed mb-10 italic">
-                      "{post.content}"
+                      &quot;{post.content}&quot;
                    </p>
 
                    <PostInteractions 

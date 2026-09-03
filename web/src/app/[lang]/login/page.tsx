@@ -105,7 +105,7 @@ export default async function LoginPage({ searchParams }: Props) {
         </div>
         
         <p className="mt-8 text-center text-xs text-zinc-400 dark:text-zinc-600 font-medium px-8">
-          Devam ederek Kullanım Şartları ve Gizlilik Politikası'nı kabul etmiş olursunuz.
+          Devam ederek Kullanım Şartları ve Gizlilik Politikası&apos;nı kabul etmiş olursunuz.
         </p>
       </div>
     </div>

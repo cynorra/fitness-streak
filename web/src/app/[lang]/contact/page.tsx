@@ -1,10 +1,16 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { Locale } from "@/i18n";
 
-export default function ContactPage() {
+interface Props {
+  params: Promise<{ lang: Locale }>
+}
+
+export default async function ContactPage({ params }: Props) {
+  const { lang } = await params
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 font-sans transition-colors duration-500">
-      <Navbar />
+      <Navbar lang={lang} />
       <main className="max-w-3xl mx-auto pt-32 pb-20 px-6 text-center">
         <h1 className="text-4xl md:text-6xl font-black text-zinc-900 dark:text-zinc-50 tracking-tight mb-8">İletişim</h1>
         <p className="text-xl text-zinc-500 dark:text-zinc-400 font-medium mb-16 italic">
@@ -30,7 +36,7 @@ export default function ContactPage() {
          <p className="text-zinc-400 dark:text-zinc-500 font-bold mb-0 relative z-10 text-white/80">VitaTribe topluluğunu beraber büyütelim.</p>
         </div>
       </main>
-      <Footer />
+      <Footer lang={lang} />
     </div>
   );
 }

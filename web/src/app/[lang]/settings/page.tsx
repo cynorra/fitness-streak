@@ -2,12 +2,15 @@ import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { updateProfile } from './actions'
 import Navbar from '@/components/Navbar'
+import { Locale } from '@/i18n'
 
 interface Props {
+  params: Promise<{ lang: Locale }>
   searchParams: Promise<{ message: string; error: string }>
 }
 
-export default async function SettingsPage({ searchParams }: Props) {
+export default async function SettingsPage({ params, searchParams }: Props) {
+  const { lang } = await params
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -25,8 +28,8 @@ export default async function SettingsPage({ searchParams }: Props) {
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 font-sans transition-colors duration-500">
-      <Navbar />
-      
+      <Navbar lang={lang} />
+
       <main className="max-w-3xl mx-auto pt-32 pb-20 px-6">
         <div className="mb-12">
            <h1 className="text-4xl font-black text-zinc-900 dark:text-zinc-50 tracking-tight mb-2">

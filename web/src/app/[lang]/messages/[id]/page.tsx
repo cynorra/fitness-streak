@@ -1,14 +1,16 @@
 import { createClient } from '@/utils/supabase/server'
 import { notFound, redirect } from 'next/navigation'
 import Navbar from '@/components/Navbar'
-import ChatInterface from './ChatInterface'
+import ChatInterface, { type Message, type OtherUser } from './ChatInterface'
+import { Locale } from '@/i18n'
+import Link from 'next/link'
 
 interface Props {
-  params: Promise<{ id: string }>
+  params: Promise<{ id: string; lang: Locale }>
 }
 
 export default async function ConversationPage({ params }: Props) {
-  const { id } = await params
+  const { id, lang } = await params
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -34,18 +36,20 @@ export default async function ConversationPage({ params }: Props) {
     redirect('/messages')
   }
 
-  const otherUser = conversation.participant_1 === user.id ? conversation.p2 : conversation.p1
+  const otherUser = (conversation.participant_1 === user.id ? conversation.p2 : conversation.p1) as unknown as OtherUser | null
 
   // Fetch initial messages
-  const { data: messages } = await supabase
+  const { data: messagesData } = await supabase
     .from('messages')
     .select('*')
     .eq('conversation_id', id)
     .order('created_at', { ascending: true })
 
+  const messages = messagesData as Message[] | null
+
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 font-sans transition-colors duration-500">
-      <Navbar />
+      <Navbar lang={lang} />
       <main className="max-w-4xl mx-auto pt-32 pb-20 px-6">
          <div className="mb-8">
             <Link href="/messages" className="text-[10px] font-black text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 uppercase tracking-widest flex items-center gap-2 group transition-colors">
@@ -62,5 +66,3 @@ export default async function ConversationPage({ params }: Props) {
     </div>
   )
 }
-
-import Link from 'next/link'

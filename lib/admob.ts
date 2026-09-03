@@ -1,4 +1,4 @@
-import { TestIds, InterstitialAd, AdRequest, BannerAdSize } from 'react-native-google-mobile-ads';
+import { TestIds, InterstitialAd, BannerAdSize } from 'react-native-google-mobile-ads';
 import { Platform } from 'react-native';
 
 // AdMob Unit IDs (Geliştirme / Test ID'leri - Canlıya alırken kendi AdMob ID'lerinizle değiştirin)

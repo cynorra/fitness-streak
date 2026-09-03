@@ -4,11 +4,23 @@ import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { sendMessage } from './actions'
 
+export interface Message {
+  id: string
+  content: string
+  sender_id: string
+  created_at: string
+}
+
+export interface OtherUser {
+  display_name: string | null
+  username: string
+}
+
 interface Props {
   conversationId: string
-  initialMessages: any[]
+  initialMessages: Message[]
   currentUserId: string
-  otherUser: any
+  otherUser: OtherUser | null
 }
 
 export default function ChatInterface({ conversationId, initialMessages, currentUserId, otherUser }: Props) {
@@ -32,9 +44,10 @@ export default function ChatInterface({ conversationId, initialMessages, current
           filter: `conversation_id=eq.${conversationId}`
         },
         (payload) => {
+          const newMessage = payload.new as Message
           setMessages((prev) => {
-            if (prev.find(m => m.id === payload.new.id)) return prev
-            return [...prev, payload.new]
+            if (prev.find(m => m.id === newMessage.id)) return prev
+            return [...prev, newMessage]
           })
         }
       )
@@ -79,7 +92,7 @@ export default function ChatInterface({ conversationId, initialMessages, current
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-8 space-y-6 scrollbar-hide">
-        {messages.map((msg: any) => {
+        {messages.map((msg) => {
           const isMine = msg.sender_id === currentUserId
           return (
             <div key={msg.id} className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>

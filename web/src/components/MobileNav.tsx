@@ -4,11 +4,12 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/utils/supabase/client'
+import type { User } from '@supabase/supabase-js'
 
 export default function MobileNav() {
   const pathname = usePathname()
-  const [user, setUser] = useState<any>(null)
-  const [profile, setProfile] = useState<any>(null)
+  const [user, setUser] = useState<User | null>(null)
+  const [profile, setProfile] = useState<{ role: string } | null>(null)
   const supabase = createClient()
 
   useEffect(() => {
