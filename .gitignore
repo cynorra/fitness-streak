@@ -18,6 +18,8 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 .pnpm-debug.log*
+hs_err_pid*.log
+replay_pid*.log
 
 # Environment files
 .env
@@ -48,3 +50,6 @@ next-env.d.ts
 
 # TypeScript
 *.tsbuildinfo
+
+# graphify (local knowledge-graph tool output)
+graphify-out/
