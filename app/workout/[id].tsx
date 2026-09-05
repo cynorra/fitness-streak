@@ -1,18 +1,17 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Dimensions, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, useWindowDimensions, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import YoutubePlayer from 'react-native-youtube-iframe';
 import * as Haptics from 'expo-haptics';
 
-const { width } = Dimensions.get('window');
-const VIDEO_HEIGHT = width * (9 / 16);
-
 export default function WorkoutPlayerScreen() {
   const { id, title } = useLocalSearchParams<{ id: string; title: string }>();
   const router = useRouter();
-  
+  const { width } = useWindowDimensions();
+  const VIDEO_HEIGHT = width * (9 / 16);
+
   const [playing, setPlaying] = useState(false);
   const [isReady, setIsReady] = useState(false);
 
@@ -44,7 +43,7 @@ export default function WorkoutPlayerScreen() {
       </SafeAreaView>
 
       {/* Video Player */}
-      <View style={styles.videoContainer}>
+      <View style={[styles.videoContainer, { height: VIDEO_HEIGHT }]}>
         {!isReady && (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color="#ff3366" />
@@ -120,7 +119,6 @@ const styles = StyleSheet.create({
   },
   videoContainer: {
     width: '100%',
-    height: VIDEO_HEIGHT,
     backgroundColor: '#000',
   },
   loadingContainer: {

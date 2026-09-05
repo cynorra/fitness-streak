@@ -28,9 +28,16 @@ export const supportedLanguages = [
 
 type I18nContextType = {
   locale: string;
-  t: (key: string) => string;
+  t: (key: string, vars?: Record<string, string | number>) => string;
   changeLanguage: (code: string) => Promise<void>;
 };
+
+function interpolate(template: string, vars?: Record<string, string | number>): string {
+  if (!vars) return template;
+  return template.replace(/\{\{(\w+)\}\}/g, (match, name) =>
+    name in vars ? String(vars[name]) : match
+  );
+}
 
 const I18nContext = createContext<I18nContextType | undefined>(undefined);
 
@@ -80,10 +87,10 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const t = (keyPath: string): string => {
+  const t = (keyPath: string, vars?: Record<string, string | number>): string => {
     const keys = keyPath.split('.');
     let current: any = translations[locale] || translations['tr'];
-    
+
     for (const key of keys) {
       if (current && typeof current === 'object' && key in current) {
         current = current[key];
@@ -97,11 +104,11 @@ export function I18nProvider({ children }: { children: ReactNode }) {
             return keyPath; // Return path if not found in fallback either
           }
         }
-        return typeof fallback === 'string' ? fallback : keyPath;
+        return typeof fallback === 'string' ? interpolate(fallback, vars) : keyPath;
       }
     }
 
-    return typeof current === 'string' ? current : keyPath;
+    return typeof current === 'string' ? interpolate(current, vars) : keyPath;
   };
 
   if (loading) {

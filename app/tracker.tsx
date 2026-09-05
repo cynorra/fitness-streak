@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, useWindowDimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocationTracking } from '../lib/useLocationTracking';
@@ -8,11 +8,10 @@ import { StatusBar } from 'expo-status-bar';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-const { width } = Dimensions.get('window');
-
 export default function TrackerScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
   const {
     isTracking,
     locations,
@@ -101,15 +100,15 @@ export default function TrackerScreen() {
         {/* Controls */}
         <View style={styles.controlsRow}>
           {!hasStarted ? (
-            <TouchableOpacity style={styles.startButton} onPress={handleStart}>
+            <TouchableOpacity style={[styles.startButton, { width: width * 0.8 }]} onPress={handleStart}>
               <Text style={styles.startButtonText}>BAŞLA</Text>
             </TouchableOpacity>
           ) : isFinished ? (
             <View style={styles.finishControls}>
-              <TouchableOpacity style={styles.discardButton} onPress={() => router.back()}>
+              <TouchableOpacity style={[styles.discardButton, { width: width * 0.3 }]} onPress={() => router.back()}>
                 <Text style={styles.discardButtonText}>Vazgeç</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+              <TouchableOpacity style={[styles.saveButton, { width: width * 0.6 }]} onPress={handleSave}>
                 <Text style={styles.saveButtonText}>Kaydet</Text>
               </TouchableOpacity>
             </View>
@@ -121,10 +120,10 @@ export default function TrackerScreen() {
                 </TouchableOpacity>
               ) : (
                 <View style={styles.pausedStateRow}>
-                  <TouchableOpacity style={styles.resumeButton} onPress={handleResume}>
+                  <TouchableOpacity style={[styles.resumeButton, { width: width * 0.4 }]} onPress={handleResume}>
                     <Text style={styles.resumeButtonText}>Devam</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.stopButton} onPress={handleStop}>
+                  <TouchableOpacity style={[styles.stopButton, { width: width * 0.4 }]} onPress={handleStop}>
                     <Text style={styles.stopButtonText}>Bitir</Text>
                   </TouchableOpacity>
                 </View>
@@ -208,7 +207,6 @@ const styles = StyleSheet.create({
   },
   startButton: {
     backgroundColor: '#ff3366',
-    width: width * 0.8,
     height: 60,
     borderRadius: 30,
     justifyContent: 'center',
@@ -250,7 +248,6 @@ const styles = StyleSheet.create({
   },
   resumeButton: {
     backgroundColor: '#ff3366',
-    width: width * 0.4,
     height: 60,
     borderRadius: 30,
     justifyContent: 'center',
@@ -263,7 +260,6 @@ const styles = StyleSheet.create({
   },
   stopButton: {
     backgroundColor: '#333',
-    width: width * 0.4,
     height: 60,
     borderRadius: 30,
     justifyContent: 'center',
@@ -281,7 +277,6 @@ const styles = StyleSheet.create({
   },
   saveButton: {
     backgroundColor: '#00cc66',
-    width: width * 0.6,
     height: 60,
     borderRadius: 30,
     justifyContent: 'center',
@@ -294,7 +289,6 @@ const styles = StyleSheet.create({
   },
   discardButton: {
     backgroundColor: 'transparent',
-    width: width * 0.3,
     height: 60,
     borderRadius: 30,
     justifyContent: 'center',

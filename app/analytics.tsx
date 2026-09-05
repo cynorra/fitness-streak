@@ -5,7 +5,7 @@ import {
   View,
   TouchableOpacity,
   ScrollView,
-  Dimensions,
+  useWindowDimensions,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -15,9 +15,6 @@ import { Ionicons } from '@expo/vector-icons';
 import GlassCard from '../components/GlassCard';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Rect, Line, Circle, Path, Text as SvgText } from 'react-native-svg';
-
-const { width } = Dimensions.get('window');
-const CHART_WIDTH = width - 72;
 
 const WEEKLY_CALORIES = [
   { day: 'Pzt', val: 420 },
@@ -33,6 +30,8 @@ export default function AnalyticsScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [timeframe, setTimeframe] = useState<'week' | 'month'>('week');
+  const { width } = useWindowDimensions();
+  const CHART_WIDTH = width - 72;
 
   const maxCal = Math.max(...WEEKLY_CALORIES.map((d) => d.val));
 

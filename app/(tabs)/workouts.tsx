@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, SafeAreaView, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, SafeAreaView, useWindowDimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as Haptics from 'expo-haptics';
-
-const { width } = Dimensions.get('window');
 
 // Dummy Video Data - Mümkün olan en popüler ve ücretsiz Youtube videoları
 const WORKOUT_CATEGORIES = [
@@ -36,6 +34,7 @@ const WORKOUT_CATEGORIES = [
 
 export default function WorkoutsScreen() {
   const router = useRouter();
+  const { width } = useWindowDimensions();
 
   const handleVideoPress = (videoId: string, title: string) => {
     Haptics.selectionAsync();
@@ -64,9 +63,9 @@ export default function WorkoutsScreen() {
               contentContainerStyle={styles.horizontalScroll}
             >
               {category.videos.map((video) => (
-                <TouchableOpacity 
-                  key={video.id} 
-                  style={styles.videoCard}
+                <TouchableOpacity
+                  key={video.id}
+                  style={[styles.videoCard, { width: width * 0.7 }]}
                   onPress={() => handleVideoPress(video.id, video.title)}
                   activeOpacity={0.8}
                 >
@@ -131,7 +130,6 @@ const styles = StyleSheet.create({
     paddingRight: 8,
   },
   videoCard: {
-    width: width * 0.7,
     marginRight: 16,
     backgroundColor: '#1a1a1a',
     borderRadius: 16,
