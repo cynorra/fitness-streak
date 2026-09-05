@@ -49,8 +49,6 @@
     "@babel/core": "^7.24.0",
     "@types/react": "^19.0.0",
     "babel-preset-expo": "~55.0.12",
-    "eslint": "^9.0.0",
-    "eslint-config-expo": "~55.0.1",
     "typescript": "~5.9.2"
   },
   "private": true
