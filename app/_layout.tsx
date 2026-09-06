@@ -10,6 +10,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as SplashScreen from 'expo-splash-screen';
 import * as Notifications from 'expo-notifications';
 import { registerForPushNotificationsAsync, syncNotificationSchedules } from '../lib/notifications';
+import { initializeAds } from '../lib/admob';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -40,6 +41,10 @@ function RootLayoutNav() {
     
     SplashScreen.hideAsync();
   }, [session, loading, segments, profile?.onboarding_completed]);
+
+  useEffect(() => {
+    initializeAds();
+  }, []);
 
   useEffect(() => {
     const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
