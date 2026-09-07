@@ -8,6 +8,8 @@ import {
   TextInput,
   Modal,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -164,7 +166,10 @@ export default function DietitianPackages() {
 
       {/* Add Package Modal */}
       <Modal visible={modalVisible} animationType="slide" transparent>
-        <View style={styles.modalOverlay}>
+        <KeyboardAvoidingView
+          style={styles.modalOverlay}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        >
           <GlassCard style={styles.modalContent}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>✨ Yeni Paket Tanımla</Text>
@@ -218,7 +223,7 @@ export default function DietitianPackages() {
               </TouchableOpacity>
             </View>
           </GlassCard>
-        </View>
+        </KeyboardAvoidingView>
       </Modal>
     </View>
   );

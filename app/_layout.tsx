@@ -162,15 +162,6 @@ function RootLayoutNav() {
         }}
       />
 
-      {/* AI Koç: sağdan sola */}
-      <Stack.Screen
-        name="ai-coach"
-        options={{
-          animation: 'slide_from_right',
-          animationDuration: 300,
-        }}
-      />
-
       {/* Blog & İçerikler: sağdan sola */}
       <Stack.Screen
         name="blog"

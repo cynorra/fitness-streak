@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import Animated, { FadeInDown, FadeInUp, SlideInRight } from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '../lib/auth';
 import { supabase } from '../lib/supabase';
 import { useRouter } from 'expo-router';
@@ -30,6 +31,7 @@ export default function Onboarding() {
   const [loading, setLoading] = useState(false);
   const { session, refreshProfile } = useAuth();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   const handleNext = () => {
     Haptics.selectionAsync();
@@ -63,7 +65,7 @@ export default function Onboarding() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
       {step < SLIDES.length ? (
         <Animated.View key={step} entering={SlideInRight.duration(400)} style={styles.slide}>
           <Text style={styles.icon}>{SLIDES[step].icon}</Text>
@@ -73,8 +75,8 @@ export default function Onboarding() {
           <Animated.Text entering={FadeInUp.delay(300)} style={styles.description}>
             {SLIDES[step].description}
           </Animated.Text>
-          
-          <TouchableOpacity style={styles.button} onPress={handleNext}>
+
+          <TouchableOpacity style={[styles.button, { bottom: insets.bottom + 48 }]} onPress={handleNext}>
             <Text style={styles.buttonText}>Devam Et</Text>
           </TouchableOpacity>
         </Animated.View>
@@ -87,7 +89,7 @@ export default function Onboarding() {
           </Text>
 
           <View style={styles.roleContainer}>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={[styles.roleCard, selectedRole === 'user' && styles.roleCardActive]}
               onPress={() => setSelectedRole('user')}
             >
@@ -96,7 +98,7 @@ export default function Onboarding() {
               <Text style={styles.roleDesc}>Antrenman ve beslenmemi takip etmek istiyorum.</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity 
+            <TouchableOpacity
               style={[styles.roleCard, selectedRole === 'dietitian' && styles.roleCardActive]}
               onPress={() => setSelectedRole('dietitian')}
             >
@@ -106,7 +108,7 @@ export default function Onboarding() {
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity style={[styles.button, loading && styles.buttonDisabled]} onPress={handleFinish} disabled={loading}>
+          <TouchableOpacity style={[styles.button, { bottom: insets.bottom + 48 }, loading && styles.buttonDisabled]} onPress={handleFinish} disabled={loading}>
             <Text style={styles.buttonText}>{loading ? 'Bekleniyor...' : 'Başla'}</Text>
           </TouchableOpacity>
         </Animated.View>
@@ -154,7 +156,6 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     position: 'absolute',
-    bottom: 48,
   },
   buttonDisabled: {
     opacity: 0.5,

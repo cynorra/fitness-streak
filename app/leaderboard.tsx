@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, RefreshControl } from 'react-native';
 import { supabase } from '../lib/supabase';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -44,17 +44,18 @@ export default function Leaderboard() {
         <View style={{ width: 44 }} />
       </View>
 
-      <ScrollView
+      <FlatList
+        data={users}
+        keyExtractor={(u) => u.id}
         contentContainerStyle={styles.content}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#10b981" />}
-      >
-        <View style={styles.infoBox}>
-          <Text style={styles.infoText}>🏆 En yüksek seriye (streak) sahip kullanıcılar. Seri yap, zirveye yerleş!</Text>
-        </View>
-
-        {users.map((u, index) => (
-          <Animated.View 
-            key={u.id} 
+        ListHeaderComponent={
+          <View style={styles.infoBox}>
+            <Text style={styles.infoText}>🏆 En yüksek seriye (streak) sahip kullanıcılar. Seri yap, zirveye yerleş!</Text>
+          </View>
+        }
+        renderItem={({ item: u, index }) => (
+          <Animated.View
             entering={FadeInDown.delay(index * 50).springify()}
             style={styles.card}
           >
@@ -75,8 +76,8 @@ export default function Leaderboard() {
               <Text style={styles.streakCount}>{u.current_streak}</Text>
             </View>
           </Animated.View>
-        ))}
-      </ScrollView>
+        )}
+      />
     </View>
   );
 }
