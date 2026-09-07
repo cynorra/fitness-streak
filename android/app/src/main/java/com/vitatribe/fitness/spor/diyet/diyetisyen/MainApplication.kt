@@ -1,4 +1,4 @@
-package com.vitatribe.fitness.diet
+package com.vitatribe.fitness.spor.diyet.diyetisyen
 
 import android.app.Application
 import android.content.res.Configuration
