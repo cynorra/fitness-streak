@@ -15,3 +15,8 @@ local.properties
 
 # Bundle artifacts
 *.jsbundle
+
+# Release signing (never commit — losing this blocks future Play Store updates)
+keystore.properties
+*.keystore
+!debug.keystore
