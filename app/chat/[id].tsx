@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import {
   View, Text, StyleSheet, FlatList, TextInput,
   TouchableOpacity, KeyboardAvoidingView, Platform,
-  ActivityIndicator,
+  ActivityIndicator, Alert,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { supabase } from '../../lib/supabase';
@@ -10,6 +10,8 @@ import { useAuth } from '../../lib/auth';
 import { format } from 'date-fns';
 import { tr } from 'date-fns/locale';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { checkContentModeration } from '../../lib/profanityFilter';
+import { blockUser, reportUser } from '../../lib/blocking';
 
 type Message = {
   id: string;
@@ -81,6 +83,13 @@ export default function ChatScreen() {
   const sendMessage = async () => {
     if (!inputText.trim() || !profile || !id) return;
     const content = inputText.trim();
+
+    const modResult = checkContentModeration(content);
+    if (!modResult.isClean) {
+      Alert.alert('Topluluk Kuralları Engeli 🛑', modResult.reason);
+      return;
+    }
+
     setInputText('');
 
     const { error } = await supabase.from('messages').insert({
@@ -91,10 +100,79 @@ export default function ChatScreen() {
 
     if (error) {
       console.error(error);
+      Alert.alert('Mesaj gönderilemedi', error.message);
     } else {
       // Update conversation timestamp
       await supabase.from('conversations').update({ updated_at: new Date() }).eq('id', id);
     }
+  };
+
+  const handleBlock = () => {
+    if (!otherProfile || !profile) return;
+    Alert.alert(
+      'Kullanıcıyı Engelle',
+      `${otherProfile.display_name || otherProfile.username} adlı kullanıcıyı engellemek istediğine emin misin? Artık birbirinize mesaj gönderemezsiniz.`,
+      [
+        { text: 'Vazgeç', style: 'cancel' },
+        {
+          text: 'Engelle',
+          style: 'destructive',
+          onPress: async () => {
+            const result = await blockUser(profile.id, otherProfile.id);
+            if (result.error) {
+              Alert.alert('Hata', result.error);
+            } else {
+              Alert.alert('Engellendi', 'Kullanıcı engellendi.');
+              router.back();
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const handleReport = () => {
+    if (!otherProfile || !profile) return;
+    Alert.alert(
+      'Kullanıcıyı Şikayet Et',
+      'Bu kullanıcıyı neden şikayet ediyorsun?',
+      [
+        { text: 'Vazgeç', style: 'cancel' },
+        {
+          text: 'Taciz / Rahatsız Edici',
+          onPress: async () => {
+            const result = await reportUser(profile.id, otherProfile.id, 'Taciz / Rahatsız edici mesajlar', 'message', typeof id === 'string' ? id : undefined);
+            Alert.alert(result.error ? 'Hata' : 'Şikayet Alındı', result.error || 'Şikayetin ekibimize iletildi.');
+          },
+        },
+        {
+          text: 'Spam',
+          onPress: async () => {
+            const result = await reportUser(profile.id, otherProfile.id, 'Spam', 'message', typeof id === 'string' ? id : undefined);
+            Alert.alert(result.error ? 'Hata' : 'Şikayet Alındı', result.error || 'Şikayetin ekibimize iletildi.');
+          },
+        },
+        {
+          text: 'Uygunsuz İçerik',
+          onPress: async () => {
+            const result = await reportUser(profile.id, otherProfile.id, 'Uygunsuz içerik', 'message', typeof id === 'string' ? id : undefined);
+            Alert.alert(result.error ? 'Hata' : 'Şikayet Alındı', result.error || 'Şikayetin ekibimize iletildi.');
+          },
+        },
+      ]
+    );
+  };
+
+  const showChatOptions = () => {
+    Alert.alert(
+      'Seçenekler',
+      undefined,
+      [
+        { text: 'Şikayet Et', onPress: handleReport },
+        { text: 'Engelle', style: 'destructive', onPress: handleBlock },
+        { text: 'Vazgeç', style: 'cancel' },
+      ]
+    );
   };
 
   if (loading) {
@@ -119,6 +197,9 @@ export default function ChatScreen() {
           <Text style={styles.headerName}>{otherProfile?.display_name || otherProfile?.username || '...'}</Text>
           <Text style={styles.headerStatus}>Çevrimiçi</Text>
         </View>
+        <TouchableOpacity onPress={showChatOptions} style={styles.backBtn}>
+          <Text style={styles.backText}>⋮</Text>
+        </TouchableOpacity>
       </View>
 
       <FlatList

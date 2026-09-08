@@ -2,6 +2,7 @@ import { createClient } from '@/utils/supabase/server'
 import { notFound } from 'next/navigation'
 import Navbar from '@/components/Navbar'
 import { requestDietitian, startConversation } from './actions'
+import ProfileSafetyMenu from './ProfileSafetyMenu'
 import PostInteractions from '@/app/[lang]/feed/PostInteractions'
 import { Metadata } from 'next'
 import Script from 'next/script'
@@ -151,6 +152,18 @@ export default async function UserProfile({ params }: { params: Promise<{ userna
     isDietitianClient = rel?.status === 'approved'
   }
 
+  // Check if current user has blocked this profile
+  let isBlockedByMe = false
+  if (currentUser && currentUser.id !== profile.id) {
+    const { data: blockRow } = await supabase
+      .from('user_blocks')
+      .select('id')
+      .eq('blocker_id', currentUser.id)
+      .eq('blocked_id', profile.id)
+      .maybeSingle()
+    isBlockedByMe = !!blockRow
+  }
+
   // Fetch workouts if authorized
   let workouts: Workout[] = []
   if (currentUser?.id === profile.id || isDietitianClient) {
@@ -250,6 +263,12 @@ export default async function UserProfile({ params }: { params: Promise<{ userna
                           Mesaj Gönder 💬
                        </button>
                     </form>
+
+                    <ProfileSafetyMenu
+                       targetUserId={profile.id}
+                       targetDisplayName={profile.display_name || profile.username}
+                       initialIsBlocked={isBlockedByMe}
+                    />
                  </div>
               )}
            </div>

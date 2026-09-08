@@ -65,6 +65,27 @@ export async function addComment(postId: string, content: string) {
   return { success: true }
 }
 
+export async function reportPost(postId: string, reason: string) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) return { error: 'Unauthorized' }
+
+  const { data: post } = await supabase.from('posts').select('user_id').eq('id', postId).single()
+  if (!post) return { error: 'Gönderi bulunamadı' }
+
+  const { error } = await supabase.from('reports').insert({
+    reporter_id: user.id,
+    reported_user_id: post.user_id,
+    content_type: 'post',
+    content_id: postId,
+    reason,
+  })
+
+  if (error) return { error: error.message }
+  return { success: true }
+}
+
 export async function toggleRepost(postId: string) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()

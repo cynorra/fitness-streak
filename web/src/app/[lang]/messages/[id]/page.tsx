@@ -38,6 +38,18 @@ export default async function ConversationPage({ params }: Props) {
 
   const otherUser = (conversation.participant_1 === user.id ? conversation.p2 : conversation.p1) as unknown as OtherUser | null
 
+  // Check whether the current user already blocked the other participant
+  let isBlocked = false
+  if (otherUser) {
+    const { data: blockRow } = await supabase
+      .from('user_blocks')
+      .select('id')
+      .eq('blocker_id', user.id)
+      .eq('blocked_id', otherUser.id)
+      .maybeSingle()
+    isBlocked = !!blockRow
+  }
+
   // Fetch initial messages
   const { data: messagesData } = await supabase
     .from('messages')
@@ -56,11 +68,12 @@ export default async function ConversationPage({ params }: Props) {
                <span className="group-hover:-translate-x-1 transition-transform">←</span> Geri Dön
             </Link>
          </div>
-         <ChatInterface 
+         <ChatInterface
            conversationId={id}
            initialMessages={messages || []}
            currentUserId={user.id}
            otherUser={otherUser}
+           initialIsBlocked={isBlocked}
          />
       </main>
     </div>

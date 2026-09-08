@@ -63,6 +63,60 @@ export async function startConversation(formData: FormData) {
     .single()
 
   if (error) return { error: error.message }
-  
+
   redirect(`/messages/${newConv.id}`)
+}
+
+export async function blockUser(blockedId: string) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) return { error: 'Giriş yapmalısınız' }
+
+  const { error } = await supabase
+    .from('user_blocks')
+    .insert({ blocker_id: user.id, blocked_id: blockedId })
+
+  if (error && error.code !== '23505') return { error: error.message }
+
+  const { data: profile } = await supabase.from('profiles').select('username').eq('id', blockedId).single()
+  if (profile) revalidatePath(`/u/${profile.username}`)
+
+  return { success: true }
+}
+
+export async function unblockUser(blockedId: string) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) return { error: 'Giriş yapmalısınız' }
+
+  const { error } = await supabase
+    .from('user_blocks')
+    .delete()
+    .match({ blocker_id: user.id, blocked_id: blockedId })
+
+  if (error) return { error: error.message }
+
+  const { data: profile } = await supabase.from('profiles').select('username').eq('id', blockedId).single()
+  if (profile) revalidatePath(`/u/${profile.username}`)
+
+  return { success: true }
+}
+
+export async function reportUser(reportedUserId: string, reason: string) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) return { error: 'Giriş yapmalısınız' }
+
+  const { error } = await supabase.from('reports').insert({
+    reporter_id: user.id,
+    reported_user_id: reportedUserId,
+    content_type: 'profile',
+    reason,
+  })
+
+  if (error) return { error: error.message }
+  return { success: true }
 }

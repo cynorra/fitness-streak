@@ -13,6 +13,7 @@ import { useTranslation } from '../../lib/i18n/i18n';
 import { getDateLocale } from '../../lib/i18n/dateUtils';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { checkContentModeration } from '../../lib/profanityFilter';
+import { reportUser } from '../../lib/blocking';
 import AdMobBanner from '../../components/AdMobBanner';
 
 type PostItem = {
@@ -138,6 +139,38 @@ export default function Feed() {
       setNewPostContent('');
       onRefresh(); // Refresh feed
     }
+  };
+
+  const handleReportPost = (item: PostItem) => {
+    if (!profile) return;
+    Alert.alert(
+      'Gönderiyi Şikayet Et',
+      'Bu gönderiyi neden şikayet ediyorsun?',
+      [
+        { text: 'Vazgeç', style: 'cancel' },
+        {
+          text: 'Uygunsuz İçerik / Küfür',
+          onPress: async () => {
+            const result = await reportUser(profile.id, item.user_id, 'Uygunsuz içerik / küfür', 'post', item.id);
+            Alert.alert(result.error ? 'Hata' : 'Şikayet Alındı', result.error || 'Şikayetin ekibimize iletildi, en kısa sürede incelenecek.');
+          },
+        },
+        {
+          text: 'Spam',
+          onPress: async () => {
+            const result = await reportUser(profile.id, item.user_id, 'Spam', 'post', item.id);
+            Alert.alert(result.error ? 'Hata' : 'Şikayet Alındı', result.error || 'Şikayetin ekibimize iletildi, en kısa sürede incelenecek.');
+          },
+        },
+        {
+          text: 'Taciz / Rahatsız Edici',
+          onPress: async () => {
+            const result = await reportUser(profile.id, item.user_id, 'Taciz / Rahatsız edici', 'post', item.id);
+            Alert.alert(result.error ? 'Hata' : 'Şikayet Alındı', result.error || 'Şikayetin ekibimize iletildi, en kısa sürede incelenecek.');
+          },
+        },
+      ]
+    );
   };
 
   const toggleLike = async (item: PostItem) => {
@@ -276,6 +309,14 @@ export default function Feed() {
                   {format(parseISO(item.created_at), 'd MMM HH:mm', { locale: dateLocale })}
                 </Text>
               </View>
+              {item.user_id !== profile?.id && (
+                <TouchableOpacity
+                  style={styles.reportBtn}
+                  onPress={() => { Haptics.selectionAsync(); handleReportPost(item); }}
+                >
+                  <Text style={styles.reportBtnText}>⋯</Text>
+                </TouchableOpacity>
+              )}
             </View>
 
             <Text style={styles.postContent}>{item.content}</Text>
@@ -412,6 +453,8 @@ const styles = StyleSheet.create({
   },
   userBadgeText: { color: '#94a3b8', fontSize: 10, fontWeight: '800' },
   userHandle: { color: '#666', fontSize: 12, fontWeight: '600' },
+  reportBtn: { width: 32, height: 32, borderRadius: 16, justifyContent: 'center', alignItems: 'center' },
+  reportBtnText: { color: '#666', fontSize: 18, fontWeight: '900' },
   userMeta: { color: '#888', fontSize: 11, marginTop: 4, textTransform: 'uppercase', fontWeight: '700', letterSpacing: 0.5 },
   
   postContent: {

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { toggleLike, addComment, toggleRepost } from './actions'
+import { toggleLike, addComment, toggleRepost, reportPost } from './actions'
 
 interface Comment {
   id: string
@@ -47,6 +47,13 @@ export default function PostInteractions({ postId, initialLikes, initialReposts,
     await addComment(postId, text)
   }
 
+  const handleReport = async () => {
+    const reason = prompt('Bu gönderiyi neden şikayet ediyorsun? (ör. spam, taciz, uygunsuz içerik)')
+    if (!reason || !reason.trim()) return
+    const result = await reportPost(postId, reason.trim())
+    alert(result.error ? 'Hata: ' + result.error : 'Şikayetin ekibimize iletildi.')
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-8 pt-4 border-t border-zinc-100 dark:border-zinc-800">
@@ -66,12 +73,20 @@ export default function PostInteractions({ postId, initialLikes, initialReposts,
           <span>{reposts} Repost</span>
         </button>
 
-        <button 
+        <button
           onClick={() => setShowComments(!showComments)}
           className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-zinc-400 hover:text-orange-500 transition-colors"
         >
           <span>💬</span>
           <span>{comments.length} Yorum</span>
+        </button>
+
+        <button
+          onClick={handleReport}
+          className="ml-auto flex items-center gap-2 text-xs font-black uppercase tracking-widest text-zinc-300 hover:text-rose-500 transition-colors"
+          aria-label="Gönderiyi şikayet et"
+        >
+          <span>🚩</span>
         </button>
       </div>
 
