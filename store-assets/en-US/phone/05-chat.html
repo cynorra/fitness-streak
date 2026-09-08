@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1080px; height: 1920px; background: #0a0a0a; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; overflow: hidden; }
+  .canvas { position: relative; width: 1080px; height: 1920px; background: #0a0a0a; display: flex; flex-direction: column; }
+  .caption { padding: 96px 72px 40px; }
+  .headline { color: #fafafa; font-size: 76px; font-weight: 900; letter-spacing: -0.02em; line-height: 1.08; }
+  .headline .accent { color: #10b981; }
+  .subhead { color: #a1a1aa; font-size: 32px; font-weight: 700; margin-top: 20px; line-height: 1.4; max-width: 880px; }
+
+  .app { margin: 8px 0 0; flex: 1; display: flex; flex-direction: column; }
+  .header { padding: 40px 60px; display: flex; align-items: center; gap: 30px; border-bottom: 2px solid #111; }
+  .backbtn { width: 88px; height: 88px; border-radius: 44px; background: #1a1a1a; display: flex; align-items: center; justify-content: center; }
+  .backbtn span { color: #fff; font-size: 44px; font-weight: 900; }
+  .hname { color: #fff; font-size: 38px; font-weight: 900; }
+  .hstatus { color: #10b981; font-size: 22px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 6px; }
+
+  .messages { flex: 1; padding: 56px 60px; display: flex; flex-direction: column; gap: 36px; }
+  .row { display: flex; }
+  .row.me { justify-content: flex-end; }
+  .row.other { justify-content: flex-start; }
+  .bubble { max-width: 78%; padding: 32px; border-radius: 44px; font-size: 32px; font-weight: 600; line-height: 1.42; }
+  .bubble.mine { background: #10b981; color: #fff; border-bottom-right-radius: 10px; }
+  .bubble.theirs { background: #1a1a1a; color: #eee; border: 2px solid #222; border-bottom-left-radius: 10px; }
+
+  .inputarea { padding: 40px 48px; display: flex; gap: 24px; align-items: center; border-top: 2px solid #111; }
+  .inputbox { flex: 1; background: #111; border-radius: 44px; padding: 32px 40px; color: #666; font-size: 30px; font-weight: 600; border: 2px solid #222; }
+  .sendbtn { width: 96px; height: 96px; border-radius: 48px; background: #10b981; display: flex; align-items: center; justify-content: center; }
+  .sendbtn span { color: #fff; font-size: 40px; font-weight: 900; }
+</style>
+</head>
+<body>
+  <div class="canvas">
+    <div class="caption">
+      <div class="headline">Stay <span class="accent">Connected.</span></div>
+      <div class="subhead">Message friends and your dietitian, right in the app.</div>
+    </div>
+    <div class="app">
+      <div class="header">
+        <div class="backbtn"><span>←</span></div>
+        <div><div class="hname">Maya Chen</div><div class="hstatus">Online</div></div>
+      </div>
+      <div class="messages">
+        <div class="row other"><div class="bubble theirs">Great job on that 47-day streak! 🔥 How's the new plan feeling?</div></div>
+        <div class="row me"><div class="bubble mine">Honestly so much easier to stick to! Energy's way up 💪</div></div>
+        <div class="row other"><div class="bubble theirs">Love hearing that. Let's adjust your macros a bit this week.</div></div>
+        <div class="row me"><div class="bubble mine">Sounds good, see you at 5pm 👋</div></div>
+      </div>
+      <div class="inputarea">
+        <div class="inputbox">Type a message...</div>
+        <div class="sendbtn"><span>➔</span></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

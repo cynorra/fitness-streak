@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1080px; height: 1920px; background: #0a0a0a; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; overflow: hidden; }
+  .canvas { position: relative; width: 1080px; height: 1920px; background: #0a0a0a; }
+  .caption { padding: 96px 72px 40px; }
+  .headline { color: #fafafa; font-size: 72px; font-weight: 900; letter-spacing: -0.02em; line-height: 1.1; }
+  .headline .accent { color: #10b981; }
+  .subhead { color: #a1a1aa; font-size: 32px; font-weight: 700; margin-top: 20px; line-height: 1.4; max-width: 880px; }
+
+  .app { margin: 8px 60px 0; display: flex; flex-direction: column; align-items: center; }
+  .avatar { width: 220px; height: 220px; border-radius: 110px; background: #10b981; display: flex; align-items: center; justify-content: center; margin-top: 12px; box-shadow: 0 20px 60px rgba(16,185,129,0.25); }
+  .avatar span { color: #fff; font-size: 92px; font-weight: 900; }
+  .name { color: #fff; font-size: 46px; font-weight: 900; margin-top: 32px; }
+  .handle { color: #52525b; font-size: 28px; font-weight: 700; margin-top: 10px; }
+
+  .statsrow { display: flex; gap: 32px; width: 100%; margin-top: 56px; }
+  .statcard { flex: 1; background: #111; border: 3px solid #222; border-radius: 56px; padding: 44px; text-align: center; }
+  .statval { color: #fff; font-size: 72px; font-weight: 900; }
+  .statlabel { color: #3f3f46; font-size: 22px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 10px; }
+
+  .sectiontitle { color: #52525b; font-size: 26px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; width: 100%; margin-top: 72px; margin-bottom: 32px; }
+  .badgegrid { display: flex; gap: 28px; width: 100%; }
+  .badgecard { flex: 1; background: #111; border: 3px solid #222; border-radius: 48px; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 14px; }
+  .badgecard .icon { font-size: 64px; }
+  .badgecard .bname { color: #fff; font-size: 22px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.3; }
+</style>
+</head>
+<body>
+  <div class="canvas">
+    <div class="caption">
+      <div class="headline">Every Streak <span class="accent">Earns You</span> Something.</div>
+      <div class="subhead">Track your progress and unlock badges as you grow.</div>
+    </div>
+    <div class="app">
+      <div class="avatar"><span>Y</span></div>
+      <div class="name">You</div>
+      <div class="handle">@you</div>
+
+      <div class="statsrow">
+        <div class="statcard"><div class="statval">47</div><div class="statlabel">Current Streak</div></div>
+        <div class="statcard"><div class="statval">62</div><div class="statlabel">Longest Streak</div></div>
+      </div>
+
+      <div class="sectiontitle">Achievements</div>
+      <div class="badgegrid">
+        <div class="badgecard"><div class="icon">🔥</div><div class="bname">Weekly<br>Warrior</div></div>
+        <div class="badgecard"><div class="icon">🏆</div><div class="bname">Monthly<br>Champion</div></div>
+        <div class="badgecard"><div class="icon">💎</div><div class="bname">Century<br>Streak</div></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1080px; height: 1920px; background: #0a0a0a; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; overflow: hidden; }
+  .canvas { position: relative; width: 1080px; height: 1920px; background: #0a0a0a; }
+  .caption { padding: 96px 72px 40px; }
+  .headline { color: #fafafa; font-size: 76px; font-weight: 900; letter-spacing: -0.02em; line-height: 1.08; }
+  .headline .accent { color: #10b981; }
+  .subhead { color: #a1a1aa; font-size: 32px; font-weight: 700; margin-top: 20px; line-height: 1.4; max-width: 880px; }
+
+  .app { margin: 8px 48px 0; }
+  .header { display: flex; align-items: center; gap: 30px; padding: 24px 8px 40px; }
+  .logobox { width: 96px; height: 96px; background: #10b981; border-radius: 24px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 40px rgba(16,185,129,0.35); }
+  .logobox span { color: #fff; font-weight: 900; font-size: 54px; }
+  .wordmark { color: #fff; font-size: 68px; font-weight: 900; letter-spacing: -0.04em; flex: 1; }
+  .wordmark .em { color: #10b981; }
+  .msgbtn { width: 132px; height: 132px; border-radius: 66px; background: #111; border: 3px solid #222; display: flex; align-items: center; justify-content: center; font-size: 56px; }
+
+  .card { background: #111; border: 3px solid #222; border-radius: 60px; padding: 52px; margin: 0 8px 48px; }
+  .cardhead { display: flex; align-items: center; gap: 30px; margin-bottom: 40px; }
+  .avatar { width: 108px; height: 108px; border-radius: 54px; background: #222; display: flex; align-items: center; justify-content: center; }
+  .avatar span { color: #10b981; font-weight: 900; font-size: 48px; }
+  .uinfo { flex: 1; }
+  .unamerow { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .uname { color: #fff; font-size: 36px; font-weight: 800; }
+  .badge { padding: 6px 20px; border-radius: 20px; border-width: 2px; border-style: solid; font-size: 22px; font-weight: 900; }
+  .badge.pro { background: rgba(245,158,11,0.12); border-color: #f59e0b; color: #f59e0b; }
+  .badge.dietitian { background: rgba(16,185,129,0.12); border-color: #10b981; color: #10b981; }
+  .uhandle { color: #52525b; font-size: 28px; font-weight: 700; }
+  .umeta { color: #71717a; font-size: 24px; font-weight: 700; margin-top: 10px; text-transform: uppercase; letter-spacing: 1px; }
+  .content { color: #f4f4f5; font-size: 34px; line-height: 1.5; font-weight: 500; margin-bottom: 44px; }
+  .actions { display: flex; gap: 24px; }
+  .actbtn { display: flex; align-items: center; gap: 14px; padding: 18px 28px; background: #1a1a1a; border-radius: 28px; }
+  .actbtn .em { font-size: 30px; }
+  .actbtn .ct { color: #a1a1aa; font-size: 28px; font-weight: 700; }
+  .actbtn .ct.liked { color: #10b981; }
+</style>
+</head>
+<body>
+  <div class="canvas">
+    <div class="caption">
+      <div class="headline">Share Every <span class="accent">Win.</span></div>
+      <div class="subhead">Post updates, send Kudos, and cheer each other on.</div>
+    </div>
+    <div class="app">
+      <div class="header">
+        <div class="logobox"><span>S</span></div>
+        <div class="wordmark">VITA<span class="em">TRIBE</span></div>
+        <div class="msgbtn">💬</div>
+      </div>
+
+      <div class="card">
+        <div class="cardhead">
+          <div class="avatar"><span>J</span></div>
+          <div class="uinfo">
+            <div class="unamerow">
+              <span class="uname">Jordan Lee</span>
+              <span class="badge pro">🏆 Pro Athlete</span>
+            </div>
+            <div class="uhandle">@jordanlifts</div>
+          </div>
+        </div>
+        <div class="content">Leg day complete 🔥 47-day streak and counting. Who's joining me tomorrow?</div>
+        <div class="actions">
+          <div class="actbtn"><span class="em">❤️</span><span class="ct liked">128</span></div>
+          <div class="actbtn"><span class="em">💬</span><span class="ct">24</span></div>
+          <div class="actbtn"><span class="em">📸</span><span class="ct">Share</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cardhead">
+          <div class="avatar"><span>M</span></div>
+          <div class="uinfo">
+            <div class="unamerow">
+              <span class="uname">Maya Chen</span>
+              <span class="badge dietitian">🩺 Dietitian</span>
+            </div>
+            <div class="uhandle">@coach.maya</div>
+          </div>
+        </div>
+        <div class="content">New meal-prep tips just went live 🥗 Check your nutrition tab for this week's plan!</div>
+        <div class="actions">
+          <div class="actbtn"><span class="em">🤍</span><span class="ct">89</span></div>
+          <div class="actbtn"><span class="em">💬</span><span class="ct">12</span></div>
+          <div class="actbtn"><span class="em">📸</span><span class="ct">Share</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

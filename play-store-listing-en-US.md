@@ -52,7 +52,7 @@ Can I really talk to a dietitian in the app?
 Yes. VitaTribe lets you find, book, and message certified dietitians who can build you a personalized nutrition plan and track your progress.
 
 Is VitaTribe free?
-Yes, core streak tracking, friends, and the leaderboard are free. Dietitian packages are available as in-app purchases.
+Yes, VitaTribe is free to use — streak tracking, friends, the leaderboard, and booking a dietitian are all included.
 
 Download VitaTribe today and turn your next workout into day one of a streak you won't want to break.
 ```

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1080px; height: 1920px; background: #0a0a0a; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; overflow: hidden; }
+  .canvas { position: relative; width: 1080px; height: 1920px; background: #0a0a0a; }
+
+  /* Marketing caption */
+  .caption { padding: 96px 72px 40px; position: relative; z-index: 2; }
+  .headline { color: #fafafa; font-size: 76px; font-weight: 900; letter-spacing: -0.02em; line-height: 1.08; }
+  .headline .accent { color: #10b981; }
+  .subhead { color: #a1a1aa; font-size: 32px; font-weight: 700; margin-top: 20px; line-height: 1.4; max-width: 880px; }
+
+  /* App chrome */
+  .app { margin: 24px 48px 0; }
+  .statusbar { height: 20px; }
+  .header { display: flex; align-items: center; gap: 30px; padding: 40px 8px 32px; }
+  .logobox { width: 96px; height: 96px; background: #10b981; border-radius: 24px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 40px rgba(16,185,129,0.35); }
+  .logobox span { color: #fff; font-weight: 900; font-size: 54px; }
+  .wordmark { color: #fff; font-size: 68px; font-weight: 900; letter-spacing: -0.04em; flex: 1; }
+  .wordmark .em { color: #10b981; }
+  .msgbtn { width: 132px; height: 132px; border-radius: 66px; background: #111; border: 3px solid #222; display: flex; align-items: center; justify-content: center; font-size: 56px; }
+  .hello { color: #52525b; font-size: 32px; font-weight: 900; letter-spacing: 4px; padding: 0 8px 40px; }
+
+  .streakcard {
+    background: #111; border: 3px solid #1f2937; border-radius: 100px;
+    margin: 0 8px 56px; padding: 96px 60px 76px;
+    display: flex; flex-direction: column; align-items: center;
+    box-shadow: 0 40px 120px rgba(16,185,129,0.16);
+    position: relative;
+  }
+  .streak-emoji { font-size: 168px; line-height: 1; margin-bottom: 12px; filter: drop-shadow(0 0 40px rgba(16,185,129,0.35)); }
+  .streak-num { color: #fff; font-size: 268px; font-weight: 900; letter-spacing: -0.05em; line-height: 1; }
+  .streak-pill { margin-top: 44px; background: #10b981; padding: 20px 44px; border-radius: 999px; }
+  .streak-pill span { color: #06251b; font-size: 30px; font-weight: 900; letter-spacing: 2px; }
+
+  .weekstrip { display: flex; justify-content: space-between; padding: 0 24px; margin-bottom: 64px; }
+  .daycol { display: flex; flex-direction: column; align-items: center; gap: 18px; }
+  .daylabel { color: #3f3f46; font-size: 26px; font-weight: 900; text-transform: uppercase; }
+  .daydot { width: 104px; height: 104px; border-radius: 32px; background: #111; border: 3px solid #222; display: flex; align-items: center; justify-content: center; }
+  .daydot.active { background: #10b981; border-color: #10b981; box-shadow: 0 10px 30px rgba(16,185,129,0.4); }
+  .daydot span { color: #fff; font-size: 48px; font-weight: 900; }
+  .daynum { color: #52525b; font-size: 26px; font-weight: 900; }
+
+  .statsrow { display: flex; gap: 32px; padding: 0 8px; margin-bottom: 64px; }
+  .statcard { flex: 1; background: #111; border: 3px solid #222; border-radius: 64px; padding: 60px 48px; }
+  .statval { color: #fff; font-size: 92px; font-weight: 900; letter-spacing: -0.03em; }
+  .statlabel { color: #3f3f46; font-size: 24px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; margin-top: 12px; }
+
+  .gamerow { display: flex; gap: 32px; padding: 0 8px; }
+  .gamecard { flex: 1; background: rgba(16,185,129,0.12); border: 3px solid rgba(16,185,129,0.32); border-radius: 52px; padding: 52px 24px; display: flex; flex-direction: column; align-items: center; gap: 18px; }
+  .gamecard .icon { font-size: 64px; }
+  .gamecard .label { color: #10b981; font-size: 26px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; }
+</style>
+</head>
+<body>
+  <div class="canvas">
+    <div class="caption">
+      <div class="headline">Never Break<br>The <span class="accent">Chain.</span></div>
+      <div class="subhead">Log a workout, watch your streak grow, and stay honest every single day.</div>
+    </div>
+    <div class="app">
+      <div class="header">
+        <div class="logobox"><span>S</span></div>
+        <div class="wordmark">VITA<span class="em">TRIBE</span></div>
+        <div class="msgbtn">💬</div>
+      </div>
+      <div class="hello">HELLO, JORDAN</div>
+
+      <div class="streakcard">
+        <div class="streak-emoji">🏆</div>
+        <div class="streak-num">47</div>
+        <div class="streak-pill"><span>SERIOUS STREAK</span></div>
+      </div>
+
+      <div class="weekstrip">
+        <div class="daycol"><div class="daylabel">M</div><div class="daydot active"><span>✓</span></div><div class="daynum">2</div></div>
+        <div class="daycol"><div class="daylabel">T</div><div class="daydot active"><span>✓</span></div><div class="daynum">3</div></div>
+        <div class="daycol"><div class="daylabel">W</div><div class="daydot active"><span>✓</span></div><div class="daynum">4</div></div>
+        <div class="daycol"><div class="daylabel">T</div><div class="daydot"></div><div class="daynum">5</div></div>
+        <div class="daycol"><div class="daylabel">F</div><div class="daydot active"><span>✓</span></div><div class="daynum">6</div></div>
+        <div class="daycol"><div class="daylabel">S</div><div class="daydot active"><span>✓</span></div><div class="daynum">7</div></div>
+        <div class="daycol"><div class="daylabel">S</div><div class="daydot active"><span>✓</span></div><div class="daynum">8</div></div>
+      </div>
+
+      <div class="statsrow">
+        <div class="statcard"><div class="statval">62</div><div class="statlabel">Longest Streak</div></div>
+        <div class="statcard"><div class="statval">6</div><div class="statlabel">This Week</div></div>
+      </div>
+
+      <div class="gamerow">
+        <div class="gamecard"><div class="icon">🏆</div><div class="label">Leaderboard</div></div>
+        <div class="gamecard"><div class="icon">🎯</div><div class="label">Challenges</div></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

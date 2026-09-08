@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1080px; height: 1920px; background: #0a0a0a; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; overflow: hidden; }
+  .canvas { position: relative; width: 1080px; height: 1920px; background: #0a0a0a; }
+  .caption { padding: 96px 72px 40px; }
+  .headline { color: #fafafa; font-size: 72px; font-weight: 900; letter-spacing: -0.02em; line-height: 1.1; }
+  .headline .accent { color: #10b981; }
+  .subhead { color: #a1a1aa; font-size: 32px; font-weight: 700; margin-top: 20px; line-height: 1.4; max-width: 880px; }
+
+  .app { margin: 8px 60px 0; }
+  .toprow { display: flex; align-items: center; gap: 24px; padding: 24px 8px 44px; }
+  .back { color: #fff; font-size: 56px; font-weight: 900; }
+  .title { color: #fff; font-size: 40px; font-weight: 900; letter-spacing: 1px; flex: 1; text-align: center; margin-right: 56px; }
+
+  .card { background: #111; border: 3px solid #222; border-radius: 60px; padding: 48px; margin-bottom: 40px; display: flex; align-items: center; gap: 36px; }
+  .davatar { width: 140px; height: 140px; border-radius: 44px; background: linear-gradient(135deg,#f59e0b,#f97316); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .davatar span { color: #fff; font-size: 60px; font-weight: 900; }
+  .dinfo { flex: 1; }
+  .dname { color: #fff; font-size: 38px; font-weight: 900; }
+  .dspec { color: #10b981; font-size: 26px; font-weight: 800; margin-top: 8px; text-transform: uppercase; letter-spacing: 1px; }
+  .drating { color: #a1a1aa; font-size: 26px; font-weight: 700; margin-top: 14px; }
+  .dbtn { margin-top: 28px; background: #10b981; padding: 22px 0; border-radius: 26px; text-align: center; }
+  .dbtn span { color: #06251b; font-size: 26px; font-weight: 900; letter-spacing: 0.5px; }
+</style>
+</head>
+<body>
+  <div class="canvas">
+    <div class="caption">
+      <div class="headline">Real Dietitians,<br>Real <span class="accent">Plans.</span></div>
+      <div class="subhead">Book a certified dietitian and get a nutrition plan built around you.</div>
+    </div>
+    <div class="app">
+      <div class="toprow"><span class="back">←</span><span class="title">FIND A DIETITIAN</span></div>
+
+      <div class="card">
+        <div class="davatar"><span>E</span></div>
+        <div class="dinfo">
+          <div class="dname">Dr. Elena Cruz</div>
+          <div class="dspec">Sports Nutrition</div>
+          <div class="drating">⭐ 4.9 · 212 reviews</div>
+          <div class="dbtn"><span>BOOK APPOINTMENT</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="davatar"><span>M</span></div>
+        <div class="dinfo">
+          <div class="dname">Maya Chen, RD</div>
+          <div class="dspec">Weight Management</div>
+          <div class="drating">⭐ 4.8 · 176 reviews</div>
+          <div class="dbtn"><span>BOOK APPOINTMENT</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="davatar"><span>O</span></div>
+        <div class="dinfo">
+          <div class="dname">Omar Farouk</div>
+          <div class="dspec">Diabetic Nutrition</div>
+          <div class="drating">⭐ 4.9 · 94 reviews</div>
+          <div class="dbtn"><span>BOOK APPOINTMENT</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
