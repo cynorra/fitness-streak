@@ -262,7 +262,7 @@ export default function Profile() {
         <Text style={styles.deleteText}>{t('profile.delete_account')}</Text>
       </TouchableOpacity>
 
-      <Text style={styles.version}>VITATRIBE v1.0.0</Text>
+      <Text style={styles.version}>VITATRIBE v1.0.1</Text>
     </ScrollView>
   );
 }

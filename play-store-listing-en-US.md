@@ -59,7 +59,7 @@ Download VitaTribe today and turn your next workout into day one of a streak you
 
 ## Release name (internal, Play Console only — not user-facing)
 ```
-1.0.0 (1) - First Release
+1.0.1 (2) - First Release
 ```
 
 ## Release notes / What's New (500 char limit, user-facing)
