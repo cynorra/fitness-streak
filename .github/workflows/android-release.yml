@@ -2,12 +2,23 @@ name: Android Release
 
 on:
   push:
+    branches:
+      - main
+    paths-ignore:
+      - 'docs/**'
+      - 'store-assets/**'
+      - 'web/**'
+      - '**.md'
     tags:
       - 'v*'
   workflow_dispatch:
 
 permissions:
   contents: write
+
+concurrency:
+  group: android-release-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -60,12 +71,14 @@ jobs:
       - name: Collect artifacts
         run: |
           mkdir -p out
-          cp android/app/build/outputs/bundle/release/app-release.aab out/vitatribe-${{ github.ref_name }}.aab
-          cp android/app/build/outputs/apk/release/app-release.apk out/vitatribe-${{ github.ref_name }}.apk
+          if [[ "${{ github.ref_type }}" == "tag" ]]; then NAME="${{ github.ref_name }}"; else NAME="main-${GITHUB_SHA::7}"; fi
+          cp android/app/build/outputs/bundle/release/app-release.aab out/vitatribe-$NAME.aab
+          cp android/app/build/outputs/apk/release/app-release.apk out/vitatribe-$NAME.apk
 
       - uses: actions/upload-artifact@v4
         with:
-          name: vitatribe-release
+          name: vitatribe-release-${{ github.sha }}
+          retention-days: 14
           path: out/*
 
       - name: Create GitHub Release
