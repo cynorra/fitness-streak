@@ -2,7 +2,7 @@
   "expo": {
     "name": "VitaTribe",
     "slug": "vitatribe",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "Share workout & diet streaks with friends and dietitians, track habits & stay motivated!",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -27,7 +27,7 @@
         "backgroundColor": "#0a0a0a"
       },
       "package": "com.vitatribe.fitness.spor.diyet.diyetisyen",
-      "versionCode": 2,
+      "versionCode": 3,
       "permissions": [
         "INTERNET",
         "ACCESS_COARSE_LOCATION",
