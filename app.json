@@ -27,7 +27,7 @@
         "backgroundColor": "#0a0a0a"
       },
       "package": "com.vitatribe.fitness.spor.diyet.diyetisyen",
-      "versionCode": 3,
+      "versionCode": 4,
       "permissions": [
         "INTERNET",
         "ACCESS_COARSE_LOCATION",
