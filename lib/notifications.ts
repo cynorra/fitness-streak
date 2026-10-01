@@ -108,17 +108,39 @@ export async function getLocalizedNotificationStrings(langOverride?: string) {
       streakBody: "Don't forget to complete your workout and log your activity today. Keep your streak alive! 💪",
       waterTitle: '💧 VitaTribe Water Time!',
       waterTimes: [
-        { hour: 10, minute: 0, body: 'Start your morning with a fresh glass of water to boost your energy! 💧' },
-        { hour: 14, minute: 0, body: 'Drink 1 more glass of water to keep your hydration optimal! 💧' },
-        { hour: 18, minute: 0, body: 'Have you reached your water goal before your evening workout? 💧' },
+        { hour: 10, minute: 30, body: 'Start your morning with a fresh glass of water to boost your energy! 💧' },
+        { hour: 15, minute: 30, body: 'Drink 1 more glass of water to keep your hydration optimal! 💧' },
+        { hour: 18, minute: 30, body: 'Have you reached your water goal before your evening workout? 💧' },
         { hour: 21, minute: 0, body: 'Final water reminder of the day! Complete your daily goal. 💧' },
       ],
       motivationTitle: '⚡ VitaTribe Daily Motivation',
+      // Each slot rotates through its variants by weekday so the text never feels repetitive.
       motivations: [
-        { hour: 8, minute: 30, body: 'Good morning! Every new day is a fresh opportunity to achieve your fitness goals! 🌅💪' },
-        { hour: 12, minute: 30, body: 'Discipline is choosing between what you want now and what you want most! 🚀' },
-        { hour: 18, minute: 30, body: 'Workday is over! Time to release stress and crush your workout session! 🏋️‍♂️🔥' },
+        { hour: 8, minute: 30, bodies: [
+          'Good morning! Every new day is a fresh opportunity to achieve your fitness goals! 🌅💪',
+          'Rise and shine! Small steps today build the body you want tomorrow. ☀️',
+          'New day, clean slate. What is the one healthy thing you will do first? 🌱',
+          'Your future self is already thanking you for moving today. Let’s go! 🚀',
+        ] },
+        { hour: 12, minute: 30, bodies: [
+          'Discipline is choosing between what you want now and what you want most! 🚀',
+          'Halfway through the day — a quick walk or stretch resets your energy. 🚶‍♂️',
+          'Fuel up smart at lunch: protein, veggies, water. Your body will thank you! 🥗',
+          'Motivation gets you started, habit keeps you going. Keep the streak alive! 🔥',
+        ] },
+        { hour: 17, minute: 0, bodies: [
+          'Workday is over! Time to release stress and crush your workout session! 🏋️‍♂️🔥',
+          'Even 15 minutes counts. Put on your shoes and start — the rest follows! 👟',
+          'Your tribe is training right now. Join them and log today’s session! 💪',
+          'Tired? That is exactly when a workout gives you the most back. ⚡',
+        ] },
       ],
+      mealTitle: '🍽️ VitaTribe Nutrition',
+      mealReminder: { hour: 14, minute: 0, bodies: [
+        'Had lunch? Log your meal in 10 seconds and stay on track! 🥗',
+        'A quick meal log keeps your nutrition goals honest. Add today’s lunch! 📝',
+        'What’s on your plate today? Log it and see how your macros are doing. 🍎',
+      ] },
       testTitle: '🚀 VitaTribe Test Notification',
       testBody: 'Success! VitaTribe background notifications are working perfectly on your device! 🔥',
       comebackTitle: '👋 VitaTribe misses you!',
@@ -140,17 +162,39 @@ export async function getLocalizedNotificationStrings(langOverride?: string) {
     streakBody: 'Bugünkü antrenmanını ve aktiviteni tamamlamayı unutma. Serini sürdür! 💪',
     waterTitle: '💧 VitaTribe Su Vakti!',
     waterTimes: [
-      { hour: 10, minute: 0, body: 'Güne taze bir bardak su ile başlayıp enerjini yükselt! 💧' },
-      { hour: 14, minute: 0, body: 'Hidrasyon seviyeni korumak için 1 bardak daha su iç. 💧' },
-      { hour: 18, minute: 0, body: 'Antrenman öncesi su hedefine ulaştın mı? Kaydet! 💧' },
+      { hour: 10, minute: 30, body: 'Güne taze bir bardak su ile başlayıp enerjini yükselt! 💧' },
+      { hour: 15, minute: 30, body: 'Hidrasyon seviyeni korumak için 1 bardak daha su iç. 💧' },
+      { hour: 18, minute: 30, body: 'Antrenman öncesi su hedefine ulaştın mı? Kaydet! 💧' },
       { hour: 21, minute: 0, body: 'Günün son su hatırlatması! Günlük su hedefini tamamla. 💧' },
     ],
     motivationTitle: '⚡ VitaTribe Motivasyon',
+    // Her zaman dilimi, haftanın gününe göre farklı metin gösterir; tekrar hissi olmaz.
     motivations: [
-      { hour: 8, minute: 30, body: 'Günaydın! Yeni bir gün, hedeflerine bir adım daha yaklaşmak için harika bir fırsat! 🌅💪' },
-      { hour: 12, minute: 30, body: 'Disiplin, ne istediğinle şu an ne istediğin arasındaki seçimdir. Başarmak senin elinde! 🚀' },
-      { hour: 18, minute: 30, body: 'Mesai bitti, deşarj vakti! Bugünkü antrenmanını tamamlayıp günün stresini at! 🏋️‍♂️🔥' },
+      { hour: 8, minute: 30, bodies: [
+        'Günaydın! Yeni bir gün, hedeflerine bir adım daha yaklaşmak için harika bir fırsat! 🌅💪',
+        'Güne enerjiyle başla! Bugün atacağın küçük adımlar yarınki vücudunu şekillendirir. ☀️',
+        'Yeni gün, temiz sayfa. Bugün yapacağın ilk sağlıklı şey ne olacak? 🌱',
+        'Gelecekteki sen, bugün hareket ettiğin için şimdiden teşekkür ediyor. Hadi başlayalım! 🚀',
+      ] },
+      { hour: 12, minute: 30, bodies: [
+        'Disiplin, ne istediğinle şu an ne istediğin arasındaki seçimdir. Başarmak senin elinde! 🚀',
+        'Günün yarısı geçti — kısa bir yürüyüş ya da esneme enerjini tazeler. 🚶‍♂️',
+        'Öğle yemeğinde akıllı yakıt: protein, sebze, su. Vücudun teşekkür edecek! 🥗',
+        'Motivasyon başlatır, alışkanlık sürdürür. Serini canlı tut! 🔥',
+      ] },
+      { hour: 17, minute: 0, bodies: [
+        'Mesai bitti, deşarj vakti! Bugünkü antrenmanını tamamlayıp günün stresini at! 🏋️‍♂️🔥',
+        '15 dakika bile sayılır. Ayakkabılarını giy ve başla, gerisi gelir! 👟',
+        'Kabilen şu an antrenman yapıyor. Sen de katıl ve bugünü kaydet! 💪',
+        'Yorgun musun? Antrenman en çok tam da böyle günlerde geri verir. ⚡',
+      ] },
     ],
+    mealTitle: '🍽️ VitaTribe Beslenme',
+    mealReminder: { hour: 14, minute: 0, bodies: [
+      'Öğle yemeğini yedin mi? 10 saniyede kaydet, hedefinde kal! 🥗',
+      'Kısa bir öğün kaydı beslenme hedeflerini dürüst tutar. Bugünkü öğlenini ekle! 📝',
+      'Bugün tabağında ne var? Kaydet ve makrolarının durumunu gör. 🍎',
+    ] },
     testTitle: '🚀 VitaTribe Test Bildirimi',
     testBody: 'Tebrikler! VitaTribe bildirimleri cihazınızda uygulama kapalıyken de sorunsuz çalışıyor! 🔥',
     comebackTitle: '👋 VitaTribe seni özledi!',
@@ -345,22 +389,35 @@ async function syncNow(customSettings?: NotificationSettings) {
       }
     }
 
-    // 3. Schedule Daily Motivation Pushes (Morning 08:30, Noon 12:30, Evening / Post-work 18:30)
+    // 3. Daily motivation (08:30, 12:30, 17:00) + lunch meal-log nudge (14:00).
+    //    Weekly triggers so each weekday gets a different message from the slot's pool.
     if (settings.motivationEnabled) {
       for (const mot of localized.motivations) {
+        for (let weekday = 1; weekday <= 7; weekday++) {
+          await Notifications.scheduleNotificationAsync({
+            content: {
+              title: localized.motivationTitle,
+              body: mot.bodies[(weekday - 1) % mot.bodies.length],
+              sound: true,
+              channelId: 'vitatribe_motivation',
+              data: { screen: '(tabs)' },
+            } as any,
+            trigger: { type: T.WEEKLY, weekday, hour: mot.hour, minute: mot.minute },
+          });
+        }
+      }
+
+      const meal = localized.mealReminder;
+      for (let weekday = 1; weekday <= 7; weekday++) {
         await Notifications.scheduleNotificationAsync({
           content: {
-            title: localized.motivationTitle,
-            body: mot.body,
+            title: localized.mealTitle,
+            body: meal.bodies[(weekday - 1) % meal.bodies.length],
             sound: true,
             channelId: 'vitatribe_motivation',
-            data: { screen: '(tabs)' },
+            data: { screen: 'nutrition/log' },
           } as any,
-          trigger: {
-            type: Notifications.SchedulableTriggerInputTypes.DAILY,
-            hour: mot.hour,
-            minute: mot.minute,
-          },
+          trigger: { type: T.WEEKLY, weekday, hour: meal.hour, minute: meal.minute },
         });
       }
     }
