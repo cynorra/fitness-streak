@@ -167,6 +167,9 @@ export default function FindDietitian() {
                           : t('dietitianCare.no_reviews')}
                       </Text>
                     </View>
+                    {!!score && score.referral_count > 0 && (
+                      <Text style={styles.referralBadge}>🤝 {score.referral_count} {t('referral.invited')}</Text>
+                    )}
                   </View>
                   {score && (
                     <View style={[styles.trustPill, { borderColor: trustColor(score.trust_score) }]}>
@@ -269,6 +272,7 @@ const styles = StyleSheet.create({
   badgeOk: { backgroundColor: '#10b98122' },
   badgeNo: { backgroundColor: '#ef444422' },
   badgeText: { color: '#fff', fontSize: 12, fontWeight: '800' },
+  referralBadge: { color: '#a78bfa', fontSize: 11, fontWeight: '700', marginTop: 4 },
   ratingRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 4 },
   ratingText: { color: '#a1a1aa', fontSize: 11, fontWeight: '600' },
   trustPill: { borderWidth: 1, borderRadius: 12, paddingVertical: 6, paddingHorizontal: 10, alignItems: 'center', minWidth: 58 },

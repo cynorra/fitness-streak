@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useTranslation, supportedLanguages } from '../../lib/i18n/i18n';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import InviteCard from '../../components/InviteCard';
 import { friendlyError } from '../../lib/useOnline';
 
 export default function Profile() {
@@ -295,6 +296,8 @@ export default function Profile() {
           </TouchableOpacity>
         </>
       )}
+
+      <InviteCard isDietitian={profile?.role === 'dietitian'} />
 
       {/* Language Selector Section */}
       <View style={styles.languageContainer}>

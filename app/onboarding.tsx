@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput } from 'react-native';
+import { redeemReferral } from '../lib/referral';
 import Animated, { FadeInDown, FadeInUp, SlideInRight } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '../lib/auth';
@@ -18,6 +19,7 @@ export default function Onboarding() {
   const [step, setStep] = useState(0);
   const [selectedRole, setSelectedRole] = useState<'user' | 'dietitian'>('user');
   const [loading, setLoading] = useState(false);
+  const [inviteCode, setInviteCode] = useState('');
   const { session, refreshProfile } = useAuth();
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -60,6 +62,11 @@ export default function Onboarding() {
           ...patch,
         });
         if (insertError) throw insertError;
+      }
+
+      // Optional invite code: never blocks onboarding, a bad code is simply ignored.
+      if (inviteCode.trim()) {
+        redeemReferral(inviteCode).catch(() => {});
       }
 
       await refreshProfile();
@@ -116,6 +123,17 @@ export default function Onboarding() {
             </TouchableOpacity>
           </View>
 
+          <TextInput
+            style={styles.inviteInput}
+            value={inviteCode}
+            onChangeText={(v) => setInviteCode(v.toUpperCase())}
+            placeholder={t('referral.enter_ph')}
+            placeholderTextColor="#555"
+            autoCapitalize="characters"
+            autoCorrect={false}
+            maxLength={12}
+          />
+
           <TouchableOpacity style={[styles.button, { bottom: insets.bottom + 48 }, loading && styles.buttonDisabled]} onPress={handleFinish} disabled={loading}>
             <Text style={styles.buttonText}>{loading ? t('onboarding.waiting') : t('onboarding.start')}</Text>
           </TouchableOpacity>
@@ -126,6 +144,19 @@ export default function Onboarding() {
 }
 
 const styles = StyleSheet.create({
+  inviteInput: {
+    marginTop: 20,
+    width: '100%',
+    backgroundColor: '#111',
+    borderWidth: 1,
+    borderColor: '#222',
+    borderRadius: 12,
+    padding: 14,
+    color: '#fff',
+    textAlign: 'center',
+    letterSpacing: 2,
+    fontWeight: '800',
+  },
   container: {
     flex: 1,
     backgroundColor: '#0a0a0a',

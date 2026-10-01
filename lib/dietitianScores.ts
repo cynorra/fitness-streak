@@ -6,6 +6,7 @@ export type DietitianScore = {
   avg_rating: number;
   client_count: number;
   trust_score: number;
+  referral_count: number;
 };
 
 /** Scores for every dietitian, keyed by id. Empty map if the migration has not been run / offline. */
@@ -20,6 +21,7 @@ export async function fetchDietitianScores(): Promise<Map<string, DietitianScore
       avg_rating: Number(row.avg_rating) || 0,
       client_count: Number(row.client_count) || 0,
       trust_score: Number(row.trust_score) || 0,
+      referral_count: Number(row.referral_count) || 0,
     });
   }
   return map;

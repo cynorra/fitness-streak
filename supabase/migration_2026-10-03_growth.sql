@@ -264,8 +264,9 @@ revoke all on function public.redeem_referral(text) from public, anon;
 grant execute on function public.redeem_referral(text) to authenticated;
 
 -- My code + how many people joined (active = finished onboarding).
-create or replace function public.my_referral_stats()
-returns table (code text, invited int, active int)
+drop function if exists public.my_referral_stats();
+create function public.my_referral_stats()
+returns table (code text, invited int, active int, referred boolean)
 language sql
 stable
 security definer
@@ -275,8 +276,9 @@ as $$
     (select referral_code from public.profiles where id = auth.uid()),
     (select count(*)::int from public.referrals where referrer_id = auth.uid()),
     (select count(*)::int from public.referrals r join public.profiles p on p.id = r.referred_id
-       where r.referrer_id = auth.uid() and p.onboarding_completed);
-$$;
+       where r.referrer_id = auth.uid() and p.onboarding_completed),
+    exists (select 1 from public.referrals where referred_id = auth.uid());
+$;
 
 revoke all on function public.my_referral_stats() from public, anon;
 grant execute on function public.my_referral_stats() to authenticated;
