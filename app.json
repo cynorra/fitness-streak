@@ -69,7 +69,8 @@
           "iosAppId": "ca-app-pub-4674211063760769~2310207755"
         }
       ],
-      "expo-sharing"
+      "expo-sharing",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true

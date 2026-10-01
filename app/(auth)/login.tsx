@@ -13,11 +13,14 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import * as Linking from 'expo-linking';
+import * as WebBrowser from 'expo-web-browser';
 import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '../../lib/supabase';
 import GlassCard from '../../components/GlassCard';
 import { useTranslation, supportedLanguages } from '../../lib/i18n/i18n';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+WebBrowser.maybeCompleteAuthSession();
 
 export default function Login() {
   const { t, locale, changeLanguage } = useTranslation();
@@ -34,15 +37,50 @@ export default function Login() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     try {
-      const redirectUrl = Linking.createURL('/(tabs)');
+      const redirectUrl = Linking.createURL('');
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: redirectUrl,
+          skipBrowserRedirect: true,
         },
       });
 
       if (error) throw error;
+      if (!data?.url) throw new Error('Google giriş adresi alınamadı.');
+
+      const result = await WebBrowser.openAuthSessionAsync(data.url, redirectUrl);
+      if (result.type !== 'success') {
+        // Kullanıcı pencereyi kapattı / iptal etti
+        return;
+      }
+
+      // Token'lar fragment (#) ya da query (?) içinde gelebilir
+      const returned = result.url;
+      const params = new URLSearchParams(
+        returned.includes('#') ? returned.split('#')[1] : (returned.split('?')[1] || '')
+      );
+
+      const oauthError = params.get('error_description') || params.get('error');
+      if (oauthError) throw new Error(oauthError);
+
+      const accessToken = params.get('access_token');
+      const refreshToken = params.get('refresh_token');
+      const code = params.get('code');
+
+      if (accessToken && refreshToken) {
+        const { error: sessionError } = await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken,
+        });
+        if (sessionError) throw sessionError;
+      } else if (code) {
+        const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+        if (exchangeError) throw exchangeError;
+      } else {
+        throw new Error('Google girişi tamamlanamadı.');
+      }
+
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } catch (err: any) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
