@@ -24,6 +24,8 @@ type MealLog = {
   fat_g: number | null;
 };
 
+const QUICK_REACTIONS = ['👍', '🔥', '🥗', '💧', '⚠️', '👏'];
+
 type Feedback = { id: string; log_id: string; message: string; created_at: string };
 
 export default function ClientMeals() {
@@ -104,8 +106,8 @@ export default function ClientMeals() {
     setRefreshing(false);
   };
 
-  const sendRecommendation = async (log: MealLog) => {
-    const message = (drafts[log.id] || '').trim();
+  const sendRecommendation = async (log: MealLog, quick?: string) => {
+    const message = (quick ?? drafts[log.id] ?? '').trim();
     if (!message || !profile || !clientId) return;
     setSendingId(log.id);
     const { error } = await supabase.from('meal_feedback').insert({
@@ -120,7 +122,7 @@ export default function ClientMeals() {
       return;
     }
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    setDrafts((d) => ({ ...d, [log.id]: '' }));
+    if (quick === undefined) setDrafts((d) => ({ ...d, [log.id]: '' }));
     load();
   };
 
@@ -200,6 +202,19 @@ export default function ClientMeals() {
                     </View>
                   ))}
 
+                  <View style={styles.reactRow}>
+                    {QUICK_REACTIONS.map((emoji) => (
+                      <TouchableOpacity
+                        key={emoji}
+                        style={styles.reactChip}
+                        disabled={sendingId === log.id}
+                        onPress={() => sendRecommendation(log, emoji)}
+                      >
+                        <Text style={styles.reactEmoji}>{emoji}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+
                   <View style={styles.composer}>
                     <TextInput
                       style={styles.composerInput}
@@ -268,6 +283,9 @@ const styles = StyleSheet.create({
   note: { backgroundColor: '#8b5cf61a', borderLeftWidth: 3, borderLeftColor: '#8b5cf6', borderRadius: 8, padding: 10, marginBottom: 8 },
   noteLabel: { color: '#a78bfa', fontSize: 10, fontWeight: '900', letterSpacing: 0.5, textTransform: 'uppercase' },
   noteText: { color: '#fff', fontSize: 13, marginTop: 2 },
+  reactRow: { flexDirection: 'row', gap: 8, marginBottom: 8 },
+  reactChip: { backgroundColor: '#1a1a1a', borderWidth: 1, borderColor: '#2a2a2a', borderRadius: 999, paddingVertical: 6, paddingHorizontal: 12 },
+  reactEmoji: { fontSize: 18 },
   composer: { flexDirection: 'row', gap: 8, alignItems: 'flex-end', marginTop: 4 },
   composerInput: { flex: 1, backgroundColor: '#0a0a0a', borderWidth: 1, borderColor: '#222', borderRadius: 12, padding: 10, color: '#fff', minHeight: 44, maxHeight: 100 },
   sendBtn: { backgroundColor: '#8b5cf6', borderRadius: 12, paddingHorizontal: 14, height: 44, justifyContent: 'center' },

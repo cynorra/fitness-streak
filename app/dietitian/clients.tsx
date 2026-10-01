@@ -22,6 +22,7 @@ import { calculateNutritionTargets, BMRParams } from '../../lib/nutritionCalc';
 import { useTranslation } from '../../lib/i18n/i18n';
 import { friendlyError } from '../../lib/useOnline';
 import StarRating from '../../components/StarRating';
+import { fetchClientCockpit, ClientCockpit, STATUS_COLORS } from '../../lib/clientCockpit';
 import { fetchDietitianScores, trustColor, DietitianScore } from '../../lib/dietitianScores';
 
 export default function DietitianClients() {
@@ -45,6 +46,7 @@ export default function DietitianClients() {
     goal: 'lose_weight',
   });
   const [calcResult, setCalcResult] = useState<any>(null);
+  const [cockpit, setCockpit] = useState<Map<string, ClientCockpit>>(new Map());
   // The dietitian's own trust score + latest reviews
   const [myScore, setMyScore] = useState<DietitianScore | null>(null);
   const [latestReviews, setLatestReviews] = useState<{ id: string; rating: number; comment: string | null }[]>([]);
@@ -72,7 +74,7 @@ export default function DietitianClients() {
 
   useEffect(() => {
     loadClients();
-  }, []);
+  }, [profile?.id]);
 
   const loadClients = async () => {
     if (!profile) return;
@@ -88,6 +90,10 @@ export default function DietitianClients() {
 
       if (error) throw error;
       setClients(data || []);
+
+      // Live dashboard data for approved clients (failure just hides the dashboard row).
+      const approvedIds = (data || []).filter((c: any) => c.status === 'approved').map((c: any) => c.client?.id).filter(Boolean);
+      fetchClientCockpit(profile.id, approvedIds).then(setCockpit).catch(() => {});
     } catch (err: any) {
       console.error('Error loading clients:', err);
     } finally {
@@ -154,10 +160,17 @@ export default function DietitianClients() {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
   };
 
-  const filteredClients = clients.filter((item) => {
-    const name = item.client?.display_name || item.client?.username || '';
-    return name.toLowerCase().includes(search.toLowerCase());
-  });
+  // Needs-attention first: pending requests, then red → amber → green.
+  const rank = (item: any) =>
+    item.status === 'pending' ? 0 : ({ red: 1, amber: 2, green: 3 } as const)[cockpit.get(item.client?.id)?.status ?? 'green'];
+  const filteredClients = clients
+    .filter((item) => {
+      const name = item.client?.display_name || item.client?.username || '';
+      return name.toLowerCase().includes(search.toLowerCase());
+    })
+    .sort((a, b) => rank(a) - rank(b));
+  const statusCounts = { green: 0, amber: 0, red: 0 };
+  cockpit.forEach((c) => { statusCounts[c.status] += 1; });
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
@@ -216,6 +229,14 @@ export default function DietitianClients() {
             <Text style={styles.statLbl}>{t('clients.pending')}</Text>
           </View>
         </GlassCard>
+
+        {cockpit.size > 0 && (
+          <View style={styles.statusStrip}>
+            <Text style={[styles.statusChip, { color: STATUS_COLORS.green }]}>● {statusCounts.green} {t('dietitianCare.ck_on_track')}</Text>
+            <Text style={[styles.statusChip, { color: STATUS_COLORS.amber }]}>● {statusCounts.amber} {t('dietitianCare.ck_watch')}</Text>
+            <Text style={[styles.statusChip, { color: STATUS_COLORS.red }]}>● {statusCounts.red} {t('dietitianCare.ck_attention')}</Text>
+          </View>
+        )}
 
         {myScore && (
           <GlassCard style={styles.scoreCard}>
@@ -278,6 +299,35 @@ export default function DietitianClients() {
                   <Text style={styles.complianceText}>{t(`clients.st_${item.status}`)}</Text>
                 </View>
               </View>
+
+              {item.status === 'approved' && cockpit.get(item.client?.id) && (() => {
+                const c = cockpit.get(item.client?.id)!;
+                const color = STATUS_COLORS[c.status];
+                return (
+                  <View style={[styles.cockpitRow, { borderLeftColor: color }]}>
+                    <View style={styles.cockpitCell}>
+                      <Text style={[styles.cockpitValue, { color }]}>
+                        {c.todayKcal}{c.targetKcal ? ` / ${c.targetKcal}` : ''}
+                      </Text>
+                      <Text style={styles.cockpitLabel}>{t('dietitianCare.ck_today_kcal')}</Text>
+                    </View>
+                    <View style={styles.cockpitCell}>
+                      <Text style={styles.cockpitValue}>{c.workouts7}/7</Text>
+                      <Text style={styles.cockpitLabel}>{t('dietitianCare.ck_workouts')}</Text>
+                    </View>
+                    <View style={styles.cockpitCell}>
+                      <Text style={styles.cockpitValue}>
+                        {c.daysSinceLastLog === null
+                          ? '—'
+                          : c.daysSinceLastLog === 0
+                            ? t('dietitianCare.today')
+                            : t('dietitianCare.ck_days_ago', { n: c.daysSinceLastLog })}
+                      </Text>
+                      <Text style={styles.cockpitLabel}>{t('dietitianCare.ck_last_log')}</Text>
+                    </View>
+                  </View>
+                );
+              })()}
 
               {item.status === 'pending' && (
                 <View style={[styles.actionsRow, { marginBottom: 10 }]}>
@@ -540,6 +590,12 @@ const styles = StyleSheet.create({
   modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
   modalTitle: { color: '#fff', fontSize: 16, fontWeight: '900' },
   inputLabel: { color: '#94a3b8', fontSize: 10, fontWeight: '900', marginTop: 8 },
+  statusStrip: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 14, paddingHorizontal: 4 },
+  statusChip: { fontSize: 12, fontWeight: '800' },
+  cockpitRow: { flexDirection: 'row', borderLeftWidth: 4, backgroundColor: '#ffffff08', borderRadius: 10, paddingVertical: 10, paddingHorizontal: 12, marginBottom: 10 },
+  cockpitCell: { flex: 1 },
+  cockpitValue: { color: '#fff', fontSize: 14, fontWeight: '900' },
+  cockpitLabel: { color: '#71717a', fontSize: 10, fontWeight: '700', marginTop: 2 },
   scoreCard: { padding: 16, marginBottom: 16 },
   scoreRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   scoreTitle: { color: '#94a3b8', fontSize: 11, fontWeight: '900', letterSpacing: 1, textTransform: 'uppercase', marginBottom: 4 },
