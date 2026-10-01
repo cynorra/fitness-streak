@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useTranslation, supportedLanguages } from '../../lib/i18n/i18n';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { friendlyError } from '../../lib/useOnline';
 
 export default function Profile() {
   const { profile, session, refreshProfile } = useAuth();
@@ -33,7 +34,7 @@ export default function Profile() {
         onPress: async () => {
           const { error } = await supabase.rpc('delete_my_account');
           if (error) {
-            Alert.alert(t('common.error'), error.message);
+            Alert.alert(t('common.error'), friendlyError(error.message, t));
             return;
           }
           await supabase.auth.signOut();

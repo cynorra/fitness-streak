@@ -20,6 +20,7 @@ import * as Haptics from 'expo-haptics';
 import { exportNutritionPlanToPDF } from '../../lib/pdfExport';
 import { useTranslation } from '../../lib/i18n/i18n';
 import { getMealTemplates } from '../../lib/nutritionCalc';
+import { friendlyError } from '../../lib/useOnline';
 
 export default function CreateNutritionPlan() {
   const { profile } = useAuth();
@@ -126,7 +127,7 @@ export default function CreateNutritionPlan() {
         { text: t('plan.ok'), onPress: () => router.back() },
       ]);
     } catch (err: any) {
-      Alert.alert(t('common.error'), err.message || t('plan.save_failed'));
+      Alert.alert(t('common.error'), friendlyError(err.message, t) || t('plan.save_failed'));
     } finally {
       setSaving(false);
     }

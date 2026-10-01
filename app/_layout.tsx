@@ -2,20 +2,21 @@ import 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import 'react-native-url-polyfill/auto';
 import { Stack, useRouter, useSegments } from 'expo-router';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { AuthProvider, useAuth } from '../lib/auth';
 import { I18nProvider } from '../lib/i18n/i18n';
-import { View } from 'react-native';
+import { View, AppState } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as SplashScreen from 'expo-splash-screen';
 import * as Notifications from 'expo-notifications';
 import { registerForPushNotificationsAsync, syncNotificationSchedules } from '../lib/notifications';
 import { initializeAds } from '../lib/admob';
+import OfflineBanner from '../components/OfflineBanner';
 
 SplashScreen.preventAutoHideAsync();
 
 function RootLayoutNav() {
-  const { session, profile, loading } = useAuth();
+  const { session, profile, loading, profileLoadFailed } = useAuth();
   const segments = useSegments();
   const router = useRouter();
 
@@ -26,7 +27,7 @@ function RootLayoutNav() {
 
     if (!session && !inAuthGroup && !isOnboarding) {
       router.replace('/(auth)/login');
-    } else if (session) {
+    } else if (session && !(profileLoadFailed && !profile)) {
       if (!profile?.onboarding_completed && !isOnboarding) {
         router.replace('/onboarding' as any);
       } else if (profile?.onboarding_completed && (inAuthGroup || isOnboarding)) {
@@ -34,13 +35,37 @@ function RootLayoutNav() {
       }
     }
     
-    if (session?.user && profile) {
-      registerForPushNotificationsAsync(session.user.id).catch((e) => console.log('[Push] register failed:', e));
-      Promise.resolve(syncNotificationSchedules()).catch((e) => console.log('[Push] sync failed:', e));
-    }
-    
     SplashScreen.hideAsync();
   }, [session, loading, segments, profile?.onboarding_completed]);
+
+  // Register push + rebuild reminders once per login/role change (not on every navigation).
+  const userId = session?.user?.id;
+  useEffect(() => {
+    if (!userId || !profile) return;
+    registerForPushNotificationsAsync(userId).catch((e) => console.log('[Push] register failed:', e));
+    syncNotificationSchedules().catch((e) => console.log('[Push] sync failed:', e));
+  }, [userId, !!profile, profile?.role]);
+
+  // Rebuild reminders whenever the app returns to the foreground (resets win-back timers, picks up day change).
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', (s) => {
+      if (s === 'active' && userId) syncNotificationSchedules().catch(() => {});
+    });
+    return () => sub.remove();
+  }, [userId]);
+
+  // Notification that cold-started the app.
+  const handledLaunch = useRef(false);
+  useEffect(() => {
+    if (loading || !session || handledLaunch.current) return;
+    handledLaunch.current = true;
+    Notifications.getLastNotificationResponseAsync()
+      .then((response) => {
+        const screen = response?.notification.request.content.data?.screen;
+        if (screen) setTimeout(() => router.push(`/${screen}` as any), 400);
+      })
+      .catch(() => {});
+  }, [loading, session]);
 
   useEffect(() => {
     initializeAds().catch((e) => console.log('[AdMob] init failed:', e));
@@ -189,6 +214,7 @@ export default function RootLayout() {
       <AuthProvider>
         <I18nProvider>
           <RootLayoutNav />
+          <OfflineBanner />
         </I18nProvider>
       </AuthProvider>
     </SafeAreaProvider>

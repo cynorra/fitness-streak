@@ -23,6 +23,7 @@ import {
   NotificationSettings,
 } from '../lib/notifications';
 import { useTranslation } from '../lib/i18n/i18n';
+import { useAuth } from '../lib/auth';
 
 const TIME_OPTIONS = [
   { label: '18:00', hour: 18, minute: 0 },
@@ -36,6 +37,7 @@ export default function NotificationSettingsScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { t, locale } = useTranslation();
+  const { profile } = useAuth();
   const [loading, setLoading] = useState<boolean>(true);
   const [testing, setTesting] = useState<boolean>(false);
   const [settings, setSettings] = useState<NotificationSettings>({
@@ -44,6 +46,7 @@ export default function NotificationSettingsScreen() {
     streakMinute: 0,
     waterEnabled: true,
     motivationEnabled: true,
+    dietitianEnabled: true,
   });
 
   useEffect(() => {
@@ -241,6 +244,30 @@ export default function NotificationSettingsScreen() {
             </View>
           </GlassCard>
         </Animated.View>
+
+        {/* 4. Dietitian reminders (dietitian accounts only) */}
+        {profile?.role === 'dietitian' && (
+          <Animated.View entering={FadeInDown.delay(450).duration(400)}>
+            <View style={styles.sectionHeader}>
+              <Ionicons name="medkit" size={18} color="#8b5cf6" />
+              <Text style={styles.sectionTitle}>{t('notifSettings.diet_sec')}</Text>
+            </View>
+            <GlassCard style={styles.settingCard}>
+              <View style={styles.row}>
+                <View style={styles.rowTextCol}>
+                  <Text style={styles.settingLabel}>{t('notifSettings.diet_label')}</Text>
+                  <Text style={styles.settingSub}>{t('notifSettings.diet_sub')}</Text>
+                </View>
+                <Switch
+                  value={settings.dietitianEnabled}
+                  onValueChange={(val) => updateSetting({ dietitianEnabled: val })}
+                  trackColor={{ false: '#333', true: '#8b5cf6' }}
+                  thumbColor="#fff"
+                />
+              </View>
+            </GlassCard>
+          </Animated.View>
+        )}
 
         {/* How it works info card */}
         <Animated.View entering={FadeInUp.delay(500).duration(400)}>

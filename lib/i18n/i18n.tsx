@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { translations as baseTranslations } from './translations';
 import { screenStrings } from './screens';
 
-import { syncNotificationSchedules } from '../notifications';
+import { syncNotificationSchedules, syncPushLanguage } from '../notifications';
 import { setModerationLocale } from '../profanityFilter';
 
 const LANGUAGE_KEY = '@app_language';
@@ -75,6 +75,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
       try {
         await AsyncStorage.setItem(LANGUAGE_KEY, code);
         syncNotificationSchedules();
+        syncPushLanguage();
       } catch (e) {
         console.warn('Error saving language', e);
       }

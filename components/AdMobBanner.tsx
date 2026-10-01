@@ -18,22 +18,9 @@ export default function AdMobBanner({ style, unitId, size = BannerAdSize.ANCHORE
 
   const adUnitId = unitId || ADMOB_CONFIG.BANNER_ID;
 
+  // No placeholder "ad" when a real ad is unavailable (offline / no fill): fake ad-like boxes violate AdMob policy.
   if (Platform.OS === 'web' || adFailed) {
-    return (
-      <View style={[styles.container, style]}>
-        <LinearGradient
-          colors={['rgba(255, 255, 255, 0.05)', 'rgba(255, 255, 255, 0.02)']}
-          style={styles.gradient}
-        >
-          <View style={styles.adHeader}>
-            <View style={styles.adBadge}>
-              <Text style={styles.adBadgeText}>{t('ad.sponsored')}</Text>
-            </View>
-          </View>
-          <Text style={styles.adText}>{t('ad.text')}</Text>
-        </LinearGradient>
-      </View>
-    );
+    return null;
   }
 
   return (

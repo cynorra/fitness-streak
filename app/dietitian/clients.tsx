@@ -20,6 +20,7 @@ import { supabase } from '../../lib/supabase';
 import GlassCard from '../../components/GlassCard';
 import { calculateNutritionTargets, BMRParams } from '../../lib/nutritionCalc';
 import { useTranslation } from '../../lib/i18n/i18n';
+import { friendlyError } from '../../lib/useOnline';
 
 export default function DietitianClients() {
   const { profile } = useAuth();
@@ -91,7 +92,7 @@ export default function DietitianClients() {
       }
       router.push(`/chat/${conversationId}` as any);
     } catch (err: any) {
-      Alert.alert(t('common.error'), err?.message || t('clients.chat_failed'));
+      Alert.alert(t('common.error'), friendlyError(err?.message, t) || t('clients.chat_failed'));
     }
   };
 
@@ -102,7 +103,7 @@ export default function DietitianClients() {
       .update({ status: approve ? 'approved' : 'rejected' })
       .eq('id', requestId);
     if (error) {
-      Alert.alert(t('common.error'), error.message);
+      Alert.alert(t('common.error'), friendlyError(error.message, t));
       return;
     }
     loadClients();

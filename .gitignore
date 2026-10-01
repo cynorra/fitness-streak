@@ -53,3 +53,7 @@ next-env.d.ts
 
 # graphify (local knowledge-graph tool output)
 graphify-out/
+# OAuth client secrets
+client_secret_*.json
+hs_err_pid*.log
+replay_pid*.log

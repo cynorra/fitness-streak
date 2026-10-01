@@ -21,6 +21,7 @@ import GlassCard from '../components/GlassCard';
 import { supabase } from '../lib/supabase';
 import { checkTextModeration } from '../lib/profanityFilter';
 import { useTranslation } from '../lib/i18n/i18n';
+import { friendlyError } from '../lib/useOnline';
 
 interface GymItem {
   id: string;
@@ -158,7 +159,7 @@ export default function GymsScreen() {
       setNewDiscount('');
       fetchGyms();
     } catch (err: any) {
-      Alert.alert(t('common.error'), err.message || t('gyms.add_failed'));
+      Alert.alert(t('common.error'), friendlyError(err.message, t) || t('gyms.add_failed'));
     } finally {
       setSubmitting(false);
     }

@@ -13,6 +13,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { checkContentModeration } from '../../lib/profanityFilter';
 import { blockUser, reportUser } from '../../lib/blocking';
 import { useTranslation } from '../../lib/i18n/i18n';
+import { friendlyError } from '../../lib/useOnline';
 
 type Message = {
   id: string;
@@ -106,7 +107,7 @@ export default function ChatScreen() {
 
     if (error) {
       console.error(error);
-      Alert.alert(t('chat.send_failed'), error.message);
+      Alert.alert(t('chat.send_failed'), friendlyError(error.message, t));
     } else {
       // Update conversation timestamp
       await supabase.from('conversations').update({ updated_at: new Date() }).eq('id', id);

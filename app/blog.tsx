@@ -25,6 +25,7 @@ import { useAuth } from '../lib/auth';
 import { format, parseISO } from 'date-fns';
 import { getDateLocale } from '../lib/i18n/dateUtils';
 import { useTranslation } from '../lib/i18n/i18n';
+import { friendlyError } from '../lib/useOnline';
 
 const BLOG_CATEGORIES = ['HEPSİ', 'SPOR', 'BESLENME', 'SAĞLIK', 'MOTİVASYON'];
 
@@ -137,7 +138,7 @@ export default function BlogScreen() {
       setNewContent('');
       fetchBlogPosts();
     } catch (err: any) {
-      Alert.alert(t('common.error'), err.message || t('blog.publish_failed'));
+      Alert.alert(t('common.error'), friendlyError(err.message, t) || t('blog.publish_failed'));
     } finally {
       setPublishing(false);
     }

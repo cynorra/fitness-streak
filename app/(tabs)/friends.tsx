@@ -8,6 +8,7 @@ import { useRouter } from 'expo-router';
 import { useAuth } from '../../lib/auth';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from '../../lib/i18n/i18n';
+import { friendlyError } from '../../lib/useOnline';
 
 type FriendRow = {
   id: string;
@@ -96,7 +97,7 @@ export default function Friends() {
       status: 'pending',
     });
     if (error) {
-      Alert.alert(t('friends.error'), error.message);
+      Alert.alert(t('friends.error'), friendlyError(error.message, t));
       return;
     }
     setQuery('');

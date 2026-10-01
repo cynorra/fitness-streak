@@ -15,6 +15,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { checkContentModeration } from '../../lib/profanityFilter';
 import { reportUser } from '../../lib/blocking';
 import AdMobBanner from '../../components/AdMobBanner';
+import { isNetworkError } from '../../lib/useOnline';
 
 type PostItem = {
   id: string;
@@ -42,6 +43,7 @@ export default function Feed() {
   const [refreshing, setRefreshing] = useState(false);
   const [newPostContent, setNewPostContent] = useState('');
   const [isPosting, setIsPosting] = useState(false);
+  const [loadError, setLoadError] = useState(false);
 
   const dateLocale = getDateLocale(locale);
 
@@ -56,7 +58,14 @@ export default function Feed() {
       .order('created_at', { ascending: false })
       .limit(50);
 
-    if (error || !posts || posts.length === 0) {
+    if (error) {
+      // Keep whatever is already on screen instead of wiping the feed on a network failure.
+      setLoadError(true);
+      setLoading(false);
+      return;
+    }
+    setLoadError(false);
+    if (!posts || posts.length === 0) {
       setItems([]);
       setLoading(false);
       return;
@@ -133,7 +142,10 @@ export default function Feed() {
     setIsPosting(false);
     
     if (error) {
-      Alert.alert(t('common.error'), `${t('feed2.publish_failed')} (${error.message})`);
+      Alert.alert(
+        t('common.error'),
+        isNetworkError(error.message) ? t('net.offline_msg') : `${t('feed2.publish_failed')} (${error.message})`
+      );
     } else {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       setNewPostContent('');
@@ -189,10 +201,17 @@ export default function Feed() {
         : i
     ));
 
-    if (isCurrentlyLiked) {
-      await supabase.from('post_likes').delete().match({ post_id: item.id, user_id: profile.id });
-    } else {
-      await supabase.from('post_likes').insert({ post_id: item.id, user_id: profile.id });
+    const { error } = isCurrentlyLiked
+      ? await supabase.from('post_likes').delete().match({ post_id: item.id, user_id: profile.id })
+      : await supabase.from('post_likes').insert({ post_id: item.id, user_id: profile.id });
+
+    if (error) {
+      // Roll back the optimistic update.
+      setItems(curr => curr.map(i =>
+        i.id === item.id
+          ? { ...i, user_liked: isCurrentlyLiked, like_count: isCurrentlyLiked ? i.like_count + 1 : i.like_count - 1 }
+          : i
+      ));
     }
   };
 
@@ -265,9 +284,9 @@ export default function Feed() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#10b981" />}
         ListEmptyComponent={
           <View style={styles.empty}>
-            <Text style={styles.emptyEmoji}>💬</Text>
+            <Text style={styles.emptyEmoji}>{loadError ? '📡' : '💬'}</Text>
             <Text style={styles.emptyText}>
-              {t('feed.no_posts')}
+              {loadError ? t('net.load_failed') : t('feed.no_posts')}
             </Text>
           </View>
         }

@@ -18,6 +18,9 @@ export const notifSettings = {
     mot_sec: 'GÜNLÜK MOTİVASYON',
     mot_label: 'Günlük Motivasyon Mesajları',
     mot_sub: 'Sabah (08:30), öğle (12:30) ve mesai sonrası (18:30) modunu yükseltecek ilham verici spor sözleri.',
+    diet_sec: 'DİYETİSYEN HATIRLATICILARI',
+    diet_label: 'Danışan Takip Hatırlatıcıları',
+    diet_sub: 'Her sabah 09:00, hafta içi 16:30 ve pazar 19:00 danışan, randevu ve plan hatırlatmaları.',
     info: 'Zamanlanmış bildirimler mobil cihazınızın işletim sistemi (iOS/Android) arkaplan zamanlayıcısı tarafından yönetilir. Uygulamayı tamamen kapatsanız bile bildirimler vaktinde kilit ekranınıza ulaşır.',
   },
   en: {
@@ -39,6 +42,9 @@ export const notifSettings = {
     mot_sec: 'DAILY MOTIVATION',
     mot_label: 'Daily Motivation Messages',
     mot_sub: 'Inspiring fitness quotes in the morning (08:30), noon (12:30) and after work (18:30) to lift your mood.',
+    diet_sec: 'DIETITIAN REMINDERS',
+    diet_label: 'Client Follow-up Reminders',
+    diet_sub: 'Client, appointment and meal-plan reminders every morning (09:00), weekdays (16:30) and Sunday (19:00).',
     info: 'Scheduled notifications are managed by your device\'s operating system (iOS/Android) background scheduler. Even if you completely close the app, notifications reach your lock screen on time.',
   },
 };

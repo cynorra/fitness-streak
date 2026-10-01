@@ -31,8 +31,9 @@ import { clients } from './clients';
 import { packages } from './packages';
 import { plan } from './plan';
 import { streakNumber } from './streakNumber';
+import { net } from './net';
 
-const modules: Record<string, { tr: Record<string, string>; en: Record<string, string> }> = { streakNumber, plan, packages, clients, gyms, blog, fasting, water, ad, tabs, tracker, store, notifSettings, nutritionLog, workoutPlayer, chat, messages, sessionNotes, appointments, analytics, measurements, leaderboard, challenges, history, log, workoutTypes, profile2, home, feed2, workouts, friends, login, onboarding };
+const modules: Record<string, { tr: Record<string, string>; en: Record<string, string> }> = { net, streakNumber, plan, packages, clients, gyms, blog, fasting, water, ad, tabs, tracker, store, notifSettings, nutritionLog, workoutPlayer, chat, messages, sessionNotes, appointments, analytics, measurements, leaderboard, challenges, history, log, workoutTypes, profile2, home, feed2, workouts, friends, login, onboarding };
 
 type Locale = 'tr' | 'en';
 const build = (l: Locale) =>

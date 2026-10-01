@@ -19,6 +19,7 @@ import { supabase } from '../../lib/supabase';
 import GlassCard from '../../components/GlassCard';
 import { useTranslation, supportedLanguages } from '../../lib/i18n/i18n';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { friendlyError } from '../../lib/useOnline';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -84,7 +85,7 @@ export default function Login() {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } catch (err: any) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      Alert.alert(t('common.error'), err.message || t('login.err_google_start'));
+      Alert.alert(t('common.error'), friendlyError(err.message, t) || t('login.err_google_start'));
     } finally {
       setLoading(false);
     }
@@ -122,7 +123,7 @@ export default function Login() {
       }
     } catch (err: any) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      Alert.alert(t('common.error'), err.message || t('login.err_sign_in'));
+      Alert.alert(t('common.error'), friendlyError(err.message, t) || t('login.err_sign_in'));
     } finally {
       setLoading(false);
     }
@@ -136,7 +137,7 @@ export default function Login() {
 
     const { error } = await supabase.auth.resetPasswordForEmail(email);
     if (error) {
-      Alert.alert(t('common.error'), error.message);
+      Alert.alert(t('common.error'), friendlyError(error.message, t));
     } else {
       Alert.alert(t('login.reset_title'), t('login.reset_sent'));
     }

@@ -10,6 +10,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { loadInterstitialAd, showInterstitialAd } from '../lib/admob';
 import { useEffect } from 'react';
 import { useTranslation } from '../lib/i18n/i18n';
+import { markWorkoutLoggedToday } from '../lib/notifications';
+import { isNetworkError } from '../lib/useOnline';
 
 export default function LogWorkout() {
   const { profile, refreshProfile } = useAuth();
@@ -51,10 +53,11 @@ export default function LogWorkout() {
     setLoading(false);
 
     if (error) {
-      Alert.alert(t('common.error'), error.message);
+      Alert.alert(t('common.error'), isNetworkError(error.message) ? t('net.offline_msg') : error.message);
       return;
     }
 
+    markWorkoutLoggedToday().catch(() => {});
     await refreshProfile();
     setSelectedType(null);
     setDuration('');
