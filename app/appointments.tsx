@@ -5,13 +5,16 @@ import { supabase } from '../lib/supabase';
 import { useRouter } from 'expo-router';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { format, parseISO } from 'date-fns';
+import { getDateLocale } from '../lib/i18n/dateUtils';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import SessionNotes from '../components/SessionNotes';
+import { useTranslation } from '../lib/i18n/i18n';
 
 export default function Appointments() {
   const { profile } = useAuth();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { t, locale } = useTranslation();
   const [appointments, setAppointments] = useState<any[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   
@@ -61,7 +64,7 @@ export default function Appointments() {
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
           <Text style={styles.backText}>←</Text>
         </TouchableOpacity>
-        <Text style={styles.title}>Randevularım</Text>
+        <Text style={styles.title}>{t('appointments.title')}</Text>
         <View style={{ width: 44 }} />
       </View>
 
@@ -72,8 +75,8 @@ export default function Appointments() {
         >
           <Text style={styles.quickHubIcon}>🩺</Text>
           <View>
-            <Text style={styles.quickHubTitle}>DANIŞAN KONTROL</Text>
-            <Text style={styles.quickHubSub}>BMR & Uyum Takibi</Text>
+            <Text style={styles.quickHubTitle}>{t('appointments.client_control')}</Text>
+            <Text style={styles.quickHubSub}>{t('appointments.client_control_sub')}</Text>
           </View>
         </TouchableOpacity>
 
@@ -83,8 +86,8 @@ export default function Appointments() {
         >
           <Text style={styles.quickHubIcon}>💎</Text>
           <View>
-            <Text style={styles.quickHubTitle}>DİYET PAKETLERİ</Text>
-            <Text style={styles.quickHubSub}>Hizmetler & Ücretler</Text>
+            <Text style={styles.quickHubTitle}>{t('appointments.packages')}</Text>
+            <Text style={styles.quickHubSub}>{t('appointments.packages_sub')}</Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -96,12 +99,12 @@ export default function Appointments() {
         {appointments.length === 0 ? (
           <View style={styles.empty}>
             <Text style={styles.emptyIcon}>📅</Text>
-            <Text style={styles.emptyText}>Henüz aktif bir randevun bulunmuyor.</Text>
+            <Text style={styles.emptyText}>{t('appointments.empty')}</Text>
             <TouchableOpacity 
               style={styles.connectBtn}
               onPress={() => router.push('/messages' as any)}
             >
-              <Text style={styles.connectBtnText}>💬 DİYETİSYENİNLE İLETİŞİME GEÇ</Text>
+              <Text style={styles.connectBtnText}>{t('appointments.contact')}</Text>
             </TouchableOpacity>
           </View>
         ) : (
@@ -117,11 +120,11 @@ export default function Appointments() {
               >
                 <View style={styles.cardHeader}>
                   <Text style={styles.dateText}>
-                    {format(parseISO(apt.appointment_time), 'dd MMM yyyy - HH:mm')}
+                    {format(parseISO(apt.appointment_time), t('appointments.date_fmt'), { locale: getDateLocale(locale) })}
                   </Text>
                   <View style={[styles.statusBadge, { backgroundColor: getStatusColor(apt.status) + '20' }]}>
                     <Text style={[styles.statusText, { color: getStatusColor(apt.status) }]}>
-                      {apt.status.toUpperCase()}
+                      {t(`appointments.status_${apt.status}`) === `appointments.status_${apt.status}` ? apt.status.toUpperCase() : t(`appointments.status_${apt.status}`)}
                     </Text>
                   </View>
                 </View>
@@ -133,7 +136,7 @@ export default function Appointments() {
                     </Text>
                   </View>
                   <View>
-                    <Text style={styles.personRole}>{isDietitian ? 'Danışan' : 'Diyetisyen'}</Text>
+                    <Text style={styles.personRole}>{isDietitian ? t('appointments.client') : t('appointments.dietitian')}</Text>
                     <Text style={styles.personName}>{otherPerson?.display_name || otherPerson?.username}</Text>
                   </View>
                 </View>
@@ -145,12 +148,12 @@ export default function Appointments() {
                       setSelectedApt({
                         appointmentId: apt.id,
                         clientId: apt.client_id,
-                        clientName: otherPerson?.display_name || otherPerson?.username || 'Danışan'
+                        clientName: otherPerson?.display_name || otherPerson?.username || t('appointments.client')
                       });
                       setNotesVisible(true);
                     }}
                   >
-                    <Text style={styles.noteBtnText}>Seans Notu Ekle / Gör</Text>
+                    <Text style={styles.noteBtnText}>{t('appointments.notes_btn')}</Text>
                   </TouchableOpacity>
                 )}
               </Animated.View>

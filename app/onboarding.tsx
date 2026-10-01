@@ -6,23 +6,12 @@ import { useAuth } from '../lib/auth';
 import { supabase } from '../lib/supabase';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
+import { useTranslation } from '../lib/i18n/i18n';
 
-const SLIDES = [
-  {
-    title: 'Hoş Geldin! 🌱',
-    description: 'VitaTribe ile her gün yeni bir başlangıç. Kendi serini oluştur ve motivasyonunu yüksek tut.',
-    icon: '🔥',
-  },
-  {
-    title: 'Arkadaşlarınla Büyü 🤝',
-    description: 'Arkadaşlarını ekle, onların antrenmanlarını gör ve birbirinize alkış (Kudos) göndererek destek olun.',
-    icon: '🏆',
-  },
-  {
-    title: 'Beslenme & Hedefler 🍎',
-    description: 'Gelişmiş beslenme takibi ve diyetisyen desteği ile hedeflerine çok daha hızlı ulaş.',
-    icon: '📊',
-  },
+const SLIDE_KEYS = [
+  { key: 's1', icon: '🔥' },
+  { key: 's2', icon: '🏆' },
+  { key: 's3', icon: '📊' },
 ];
 
 export default function Onboarding() {
@@ -32,6 +21,8 @@ export default function Onboarding() {
   const { session, refreshProfile } = useAuth();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
+  const SLIDES = SLIDE_KEYS.map((k) => ({ icon: k.icon, title: t(`onboarding.${k.key}_title`), description: t(`onboarding.${k.key}_desc`) }));
 
   const handleNext = () => {
     Haptics.selectionAsync();
@@ -64,7 +55,7 @@ export default function Onboarding() {
         const { error: insertError } = await supabase.from('profiles').insert({
           id: session.user.id,
           username,
-          display_name: meta.full_name || meta.name || meta.display_name || base || 'Yeni Kullanıcı',
+          display_name: meta.full_name || meta.name || meta.display_name || base || 'New User',
           avatar_url: meta.avatar_url || meta.picture || null,
           ...patch,
         });
@@ -75,7 +66,7 @@ export default function Onboarding() {
       router.replace('/(tabs)');
     } catch (err: any) {
       console.error('Onboarding update error:', err);
-      alert(`Bir hata oluştu: ${err?.message ?? 'bilinmeyen hata'}`);
+      alert(`${t('onboarding.error')}: ${err?.message ?? t('onboarding.unknown_error')}`);
     } finally {
       setLoading(false);
     }
@@ -94,15 +85,15 @@ export default function Onboarding() {
           </Animated.Text>
 
           <TouchableOpacity style={[styles.button, { bottom: insets.bottom + 48 }]} onPress={handleNext}>
-            <Text style={styles.buttonText}>Devam Et</Text>
+            <Text style={styles.buttonText}>{t('onboarding.next')}</Text>
           </TouchableOpacity>
         </Animated.View>
       ) : (
         <Animated.View entering={SlideInRight.duration(400)} style={styles.slide}>
           <Text style={styles.icon}>🎯</Text>
-          <Text style={styles.title}>Sen Kimsin?</Text>
+          <Text style={styles.title}>{t('onboarding.who_title')}</Text>
           <Text style={styles.description}>
-            Lütfen uygulamayı hangi amaçla kullanacağını seç. Rolüne göre farklı özellikler açılacaktır.
+            {t('onboarding.who_desc')}
           </Text>
 
           <View style={styles.roleContainer}>
@@ -111,8 +102,8 @@ export default function Onboarding() {
               onPress={() => setSelectedRole('user')}
             >
               <Text style={styles.roleIcon}>💪</Text>
-              <Text style={styles.roleTitle}>Kullanıcı</Text>
-              <Text style={styles.roleDesc}>Antrenman ve beslenmemi takip etmek istiyorum.</Text>
+              <Text style={styles.roleTitle}>{t('onboarding.role_user')}</Text>
+              <Text style={styles.roleDesc}>{t('onboarding.role_user_desc')}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -120,13 +111,13 @@ export default function Onboarding() {
               onPress={() => setSelectedRole('dietitian')}
             >
               <Text style={styles.roleIcon}>🩺</Text>
-              <Text style={styles.roleTitle}>Diyetisyen</Text>
-              <Text style={styles.roleDesc}>Danışanlarımı takip edip planlar oluşturmak istiyorum.</Text>
+              <Text style={styles.roleTitle}>{t('onboarding.role_dietitian')}</Text>
+              <Text style={styles.roleDesc}>{t('onboarding.role_dietitian_desc')}</Text>
             </TouchableOpacity>
           </View>
 
           <TouchableOpacity style={[styles.button, { bottom: insets.bottom + 48 }, loading && styles.buttonDisabled]} onPress={handleFinish} disabled={loading}>
-            <Text style={styles.buttonText}>{loading ? 'Bekleniyor...' : 'Başla'}</Text>
+            <Text style={styles.buttonText}>{loading ? t('onboarding.waiting') : t('onboarding.start')}</Text>
           </TouchableOpacity>
         </Animated.View>
       )}

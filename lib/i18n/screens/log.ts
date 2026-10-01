@@ -1,0 +1,28 @@
+export const log = {
+  tr: {
+    missing: 'Eksik',
+    pick_type: 'Bir antrenman tipi seç',
+    pick_duration: 'Geçerli bir süre gir (dakika)',
+    saved: 'Antrenman kaydedildi! Streak güncellendi.',
+    ok: 'Tamam',
+    title: 'ANTRENMAN LOGLA',
+    subtitle: 'NE YAPTIN BUGÜN?',
+    duration: 'Süre (dakika)',
+    note: 'Not (opsiyonel)',
+    note_placeholder: 'Bugün kendimi iyi hissettim...',
+    grow: '🌱 STREAK\'I BÜYÜT',
+  },
+  en: {
+    missing: 'Missing info',
+    pick_type: 'Pick a workout type',
+    pick_duration: 'Enter a valid duration (minutes)',
+    saved: 'Workout saved! Streak updated.',
+    ok: 'OK',
+    title: 'LOG WORKOUT',
+    subtitle: 'WHAT DID YOU DO TODAY?',
+    duration: 'Duration (minutes)',
+    note: 'Note (optional)',
+    note_placeholder: 'I felt great today...',
+    grow: '🌱 GROW YOUR STREAK',
+  },
+};

@@ -6,11 +6,13 @@ import { useRouter } from 'expo-router';
 import { format } from 'date-fns';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { FadeInDown } from 'react-native-reanimated';
+import { useTranslation } from '../../lib/i18n/i18n';
 
 export default function NutritionLog() {
   const { profile } = useAuth();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { t, locale } = useTranslation();
   
   const [mealType, setMealType] = useState('breakfast');
   const [content, setContent] = useState('');
@@ -41,7 +43,7 @@ export default function NutritionLog() {
 
   const handleSave = async () => {
     if (!content.trim() || !calories) {
-      Alert.alert('Hata', 'Lütfen en azından içerik ve kalori bilgisini doldurun.');
+      Alert.alert(t('common.error'), t('nutritionLog.fill'));
       return;
     }
 
@@ -60,7 +62,7 @@ export default function NutritionLog() {
     setLoading(false);
 
     if (error) {
-      Alert.alert('Hata', 'Kaydedilemedi. Lütfen tekrar dene.');
+      Alert.alert(t('common.error'), t('nutritionLog.save_failed'));
     } else {
       setContent('');
       setCalories('');
@@ -79,18 +81,18 @@ export default function NutritionLog() {
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
           <Text style={styles.backText}>←</Text>
         </TouchableOpacity>
-        <Text style={styles.title}>Beslenme Günlüğü</Text>
+        <Text style={styles.title}>{t('nutritionLog.title')}</Text>
         <View style={{ width: 44 }} />
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.summaryCard}>
-          <Text style={styles.summaryTitle}>Bugün Alınan Kalori</Text>
+          <Text style={styles.summaryTitle}>{t('nutritionLog.today_cals')}</Text>
           <Text style={styles.summaryValue}>{totalCals} kcal</Text>
         </View>
 
         <View style={styles.formCard}>
-          <Text style={styles.sectionTitle}>Yeni Öğün Ekle</Text>
+          <Text style={styles.sectionTitle}>{t('nutritionLog.new')}</Text>
           
           <View style={styles.tabsRow}>
             {['breakfast', 'lunch', 'dinner', 'snack'].map((type) => (
@@ -100,7 +102,7 @@ export default function NutritionLog() {
                 onPress={() => setMealType(type)}
               >
                 <Text style={[styles.tabText, mealType === type && styles.tabTextActive]}>
-                  {type === 'breakfast' ? 'Kahvaltı' : type === 'lunch' ? 'Öğle' : type === 'dinner' ? 'Akşam' : 'Ara Öğün'}
+                  {t(`nutritionLog.${type}`)}
                 </Text>
               </TouchableOpacity>
             ))}
@@ -108,7 +110,7 @@ export default function NutritionLog() {
 
           <TextInput
             style={styles.inputMulti}
-            placeholder="Ne yedin? (Örn: 2 Yumurta, Yulaf)"
+            placeholder={t('nutritionLog.what')}
             placeholderTextColor="#666"
             value={content}
             onChangeText={setContent}
@@ -116,33 +118,33 @@ export default function NutritionLog() {
           />
 
           <View style={styles.row}>
-            <TextInput style={[styles.input, styles.flex1]} placeholder="Kalori" placeholderTextColor="#666" keyboardType="numeric" value={calories} onChangeText={setCalories} />
-            <TextInput style={[styles.input, styles.flex1]} placeholder="Protein (g)" placeholderTextColor="#666" keyboardType="numeric" value={protein} onChangeText={setProtein} />
+            <TextInput style={[styles.input, styles.flex1]} placeholder={t('nutritionLog.cal')} placeholderTextColor="#666" keyboardType="numeric" value={calories} onChangeText={setCalories} />
+            <TextInput style={[styles.input, styles.flex1]} placeholder={t('nutritionLog.protein')} placeholderTextColor="#666" keyboardType="numeric" value={protein} onChangeText={setProtein} />
           </View>
           <View style={styles.row}>
-            <TextInput style={[styles.input, styles.flex1]} placeholder="Karb (g)" placeholderTextColor="#666" keyboardType="numeric" value={carbs} onChangeText={setCarbs} />
-            <TextInput style={[styles.input, styles.flex1]} placeholder="Yağ (g)" placeholderTextColor="#666" keyboardType="numeric" value={fat} onChangeText={setFat} />
+            <TextInput style={[styles.input, styles.flex1]} placeholder={t('nutritionLog.carbs')} placeholderTextColor="#666" keyboardType="numeric" value={carbs} onChangeText={setCarbs} />
+            <TextInput style={[styles.input, styles.flex1]} placeholder={t('nutritionLog.fat')} placeholderTextColor="#666" keyboardType="numeric" value={fat} onChangeText={setFat} />
           </View>
 
           <TouchableOpacity style={styles.saveBtn} onPress={handleSave} disabled={loading}>
-            <Text style={styles.saveBtnText}>{loading ? 'Kaydediliyor...' : 'Öğünü Kaydet'}</Text>
+            <Text style={styles.saveBtnText}>{loading ? t('nutritionLog.saving') : t('nutritionLog.save')}</Text>
           </TouchableOpacity>
         </View>
 
-        <Text style={[styles.sectionTitle, { marginTop: 24, marginBottom: 16 }]}>Bugünkü Öğünler</Text>
+        <Text style={[styles.sectionTitle, { marginTop: 24, marginBottom: 16 }]}>{t('nutritionLog.today')}</Text>
         {todayLogs.map((log, index) => (
           <Animated.View key={log.id} entering={FadeInDown.delay(index * 100).springify()} style={styles.logCard}>
             <View style={styles.logHeader}>
               <Text style={styles.logMealType}>
-                {log.meal_type === 'breakfast' ? 'Kahvaltı' : log.meal_type === 'lunch' ? 'Öğle' : log.meal_type === 'dinner' ? 'Akşam' : 'Ara Öğün'}
+                {t(`nutritionLog.${log.meal_type}`)}
               </Text>
               <Text style={styles.logCals}>{log.calories} kcal</Text>
             </View>
             <Text style={styles.logContent}>{log.content}</Text>
             <View style={styles.macrosRow}>
-              <Text style={styles.macroText}>P: {log.protein_g}g</Text>
-              <Text style={styles.macroText}>K: {log.carbs_g}g</Text>
-              <Text style={styles.macroText}>Y: {log.fat_g}g</Text>
+              <Text style={styles.macroText}>{t('nutritionLog.p')}: {log.protein_g}g</Text>
+              <Text style={styles.macroText}>{t('nutritionLog.c')}: {log.carbs_g}g</Text>
+              <Text style={styles.macroText}>{t('nutritionLog.f')}: {log.fat_g}g</Text>
             </View>
           </Animated.View>
         ))}

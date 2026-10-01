@@ -89,23 +89,23 @@ export default function Profile() {
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>INSTAGRAM KULLANICI ADI</Text>
+              <Text style={styles.inputLabel}>{t('profile2.instagram')}</Text>
               <TextInput 
                 style={styles.input}
                 value={instagram}
                 onChangeText={setInstagram}
-                placeholder="kullanici_adi"
+                placeholder={t('profile2.handle_placeholder')}
                 placeholderTextColor="#444"
               />
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>TIKTOK KULLANICI ADI</Text>
+              <Text style={styles.inputLabel}>{t('profile2.tiktok')}</Text>
               <TextInput 
                 style={styles.input}
                 value={tiktok}
                 onChangeText={setTiktok}
-                placeholder="kullanici_adi"
+                placeholder={t('profile2.handle_placeholder')}
                 placeholderTextColor="#444"
               />
             </View>
@@ -138,7 +138,7 @@ export default function Profile() {
         onPress={() => router.push('/notification-settings' as any)}
       >
         <Text style={styles.menuBtnIcon}>🔔</Text>
-        <Text style={styles.menuBtnText}>Bildirim & Hatırlatıcı Ayarları</Text>
+        <Text style={styles.menuBtnText}>{t('profile2.notif')}</Text>
       </TouchableOpacity>
 
       {/* Analytics Link */}
@@ -147,7 +147,7 @@ export default function Profile() {
         onPress={() => router.push('/analytics' as any)}
       >
         <Text style={styles.menuBtnIcon}>📊</Text>
-        <Text style={styles.menuBtnText}>Performans ve Analiz</Text>
+        <Text style={styles.menuBtnText}>{t('profile2.analytics')}</Text>
       </TouchableOpacity>
 
       {/* Water Tracking Link */}
@@ -156,7 +156,7 @@ export default function Profile() {
         onPress={() => router.push('/water' as any)}
       >
         <Text style={styles.menuBtnIcon}>💧</Text>
-        <Text style={styles.menuBtnText}>Su Takibi (Hidrasyon)</Text>
+        <Text style={styles.menuBtnText}>{t('profile2.water')}</Text>
       </TouchableOpacity>
 
       {/* Fasting Link */}
@@ -165,7 +165,7 @@ export default function Profile() {
         onPress={() => router.push('/fasting' as any)}
       >
         <Text style={styles.menuBtnIcon}>⏱️</Text>
-        <Text style={styles.menuBtnText}>Aralıklı Oruç Takibi</Text>
+        <Text style={styles.menuBtnText}>{t('profile2.fasting')}</Text>
       </TouchableOpacity>
 
       {/* Streak Store Link */}
@@ -174,7 +174,7 @@ export default function Profile() {
         onPress={() => router.push('/store' as any)}
       >
         <Text style={styles.menuBtnIcon}>🛡️</Text>
-        <Text style={styles.menuBtnText}>Streak Mağazası & Kalkan</Text>
+        <Text style={styles.menuBtnText}>{t('profile2.store')}</Text>
       </TouchableOpacity>
 
       {/* Appointments Link */}
@@ -183,7 +183,7 @@ export default function Profile() {
         onPress={() => router.push('/appointments' as any)}
       >
         <Text style={styles.menuBtnIcon}>📅</Text>
-        <Text style={styles.menuBtnText}>Randevularım</Text>
+        <Text style={styles.menuBtnText}>{t('profile2.appts')}</Text>
       </TouchableOpacity>
 
       {/* Nutrition Log Link */}
@@ -192,7 +192,7 @@ export default function Profile() {
         onPress={() => router.push('/nutrition/log' as any)}
       >
         <Text style={styles.menuBtnIcon}>🥗</Text>
-        <Text style={styles.menuBtnText}>Beslenme Günlüğü</Text>
+        <Text style={styles.menuBtnText}>{t('profile2.nutrition')}</Text>
       </TouchableOpacity>
 
       {/* Measurements Link */}
@@ -201,7 +201,7 @@ export default function Profile() {
         onPress={() => router.push('/measurements' as any)}
       >
         <Text style={styles.menuBtnIcon}>📏</Text>
-        <Text style={styles.menuBtnText}>Vücut Ölçüleri</Text>
+        <Text style={styles.menuBtnText}>{t('profile2.measure')}</Text>
       </TouchableOpacity>
 
       {/* Dietitian Link */}
@@ -211,7 +211,7 @@ export default function Profile() {
           onPress={() => router.push('/dietitian/create-plan' as any)}
         >
           <Text style={styles.menuBtnIcon}>📋</Text>
-          <Text style={styles.menuBtnText}>Beslenme Planı Oluştur</Text>
+          <Text style={styles.menuBtnText}>{t('profile2.create_plan')}</Text>
         </TouchableOpacity>
       )}
 

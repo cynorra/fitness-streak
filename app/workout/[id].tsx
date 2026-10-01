@@ -5,10 +5,12 @@ import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import YoutubePlayer from 'react-native-youtube-iframe';
 import * as Haptics from 'expo-haptics';
+import { useTranslation } from '../../lib/i18n/i18n';
 
 export default function WorkoutPlayerScreen() {
   const { id, title } = useLocalSearchParams<{ id: string; title: string }>();
   const router = useRouter();
+  const { t, locale } = useTranslation();
   const { width } = useWindowDimensions();
   const VIDEO_HEIGHT = width * (9 / 16);
 
@@ -25,7 +27,7 @@ export default function WorkoutPlayerScreen() {
   const handleFinish = () => {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     // In a real app, save the completed streak to DB here
-    alert('Harika iş çıkardın! 🎉\nBugünkü serin tamamlandı.');
+    alert(t('workoutPlayer.done'));
     router.back();
   };
 
@@ -70,7 +72,7 @@ export default function WorkoutPlayerScreen() {
         <View style={styles.infoBox}>
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.description}>
-            Eğitmen eşliğinde bu ücretsiz antrenmanı tamamlayarak günlük serini koruyabilirsin. Gerekli durumlarda videoyu duraklatabilir veya başa sarabilirsin.
+            {t('workoutPlayer.desc')}
           </Text>
         </View>
 
@@ -80,7 +82,7 @@ export default function WorkoutPlayerScreen() {
           activeOpacity={0.9}
         >
           <Ionicons name="checkmark-circle" size={24} color="#fff" style={{ marginRight: 8 }} />
-          <Text style={styles.finishButtonText}>ANTRENMANI BİTİRDİM</Text>
+          <Text style={styles.finishButtonText}>{t('workoutPlayer.finish')}</Text>
         </TouchableOpacity>
       </View>
     </View>

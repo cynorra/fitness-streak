@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, ViewStyle, Platform } from 'react-native';
 import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ADMOB_CONFIG } from '../lib/admob';
+import { useTranslation } from '../lib/i18n/i18n';
 
 interface AdMobBannerProps {
   style?: ViewStyle;
@@ -12,6 +13,7 @@ interface AdMobBannerProps {
 
 export default function AdMobBanner({ style, unitId, size = BannerAdSize.ANCHORED_ADAPTIVE_BANNER }: AdMobBannerProps) {
   const [adLoaded, setAdLoaded] = useState(false);
+  const { t, locale } = useTranslation();
   const [adFailed, setAdFailed] = useState(false);
 
   const adUnitId = unitId || ADMOB_CONFIG.BANNER_ID;
@@ -25,10 +27,10 @@ export default function AdMobBanner({ style, unitId, size = BannerAdSize.ANCHORE
         >
           <View style={styles.adHeader}>
             <View style={styles.adBadge}>
-              <Text style={styles.adBadgeText}>SPONSORLU</Text>
+              <Text style={styles.adBadgeText}>{t('ad.sponsored')}</Text>
             </View>
           </View>
-          <Text style={styles.adText}>🎯 VitaTribe Premium & Fitness İpuçları</Text>
+          <Text style={styles.adText}>{t('ad.text')}</Text>
         </LinearGradient>
       </View>
     );

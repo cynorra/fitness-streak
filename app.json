@@ -3,7 +3,7 @@
     "name": "VitaTribe",
     "slug": "vitatribe",
     "owner": "ernsmsr",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "description": "Share workout & diet streaks with friends and dietitians, track habits & stay motivated!",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -28,7 +28,7 @@
         "backgroundColor": "#0a0a0a"
       },
       "package": "com.vitatribe.fitness.spor.diyet.diyetisyen",
-      "versionCode": 6,
+      "versionCode": 7,
       "googleServicesFile": "./android/app/google-services.json",
       "permissions": [
         "INTERNET",

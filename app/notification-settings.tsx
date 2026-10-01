@@ -22,6 +22,7 @@ import {
   sendInstantTestNotification,
   NotificationSettings,
 } from '../lib/notifications';
+import { useTranslation } from '../lib/i18n/i18n';
 
 const TIME_OPTIONS = [
   { label: '18:00', hour: 18, minute: 0 },
@@ -34,6 +35,7 @@ const TIME_OPTIONS = [
 export default function NotificationSettingsScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { t, locale } = useTranslation();
   const [loading, setLoading] = useState<boolean>(true);
   const [testing, setTesting] = useState<boolean>(false);
   const [settings, setSettings] = useState<NotificationSettings>({
@@ -69,8 +71,8 @@ export default function NotificationSettingsScreen() {
     setTesting(false);
     if (success) {
       Alert.alert(
-        '⚡ Test Bildirimi Kuruldu!',
-        'Uygulamayı hemen arkaplana alın veya telefon ekranınızı kilitleyin. Bildirim 2 saniye içinde kilit ekranınıza düşecektir.'
+        t('notifSettings.test_set'),
+        t('notifSettings.test_set_msg')
       );
     }
   };
@@ -102,8 +104,8 @@ export default function NotificationSettingsScreen() {
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
         <View>
-          <Text style={styles.headerTitle}>BİLDİRİM & HATIRLATICI</Text>
-          <Text style={styles.headerSubtitle}>Uygulama kapalıyken bile serini koru</Text>
+          <Text style={styles.headerTitle}>{t('notifSettings.title')}</Text>
+          <Text style={styles.headerSubtitle}>{t('notifSettings.subtitle')}</Text>
         </View>
       </View>
 
@@ -117,9 +119,9 @@ export default function NotificationSettingsScreen() {
             <View style={styles.testIconContainer}>
               <Text style={{ fontSize: 28 }}>⚡</Text>
             </View>
-            <Text style={styles.testTitle}>Zamanlanmış Bildirim Testi</Text>
+            <Text style={styles.testTitle}>{t('notifSettings.test_title')}</Text>
             <Text style={styles.testDesc}>
-              Uygulama kapalıyken bildirimlerin çalışıp çalışmadığını hemen test edin.
+              {t('notifSettings.test_desc')}
             </Text>
             <TouchableOpacity
               style={[styles.testBtn, testing && { opacity: 0.6 }]}
@@ -134,7 +136,7 @@ export default function NotificationSettingsScreen() {
               >
                 <Ionicons name="notifications" size={18} color="#fff" />
                 <Text style={styles.testBtnText}>
-                  {testing ? 'Hazırlanıyor...' : '⚡ Test Bildirimi Gönder (2 sn)'}
+                  {testing ? t('notifSettings.preparing') : t('notifSettings.send_test')}
                 </Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -145,14 +147,14 @@ export default function NotificationSettingsScreen() {
         <Animated.View entering={FadeInDown.delay(200).duration(400)}>
           <View style={styles.sectionHeader}>
             <Ionicons name="flame" size={18} color="#f59e0b" />
-            <Text style={styles.sectionTitle}>GÜNLÜK STREAK & ANTRENMAN</Text>
+            <Text style={styles.sectionTitle}>{t('notifSettings.streak_sec')}</Text>
           </View>
           <GlassCard style={styles.settingCard}>
             <View style={styles.row}>
               <View style={styles.rowTextCol}>
-                <Text style={styles.settingLabel}>Günlük Seri Hatırlatıcısı</Text>
+                <Text style={styles.settingLabel}>{t('notifSettings.streak_label')}</Text>
                 <Text style={styles.settingSub}>
-                  Antrenmanını ve günlük aktiviteni kaydetmediğinde akşam vakti uyarır.
+                  {t('notifSettings.streak_sub')}
                 </Text>
               </View>
               <Switch
@@ -165,7 +167,7 @@ export default function NotificationSettingsScreen() {
 
             {settings.streakEnabled && (
               <View style={styles.timePickerContainer}>
-                <Text style={styles.timePickerLabel}>HATIRLATMA SAATİ SEÇİN:</Text>
+                <Text style={styles.timePickerLabel}>{t('notifSettings.pick_time')}</Text>
                 <View style={styles.timeChipsRow}>
                   {TIME_OPTIONS.map((opt) => {
                     const isSelected =
@@ -196,14 +198,14 @@ export default function NotificationSettingsScreen() {
         <Animated.View entering={FadeInDown.delay(300).duration(400)}>
           <View style={styles.sectionHeader}>
             <Ionicons name="water" size={18} color="#3b82f6" />
-            <Text style={styles.sectionTitle}>SU TAKİBİ & HİDRASYON</Text>
+            <Text style={styles.sectionTitle}>{t('notifSettings.water_sec')}</Text>
           </View>
           <GlassCard style={styles.settingCard}>
             <View style={styles.row}>
               <View style={styles.rowTextCol}>
-                <Text style={styles.settingLabel}>Gün İçi Su Hatırlatıcıları</Text>
+                <Text style={styles.settingLabel}>{t('notifSettings.water_label')}</Text>
                 <Text style={styles.settingSub}>
-                  Günde 4 kez (10:00, 14:00, 18:00, 21:00) su içmeni ve kaydetmeni hatırlatır.
+                  {t('notifSettings.water_sub')}
                 </Text>
               </View>
               <Switch
@@ -220,14 +222,14 @@ export default function NotificationSettingsScreen() {
         <Animated.View entering={FadeInDown.delay(400).duration(400)}>
           <View style={styles.sectionHeader}>
             <Ionicons name="flash" size={18} color="#ec4899" />
-            <Text style={styles.sectionTitle}>GÜNLÜK MOTİVASYON</Text>
+            <Text style={styles.sectionTitle}>{t('notifSettings.mot_sec')}</Text>
           </View>
           <GlassCard style={styles.settingCard}>
             <View style={styles.row}>
               <View style={styles.rowTextCol}>
-                <Text style={styles.settingLabel}>Günlük Motivasyon Mesajları</Text>
+                <Text style={styles.settingLabel}>{t('notifSettings.mot_label')}</Text>
                 <Text style={styles.settingSub}>
-                  Sabah (08:30), öğle (12:30) ve mesai sonrası (18:30) modunu yükseltecek ilham verici spor sözleri.
+                  {t('notifSettings.mot_sub')}
                 </Text>
               </View>
               <Switch
@@ -245,9 +247,7 @@ export default function NotificationSettingsScreen() {
           <View style={styles.infoBox}>
             <Ionicons name="information-circle-outline" size={20} color="#888" />
             <Text style={styles.infoText}>
-              Zamanlanmış bildirimler mobil cihazınızın işletim sistemi (iOS/Android) arkaplan
-              zamanlayıcısı tarafından yönetilir. Uygulamayı tamamen kapatsanız bile bildirimler
-              vaktinde kilit ekranınıza ulaşır.
+              {t('notifSettings.info')}
             </Text>
           </View>
         </Animated.View>

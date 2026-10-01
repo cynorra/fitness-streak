@@ -91,7 +91,7 @@ export const calculateNutritionTargets = (params: BMRParams): NutritionTargetRes
   };
 };
 
-export const MEAL_TEMPLATES = [
+const MEAL_TEMPLATES_TR = [
   {
     name: '🔥 Sporcu Yüksek Protein Planı',
     desc: 'Kas kazanımı ve yağ yakımı için optimize edilmiş yüksek proteinli diyet.',
@@ -183,3 +183,39 @@ export const MEAL_TEMPLATES = [
     ],
   },
 ];
+
+const MEAL_TEMPLATES_EN: typeof MEAL_TEMPLATES_TR = [
+  {
+    name: '🔥 Athlete High-Protein Plan',
+    desc: 'A high-protein diet optimized for muscle gain and fat loss.',
+    meals: [
+      { meal_type: 'breakfast', day_of_week: 1, content: '3-egg omelette (2 whole, 1 white), 50g cottage cheese, 50g oats, a handful of walnuts.', calories: '550' },
+      { meal_type: 'lunch', day_of_week: 1, content: '200g grilled chicken breast, 150g boiled brown rice, large green salad with olive oil.', calories: '650' },
+      { meal_type: 'snack', day_of_week: 1, content: '1 scoop whey protein / 200g strained yogurt, 1 banana, 10 almonds.', calories: '300' },
+      { meal_type: 'dinner', day_of_week: 1, content: '200g grilled salmon or steak, baked sweet potato (150g), steamed broccoli.', calories: '600' },
+    ],
+  },
+  {
+    name: '🥑 Ketogenic & Low Carb',
+    desc: 'Healthy fat-focused eating for fast fat burning and blood sugar balance.',
+    meals: [
+      { meal_type: 'breakfast', day_of_week: 1, content: '3 eggs with mushrooms and cheddar, half an avocado, 5 olives, fresh arugula.', calories: '520' },
+      { meal_type: 'lunch', day_of_week: 1, content: '180g grilled meatballs in olive oil, avocado salad with plenty of walnuts and feta.', calories: '680' },
+      { meal_type: 'snack', day_of_week: 1, content: '15 pumpkin seeds, 1 cup plain filter coffee (with MCT oil).', calories: '200' },
+      { meal_type: 'dinner', day_of_week: 1, content: '200g baked sea bass or salmon, asparagus sauteed in butter and cauliflower puree.', calories: '580' },
+    ],
+  },
+  {
+    name: '🌱 Mediterranean Balanced Diet',
+    desc: 'Classic Mediterranean eating, rich in fiber and antioxidants, for long-lasting health.',
+    meals: [
+      { meal_type: 'breakfast', day_of_week: 1, content: '2 slices whole wheat bread, 60g feta, tomato, cucumber, olives with olive oil and thyme.', calories: '420' },
+      { meal_type: 'lunch', day_of_week: 1, content: '1 plate of green beans / lentils in olive oil, 1 bowl bulgur pilaf, 1 bowl tzatziki.', calories: '520' },
+      { meal_type: 'snack', day_of_week: 1, content: '1 green apple, 2 whole walnuts, 1 cup green tea.', calories: '180' },
+      { meal_type: 'dinner', day_of_week: 1, content: '150g grilled fish or chicken, seasonal salad with plenty of lemon, 1 slice spelt bread.', calories: '480' },
+    ],
+  },
+];
+
+export const getMealTemplates = (locale: string) =>
+  locale === 'tr' ? MEAL_TEMPLATES_TR : MEAL_TEMPLATES_EN;

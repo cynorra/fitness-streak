@@ -4,10 +4,12 @@ import { supabase } from '../lib/supabase';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { FadeInDown } from 'react-native-reanimated';
+import { useTranslation } from '../lib/i18n/i18n';
 
 export default function Leaderboard() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { t, locale } = useTranslation();
   const [users, setUsers] = useState<any[]>([]);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -40,7 +42,7 @@ export default function Leaderboard() {
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
           <Text style={styles.backText}>←</Text>
         </TouchableOpacity>
-        <Text style={styles.title}>Liderlik Tablosu</Text>
+        <Text style={styles.title}>{t('leaderboard.title')}</Text>
         <View style={{ width: 44 }} />
       </View>
 
@@ -51,7 +53,7 @@ export default function Leaderboard() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#10b981" />}
         ListHeaderComponent={
           <View style={styles.infoBox}>
-            <Text style={styles.infoText}>🏆 En yüksek seriye (streak) sahip kullanıcılar. Seri yap, zirveye yerleş!</Text>
+            <Text style={styles.infoText}>{t('leaderboard.info')}</Text>
           </View>
         }
         renderItem={({ item: u, index }) => (

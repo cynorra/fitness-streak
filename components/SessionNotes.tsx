@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, TouchableOpacity, TextInput, Modal, FlatList, K
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../lib/auth';
 import { format, parseISO } from 'date-fns';
+import { getDateLocale } from '../lib/i18n/dateUtils';
+import { useTranslation } from '../lib/i18n/i18n';
 
 type SessionNotesProps = {
   visible: boolean;
@@ -14,6 +16,7 @@ type SessionNotesProps = {
 
 export default function SessionNotes({ visible, onClose, appointmentId, clientId, clientName }: SessionNotesProps) {
   const { profile } = useAuth();
+  const { t, locale } = useTranslation();
   const [notes, setNotes] = useState<any[]>([]);
   const [newNote, setNewNote] = useState('');
   const [isPrivate, setIsPrivate] = useState(false);
@@ -55,7 +58,7 @@ export default function SessionNotes({ visible, onClose, appointmentId, clientId
       setIsPrivate(false);
       await loadNotes();
     } else {
-      alert('Not eklenirken hata oluştu.');
+      alert(t('sessionNotes.add_failed'));
     }
     setLoading(false);
   };
@@ -67,9 +70,9 @@ export default function SessionNotes({ visible, onClose, appointmentId, clientId
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <View style={styles.header}>
-          <Text style={styles.title}>{clientName} - Seans Notları</Text>
+          <Text style={styles.title}>{clientName} - {t('sessionNotes.title_suffix')}</Text>
           <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
-            <Text style={styles.closeText}>Kapat</Text>
+            <Text style={styles.closeText}>{t('sessionNotes.close')}</Text>
           </TouchableOpacity>
         </View>
 
@@ -78,13 +81,13 @@ export default function SessionNotes({ visible, onClose, appointmentId, clientId
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.list}
           ListEmptyComponent={
-            <Text style={styles.emptyText}>Henüz not eklenmemiş.</Text>
+            <Text style={styles.emptyText}>{t('sessionNotes.empty')}</Text>
           }
           renderItem={({ item }) => (
             <View style={[styles.noteCard, item.is_private && styles.noteCardPrivate]}>
               <View style={styles.noteHeader}>
-                <Text style={styles.noteDate}>{format(parseISO(item.created_at), 'dd MMM yyyy HH:mm')}</Text>
-                {item.is_private && <Text style={styles.privateBadge}>Sadece Sen</Text>}
+                <Text style={styles.noteDate}>{format(parseISO(item.created_at), 'dd MMM yyyy HH:mm', { locale: getDateLocale(locale) })}</Text>
+                {item.is_private && <Text style={styles.privateBadge}>{t('sessionNotes.only_you')}</Text>}
               </View>
               <Text style={styles.noteContent}>{item.note}</Text>
             </View>
@@ -95,7 +98,7 @@ export default function SessionNotes({ visible, onClose, appointmentId, clientId
           <View style={styles.inputSection}>
             <TextInput
               style={styles.input}
-              placeholder="Yeni not ekle..."
+              placeholder={t('sessionNotes.placeholder')}
               placeholderTextColor="#666"
               value={newNote}
               onChangeText={setNewNote}
@@ -108,7 +111,7 @@ export default function SessionNotes({ visible, onClose, appointmentId, clientId
                 onPress={() => setIsPrivate(!isPrivate)}
               >
                 <Text style={styles.toggleText}>
-                  {isPrivate ? '🔒 Sadece Ben Göreyim' : '👁️ Danışan da Görsün'}
+                  {isPrivate ? t('sessionNotes.private_on') : t('sessionNotes.private_off')}
                 </Text>
               </TouchableOpacity>
 
@@ -117,7 +120,7 @@ export default function SessionNotes({ visible, onClose, appointmentId, clientId
                 onPress={handleAddNote}
                 disabled={loading}
               >
-                <Text style={styles.saveText}>{loading ? '...' : 'Ekle'}</Text>
+                <Text style={styles.saveText}>{loading ? '...' : t('sessionNotes.add')}</Text>
               </TouchableOpacity>
             </View>
           </View>

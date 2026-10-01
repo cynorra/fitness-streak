@@ -1,0 +1,26 @@
+export const friends = {
+  tr: {
+    error: 'Hata',
+    search: 'Kullanıcı adı ara...',
+    add: '+ Ekle',
+    incoming: 'GELEN İSTEKLER',
+    accept: 'Kabul',
+    friends: 'ARKADAŞLAR',
+    none: 'Arkadaşın yok henüz. Yukarıdan ara, ekle.',
+    pending: 'BEKLEYEN İSTEKLER',
+    waiting: 'bekliyor...',
+    title: 'ARKADAŞLAR',
+  },
+  en: {
+    error: 'Error',
+    search: 'Search username...',
+    add: '+ Add',
+    incoming: 'INCOMING REQUESTS',
+    accept: 'Accept',
+    friends: 'FRIENDS',
+    none: 'You don\'t have any friends yet. Search above and add some.',
+    pending: 'PENDING REQUESTS',
+    waiting: 'pending...',
+    title: 'FRIENDS',
+  },
+};

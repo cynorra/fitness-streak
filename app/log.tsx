@@ -9,11 +9,13 @@ import { useAuth } from '../lib/auth';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { loadInterstitialAd, showInterstitialAd } from '../lib/admob';
 import { useEffect } from 'react';
+import { useTranslation } from '../lib/i18n/i18n';
 
 export default function LogWorkout() {
   const { profile, refreshProfile } = useAuth();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { t, locale } = useTranslation();
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [duration, setDuration] = useState('');
   const [note, setNote] = useState('');
@@ -25,18 +27,18 @@ export default function LogWorkout() {
 
   const submit = async () => {
     if (!selectedType) {
-      Alert.alert('Eksik', 'Bir antrenman tipi seç');
+      Alert.alert(t('log.missing'), t('log.pick_type'));
       return;
     }
     const minutes = parseInt(duration);
     if (!minutes || minutes < 1 || minutes > 600) {
-      Alert.alert('Eksik', 'Geçerli bir süre gir (dakika)');
+      Alert.alert(t('log.missing'), t('log.pick_duration'));
       return;
     }
     if (!profile) return;
 
     setLoading(true);
-    const typeLabel = WORKOUT_TYPES.find(t => t.id === selectedType)?.label || selectedType;
+    const typeLabel = selectedType;
 
     const { error } = await supabase.from('workouts').insert({
       user_id: profile.id,
@@ -49,7 +51,7 @@ export default function LogWorkout() {
     setLoading(false);
 
     if (error) {
-      Alert.alert('Hata', error.message);
+      Alert.alert(t('common.error'), error.message);
       return;
     }
 
@@ -61,8 +63,8 @@ export default function LogWorkout() {
     // AdMob Interstitial Reklam Göster
     showInterstitialAd();
 
-    Alert.alert('🌱', 'Antrenman kaydedildi! Streak güncellendi.', [
-      { text: 'Tamam', onPress: () => router.push('/') },
+    Alert.alert('🌱', t('log.saved'), [
+      { text: t('log.ok'), onPress: () => router.push('/') },
     ]);
   };
 
@@ -81,30 +83,30 @@ export default function LogWorkout() {
             <Text style={styles.msgIcon}>💬</Text>
           </TouchableOpacity>
         </View>
-        <Text style={styles.title}>ANTRENMAN LOGLA</Text>
-        <Text style={styles.subtitle}>NE YAPTIN BUGÜN?</Text>
+        <Text style={styles.title}>{t('log.title')}</Text>
+        <Text style={styles.subtitle}>{t('log.subtitle')}</Text>
       </View>
 
       <View style={styles.typeGrid}>
-        {WORKOUT_TYPES.map(t => (
+        {WORKOUT_TYPES.map(wt => (
           <TouchableOpacity
-            key={t.id}
+            key={wt.id}
             style={[
               styles.typeCard,
-              selectedType === t.id && styles.typeCardSelected,
+              selectedType === wt.id && styles.typeCardSelected,
             ]}
-            onPress={() => setSelectedType(t.id)}
+            onPress={() => setSelectedType(wt.id)}
           >
-            <Text style={styles.typeEmoji}>{t.emoji}</Text>
+            <Text style={styles.typeEmoji}>{wt.emoji}</Text>
             <Text style={[
               styles.typeLabel,
-              selectedType === t.id && styles.typeLabelSelected,
-            ]}>{t.label}</Text>
+              selectedType === wt.id && styles.typeLabelSelected,
+            ]}>{t(`workoutTypes.${wt.id}`)}</Text>
           </TouchableOpacity>
         ))}
       </View>
 
-      <Text style={styles.label}>Süre (dakika)</Text>
+      <Text style={styles.label}>{t('log.duration')}</Text>
       <TextInput
         style={styles.input}
         placeholder="30"
@@ -114,10 +116,10 @@ export default function LogWorkout() {
         keyboardType="number-pad"
       />
 
-      <Text style={styles.label}>Not (opsiyonel)</Text>
+      <Text style={styles.label}>{t('log.note')}</Text>
       <TextInput
         style={[styles.input, styles.textarea]}
-        placeholder="Bugün kendimi iyi hissettim..."
+        placeholder={t('log.note_placeholder')}
         placeholderTextColor="#666"
         value={note}
         onChangeText={setNote}
@@ -131,7 +133,7 @@ export default function LogWorkout() {
         disabled={loading}
       >
         <Text style={styles.buttonText}>
-          {loading ? '...' : '🌱 STREAK\'I BÜYÜT'}
+          {loading ? '...' : t('log.grow')}
         </Text>
       </TouchableOpacity>
     </ScrollView>

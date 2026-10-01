@@ -5,11 +5,13 @@ import { supabase } from '../lib/supabase';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { FadeInDown } from 'react-native-reanimated';
+import { useTranslation } from '../lib/i18n/i18n';
 
 export default function Challenges() {
   const { profile } = useAuth();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { t, locale } = useTranslation();
   
   const [challenges, setChallenges] = useState<any[]>([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -60,7 +62,7 @@ export default function Challenges() {
       user_id: profile.id,
       challenge_id: challengeId,
       progress: 0,
-      completed: false
+      status: 'accepted',
     });
     if (!error) loadChallenges();
   };
@@ -71,7 +73,7 @@ export default function Challenges() {
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
           <Text style={styles.backText}>←</Text>
         </TouchableOpacity>
-        <Text style={styles.title}>Görevler</Text>
+        <Text style={styles.title}>{t('challenges.title')}</Text>
         <View style={{ width: 44 }} />
       </View>
 
@@ -80,18 +82,19 @@ export default function Challenges() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#10b981" />}
       >
         <View style={styles.infoBox}>
-          <Text style={styles.infoText}>🎯 Görevlere katıl, hedefleri tamamla ve motivasyonunu artır!</Text>
+          <Text style={styles.infoText}>{t('challenges.info')}</Text>
         </View>
 
         {challenges.length === 0 && (
-          <Text style={styles.emptyText}>Şu an aktif bir görev bulunmuyor.</Text>
+          <Text style={styles.emptyText}>{t('challenges.empty')}</Text>
         )}
 
         {challenges.map((c, index) => {
           const isJoined = !!c.userProgress;
-          const isCompleted = c.userProgress?.completed;
+          const isCompleted = c.userProgress?.status === 'completed';
+          const target = c.goal_value ?? c.target_value;
           const progressPercent = isJoined 
-            ? Math.min(100, (c.userProgress.progress / c.target_value) * 100) 
+            ? Math.min(100, (c.userProgress.progress / (target || 1)) * 100) 
             : 0;
 
           return (
@@ -102,7 +105,7 @@ export default function Challenges() {
             >
               <View style={styles.cardHeader}>
                 <Text style={styles.challengeTitle}>{c.title}</Text>
-                {isCompleted && <Text style={styles.badgeCompleted}>✓ Tamamlandı</Text>}
+                {isCompleted && <Text style={styles.badgeCompleted}>{t('challenges.done')}</Text>}
               </View>
               
               <Text style={styles.challengeDesc}>{c.description}</Text>
@@ -110,7 +113,7 @@ export default function Challenges() {
               {isJoined ? (
                 <View style={styles.progressContainer}>
                   <View style={styles.progressHeader}>
-                    <Text style={styles.progressText}>İlerleme: {c.userProgress.progress} / {c.target_value}</Text>
+                    <Text style={styles.progressText}>{t('challenges.progress')}: {c.userProgress.progress} / {target}</Text>
                     <Text style={styles.progressPercent}>{Math.round(progressPercent)}%</Text>
                   </View>
                   <View style={styles.progressBarBg}>
@@ -119,7 +122,7 @@ export default function Challenges() {
                 </View>
               ) : (
                 <TouchableOpacity style={styles.joinBtn} onPress={() => handleJoin(c.id)}>
-                  <Text style={styles.joinBtnText}>Göreve Katıl</Text>
+                  <Text style={styles.joinBtnText}>{t('challenges.join')}</Text>
                 </TouchableOpacity>
               )}
             </Animated.View>

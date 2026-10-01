@@ -23,6 +23,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../lib/auth';
 import { format, parseISO } from 'date-fns';
+import { getDateLocale } from '../lib/i18n/dateUtils';
+import { useTranslation } from '../lib/i18n/i18n';
 
 const BLOG_CATEGORIES = ['HEPSİ', 'SPOR', 'BESLENME', 'SAĞLIK', 'MOTİVASYON'];
 
@@ -42,6 +44,12 @@ export default function BlogScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { profile } = useAuth();
+  const { t, locale } = useTranslation();
+  const catLabel = (cat: string) => {
+    const map: Record<string, string> = { 'HEPSİ': 'cat_all', SPOR: 'cat_SPOR', BESLENME: 'cat_BESLENME', 'SAĞLIK': 'cat_SAGLIK', 'MOTİVASYON': 'cat_MOTIVASYON' };
+    return map[cat] ? t(`blog.${map[cat]}`) : cat;
+  };
+
 
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
@@ -70,11 +78,11 @@ export default function BlogScreen() {
           title: item.title,
           excerpt: item.excerpt || item.content.substring(0, 100) + '...',
           content: item.content,
-          author: item.author || 'Uzman Diyetisyen & Koç',
+          author: item.author || t('blog.default_author'),
           date: item.created_at
-            ? format(parseISO(item.created_at), 'dd MMM yyyy')
-            : 'Güncel',
-          readTime: item.read_time || '4 dk okuma',
+            ? format(parseISO(item.created_at), 'dd MMM yyyy', { locale: getDateLocale(locale) })
+            : t('blog.current'),
+          readTime: item.read_time || t('blog.read_time', { n: 4 }),
           gradient:
             item.category === 'BESLENME'
               ? (['#f97316', '#ea580c'] as const)
@@ -87,7 +95,7 @@ export default function BlogScreen() {
       setArticles([]);
     }
     setLoading(false);
-  }, []);
+  }, [locale]);
 
   useEffect(() => {
     fetchBlogPosts();
@@ -101,7 +109,7 @@ export default function BlogScreen() {
 
   const handlePublishPost = async () => {
     if (!newTitle || !newContent) {
-      Alert.alert('Eksik Bilgi', 'Lütfen başlık ve içerik girin.');
+      Alert.alert(t('blog.missing'), t('blog.missing_msg'));
       return;
     }
 
@@ -109,27 +117,27 @@ export default function BlogScreen() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     try {
-      const authorName = profile?.display_name || profile?.username || 'Uzman Diyetisyen';
+      const authorName = profile?.display_name || profile?.username || t('blog.expert');
 
       const { error } = await supabase.from('blog_posts').insert({
         title: newTitle,
         content: newContent,
         category: newCategory,
-        author: `🩺 Dzt. ${authorName}`,
+        author: `🩺 ${t('blog.author_dt')} ${authorName}`,
         excerpt: newContent.substring(0, 120) + '...',
-        read_time: `${Math.max(2, Math.ceil(newContent.length / 200))} dk okuma`,
+        read_time: t('blog.read_time', { n: Math.max(2, Math.ceil(newContent.length / 200)) }),
       });
 
       if (error) throw error;
 
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      Alert.alert('🎉 Tebrikler!', 'Blog yazınız yayınlandı.');
+      Alert.alert(t('blog.congrats'), t('blog.published'));
       setCreateModalVisible(false);
       setNewTitle('');
       setNewContent('');
       fetchBlogPosts();
     } catch (err: any) {
-      Alert.alert('Hata', err.message || 'Yazı yayınlanamadı.');
+      Alert.alert(t('common.error'), err.message || t('blog.publish_failed'));
     } finally {
       setPublishing(false);
     }
@@ -157,7 +165,7 @@ export default function BlogScreen() {
         >
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>VITATRIBE BLOG</Text>
+        <Text style={styles.headerTitle}>{t('blog.title')}</Text>
 
         {profile?.role === 'dietitian' ? (
           <TouchableOpacity
@@ -168,7 +176,7 @@ export default function BlogScreen() {
             }}
           >
             <Ionicons name="create-outline" size={18} color="#fff" />
-            <Text style={styles.publishBtnText}>YAZI EKLE</Text>
+            <Text style={styles.publishBtnText}>{t('blog.add')}</Text>
           </TouchableOpacity>
         ) : (
           <View style={{ width: 44 }} />
@@ -210,7 +218,7 @@ export default function BlogScreen() {
                     selectedCat === cat && styles.catChipTextActive,
                   ]}
                 >
-                  {cat}
+                  {catLabel(cat)}
                 </Text>
               </TouchableOpacity>
             ))}
@@ -224,8 +232,8 @@ export default function BlogScreen() {
         ) : filtered.length === 0 ? (
           <GlassCard style={styles.emptyCard}>
             <Text style={{ fontSize: 40, marginBottom: 12 }}>📖</Text>
-            <Text style={styles.emptyTitle}>Henüz Yazı Bulunmuyor</Text>
-            <Text style={styles.emptyDesc}>Diyetisyenlerimiz tarafından yeni rehberler hazırlanmaktadır.</Text>
+            <Text style={styles.emptyTitle}>{t('blog.empty_title')}</Text>
+            <Text style={styles.emptyDesc}>{t('blog.empty_desc')}</Text>
           </GlassCard>
         ) : (
           filtered.map((item, idx) => (
@@ -241,7 +249,7 @@ export default function BlogScreen() {
               >
                 <GlassCard style={styles.articleCard}>
                   <LinearGradient colors={item.gradient} style={styles.badgeGrad}>
-                    <Text style={styles.badgeText}>{item.category}</Text>
+                    <Text style={styles.badgeText}>{catLabel(item.category)}</Text>
                   </LinearGradient>
                   <Text style={styles.articleTitle}>{item.title}</Text>
                   <Text style={styles.articleExcerpt} numberOfLines={2}>{item.excerpt}</Text>
@@ -262,7 +270,7 @@ export default function BlogScreen() {
         <View style={styles.detailOverlay}>
           <GlassCard style={styles.detailContent}>
             <View style={styles.modalHeader}>
-              <Text style={styles.detailCat}>{selectedArticle?.category}</Text>
+              <Text style={styles.detailCat}>{selectedArticle ? catLabel(selectedArticle.category) : ''}</Text>
               <TouchableOpacity onPress={() => setSelectedArticle(null)}>
                 <Ionicons name="close-circle" size={26} color="#64748b" />
               </TouchableOpacity>
@@ -270,7 +278,7 @@ export default function BlogScreen() {
 
             <ScrollView contentContainerStyle={{ gap: 12 }}>
               <Text style={styles.detailTitle}>{selectedArticle?.title}</Text>
-              <Text style={styles.detailMeta}>Yazar: {selectedArticle?.author} | Tarih: {selectedArticle?.date}</Text>
+              <Text style={styles.detailMeta}>{t('blog.byline', { author: selectedArticle?.author ?? '', date: selectedArticle?.date ?? '' })}</Text>
               <View style={styles.detailDivider} />
               <Text style={styles.detailBody}>{selectedArticle?.content}</Text>
             </ScrollView>
@@ -283,14 +291,14 @@ export default function BlogScreen() {
         <View style={styles.detailOverlay}>
           <GlassCard style={styles.detailContent}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>✍️ Yeni Blog Yazısı Paylaş</Text>
+              <Text style={styles.modalTitle}>{t('blog.new_post')}</Text>
               <TouchableOpacity onPress={() => setCreateModalVisible(false)}>
                 <Ionicons name="close-circle" size={26} color="#64748b" />
               </TouchableOpacity>
             </View>
 
             <ScrollView contentContainerStyle={{ gap: 12 }}>
-              <Text style={styles.label}>KATEGORİ SEÇİN:</Text>
+              <Text style={styles.label}>{t('blog.pick_cat')}</Text>
               <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
                 {(['BESLENME', 'SPOR', 'SAĞLIK', 'MOTİVASYON'] as const).map((cat) => (
                   <TouchableOpacity
@@ -298,25 +306,25 @@ export default function BlogScreen() {
                     style={[styles.catChip, newCategory === cat && styles.catChipActive]}
                     onPress={() => setNewCategory(cat)}
                   >
-                    <Text style={[styles.catChipText, newCategory === cat && styles.catChipTextActive]}>{cat}</Text>
+                    <Text style={[styles.catChipText, newCategory === cat && styles.catChipTextActive]}>{catLabel(cat)}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
 
-              <Text style={styles.label}>YAZI BAŞLIĞI:</Text>
+              <Text style={styles.label}>{t('blog.post_title')}</Text>
               <TextInput
                 style={styles.input}
-                placeholder="örn: Kas Yapımını Hızlandıran 5 Süper Besin"
+                placeholder={t('blog.title_ph')}
                 placeholderTextColor="#64748b"
                 value={newTitle}
                 onChangeText={setNewTitle}
               />
 
-              <Text style={styles.label}>YAZI İÇERİĞİ:</Text>
+              <Text style={styles.label}>{t('blog.post_content')}</Text>
               <TextInput
                 style={[styles.input, { height: 140 }]}
                 multiline
-                placeholder="Detaylı bilgi ve uzman tavsiyelerinizi buraya yazın..."
+                placeholder={t('blog.content_ph')}
                 placeholderTextColor="#64748b"
                 value={newContent}
                 onChangeText={setNewContent}
@@ -327,7 +335,7 @@ export default function BlogScreen() {
                 onPress={handlePublishPost}
                 disabled={publishing}
               >
-                <Text style={styles.saveBtnText}>{publishing ? 'YAYINLANIYOR...' : 'YAYINLA'}</Text>
+                <Text style={styles.saveBtnText}>{publishing ? t('blog.publishing') : t('blog.publish')}</Text>
               </TouchableOpacity>
             </ScrollView>
           </GlassCard>

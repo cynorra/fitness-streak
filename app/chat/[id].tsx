@@ -8,10 +8,11 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../lib/auth';
 import { format } from 'date-fns';
-import { tr } from 'date-fns/locale';
+import { getDateLocale } from '../../lib/i18n/dateUtils';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { checkContentModeration } from '../../lib/profanityFilter';
 import { blockUser, reportUser } from '../../lib/blocking';
+import { useTranslation } from '../../lib/i18n/i18n';
 
 type Message = {
   id: string;
@@ -25,6 +26,7 @@ export default function ChatScreen() {
   const { profile } = useAuth();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { t, locale } = useTranslation();
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
   const [loading, setLoading] = useState(true);
@@ -90,7 +92,7 @@ export default function ChatScreen() {
 
     const modResult = checkContentModeration(content);
     if (!modResult.isClean) {
-      Alert.alert('Topluluk Kuralları Engeli 🛑', modResult.reason);
+      Alert.alert(t('chat.rules'), modResult.reason);
       return;
     }
 
@@ -104,7 +106,7 @@ export default function ChatScreen() {
 
     if (error) {
       console.error(error);
-      Alert.alert('Mesaj gönderilemedi', error.message);
+      Alert.alert(t('chat.send_failed'), error.message);
     } else {
       // Update conversation timestamp
       await supabase.from('conversations').update({ updated_at: new Date() }).eq('id', id);
@@ -114,19 +116,19 @@ export default function ChatScreen() {
   const handleBlock = () => {
     if (!otherProfile || !profile) return;
     Alert.alert(
-      'Kullanıcıyı Engelle',
-      `${otherProfile.display_name || otherProfile.username} adlı kullanıcıyı engellemek istediğine emin misin? Artık birbirinize mesaj gönderemezsiniz.`,
+      t('chat.block_title'),
+      t('chat.block_msg', { name: otherProfile.display_name || otherProfile.username }),
       [
-        { text: 'Vazgeç', style: 'cancel' },
+        { text: t('chat.cancel'), style: 'cancel' },
         {
-          text: 'Engelle',
+          text: t('chat.block'),
           style: 'destructive',
           onPress: async () => {
             const result = await blockUser(profile.id, otherProfile.id);
             if (result.error) {
-              Alert.alert('Hata', result.error);
+              Alert.alert(t('common.error'), result.error);
             } else {
-              Alert.alert('Engellendi', 'Kullanıcı engellendi.');
+              Alert.alert(t('chat.blocked_title'), t('chat.blocked_msg'));
               router.back();
             }
           },
@@ -138,29 +140,29 @@ export default function ChatScreen() {
   const handleReport = () => {
     if (!otherProfile || !profile) return;
     Alert.alert(
-      'Kullanıcıyı Şikayet Et',
-      'Bu kullanıcıyı neden şikayet ediyorsun?',
+      t('chat.report_title'),
+      t('chat.report_q'),
       [
-        { text: 'Vazgeç', style: 'cancel' },
+        { text: t('chat.cancel'), style: 'cancel' },
         {
-          text: 'Taciz / Rahatsız Edici',
+          text: t('chat.r_harass'),
           onPress: async () => {
-            const result = await reportUser(profile.id, otherProfile.id, 'Taciz / Rahatsız edici mesajlar', 'message', typeof id === 'string' ? id : undefined);
-            Alert.alert(result.error ? 'Hata' : 'Şikayet Alındı', result.error || 'Şikayetin ekibimize iletildi.');
+            const result = await reportUser(profile.id, otherProfile.id, t('chat.r_harass_val'), 'message', typeof id === 'string' ? id : undefined);
+            Alert.alert(result.error ? t('common.error') : t('chat.report_received'), result.error || t('chat.report_sent'));
           },
         },
         {
-          text: 'Spam',
+          text: t('chat.r_spam'),
           onPress: async () => {
-            const result = await reportUser(profile.id, otherProfile.id, 'Spam', 'message', typeof id === 'string' ? id : undefined);
-            Alert.alert(result.error ? 'Hata' : 'Şikayet Alındı', result.error || 'Şikayetin ekibimize iletildi.');
+            const result = await reportUser(profile.id, otherProfile.id, t('chat.r_spam'), 'message', typeof id === 'string' ? id : undefined);
+            Alert.alert(result.error ? t('common.error') : t('chat.report_received'), result.error || t('chat.report_sent'));
           },
         },
         {
-          text: 'Uygunsuz İçerik',
+          text: t('chat.r_inapp'),
           onPress: async () => {
-            const result = await reportUser(profile.id, otherProfile.id, 'Uygunsuz içerik', 'message', typeof id === 'string' ? id : undefined);
-            Alert.alert(result.error ? 'Hata' : 'Şikayet Alındı', result.error || 'Şikayetin ekibimize iletildi.');
+            const result = await reportUser(profile.id, otherProfile.id, t('chat.r_inapp_val'), 'message', typeof id === 'string' ? id : undefined);
+            Alert.alert(result.error ? t('common.error') : t('chat.report_received'), result.error || t('chat.report_sent'));
           },
         },
       ]
@@ -169,12 +171,12 @@ export default function ChatScreen() {
 
   const showChatOptions = () => {
     Alert.alert(
-      'Seçenekler',
+      t('chat.options'),
       undefined,
       [
-        { text: 'Şikayet Et', onPress: handleReport },
-        { text: 'Engelle', style: 'destructive', onPress: handleBlock },
-        { text: 'Vazgeç', style: 'cancel' },
+        { text: t('chat.report'), onPress: handleReport },
+        { text: t('chat.block'), style: 'destructive', onPress: handleBlock },
+        { text: t('chat.cancel'), style: 'cancel' },
       ]
     );
   };
@@ -199,7 +201,7 @@ export default function ChatScreen() {
         </TouchableOpacity>
         <View style={styles.headerInfo}>
           <Text style={styles.headerName}>{otherProfile?.display_name || otherProfile?.username || '...'}</Text>
-          <Text style={styles.headerStatus}>Çevrimiçi</Text>
+          <Text style={styles.headerStatus}>{t('chat.online')}</Text>
         </View>
         <TouchableOpacity onPress={showChatOptions} style={styles.backBtn}>
           <Text style={styles.backText}>⋮</Text>
@@ -221,7 +223,7 @@ export default function ChatScreen() {
                   {item.content}
                 </Text>
                 <Text style={styles.time}>
-                  {format(new Date(item.created_at), 'HH:mm', { locale: tr })}
+                  {format(new Date(item.created_at), 'HH:mm', { locale: getDateLocale(locale) })}
                 </Text>
               </View>
             </View>
@@ -232,7 +234,7 @@ export default function ChatScreen() {
       <View style={[styles.inputArea, { paddingBottom: insets.bottom + 12 }]}>
         <TextInput
           style={styles.input}
-          placeholder="Mesaj yaz..."
+          placeholder={t('chat.placeholder')}
           placeholderTextColor="#666"
           value={inputText}
           onChangeText={setInputText}

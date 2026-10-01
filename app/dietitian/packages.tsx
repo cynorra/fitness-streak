@@ -18,6 +18,7 @@ import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '../../lib/auth';
 import GlassCard from '../../components/GlassCard';
+import { useTranslation } from '../../lib/i18n/i18n';
 
 interface DietitianPackage {
   id: string;
@@ -28,32 +29,22 @@ interface DietitianPackage {
   features: string[];
 }
 
-const DEFAULT_PACKAGES: DietitianPackage[] = [
+const buildDefaultPackages = (t: (k: string) => string): DietitianPackage[] => [
   {
     id: '1',
-    title: '🌱 1 Aylık Standart Online Diyet',
-    price: '1.499 ₺',
+    title: t('packages.p1_title'),
+    price: t('packages.p1_price'),
     durationDays: 30,
-    description: 'Kilo verme veya alma hedefinize özel haftalık güncellenen diyet listesi ve haftalık kontrol.',
-    features: [
-      'Kişiye özel haftalık diyet planı',
-      'Haftada 1 gün online kontrol ve tartı takibi',
-      '7/24 WhatsApp & İçi Mesajlaşma',
-      'PDF Formatında Dışa Aktarma',
-    ],
+    description: t('packages.p1_desc'),
+    features: [t('packages.p1_f1'), t('packages.p1_f2'), t('packages.p1_f3'), t('packages.p1_f4')],
   },
   {
     id: '2',
-    title: '⚡ 3 Aylık VIP Sporcu & Performans Paketi',
-    price: '3.499 ₺',
+    title: t('packages.p2_title'),
+    price: t('packages.p2_price'),
     durationDays: 90,
-    description: 'Sporcular ve yoğun antrenman yapanlar için yüksek proteinli makro ve takviye planı.',
-    features: [
-      'Antrenman öncesi/sonrası beslenme zamanlaması',
-      'BMR & TDEE Klinik hesaplamaları',
-      '2 Haftada 1 Görüntülü Seans (30 dk)',
-      'Takviye & Suplement Danışmanlığı',
-    ],
+    description: t('packages.p2_desc'),
+    features: [t('packages.p2_f1'), t('packages.p2_f2'), t('packages.p2_f3'), t('packages.p2_f4')],
   },
 ];
 
@@ -61,8 +52,9 @@ export default function DietitianPackages() {
   const { profile } = useAuth();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { t, locale } = useTranslation();
 
-  const [packages, setPackages] = useState<DietitianPackage[]>(DEFAULT_PACKAGES);
+  const [packages, setPackages] = useState<DietitianPackage[]>(() => buildDefaultPackages(t));
   const [modalVisible, setModalVisible] = useState(false);
 
   // New Package form
@@ -73,17 +65,17 @@ export default function DietitianPackages() {
 
   const handleAddPackage = () => {
     if (!newTitle || !newPrice) {
-      Alert.alert('Eksik Bilgi', 'Lütfen paket başlığı ve ücretini girin.');
+      Alert.alert(t('packages.missing'), t('packages.missing_msg'));
       return;
     }
 
     const created: DietitianPackage = {
       id: String(Date.now()),
       title: newTitle,
-      price: newPrice.includes('₺') ? newPrice : `${newPrice} ₺`,
+      price: /[₺$]/.test(newPrice) ? newPrice : t('packages.currency') === '$' ? `$${newPrice}` : `${newPrice} ${t('packages.currency')}`,
       durationDays: Number(newDays) || 30,
-      description: newDesc || 'Kişiselleştirilmiş beslenme danışmanlığı.',
-      features: ['Kişiye özel diyet listesi', 'Mesajlaşma desteği', 'Haftalık gelişim kontrolü'],
+      description: newDesc || t('packages.default_desc'),
+      features: [t('packages.custom_f1'), t('packages.custom_f2'), t('packages.custom_f3')],
     };
 
     setPackages([created, ...packages]);
@@ -92,7 +84,7 @@ export default function DietitianPackages() {
     setNewPrice('');
     setNewDesc('');
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    Alert.alert('Başarılı', 'Yeni diyet paketiniz yayınlandı!');
+    Alert.alert(t('packages.success'), t('packages.published'));
   };
 
   return (
@@ -108,8 +100,8 @@ export default function DietitianPackages() {
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
         <View style={styles.headerTitles}>
-          <Text style={styles.headerTitle}>DANIŞMANLIK PAKETLERİ 💎</Text>
-          <Text style={styles.headerSub}>Hizmetlerinizi & Fiyatlarınızı Yönetin</Text>
+          <Text style={styles.headerTitle}>{t('packages.title')}</Text>
+          <Text style={styles.headerSub}>{t('packages.sub')}</Text>
         </View>
         {profile?.role === 'dietitian' && (
           <TouchableOpacity
@@ -148,7 +140,7 @@ export default function DietitianPackages() {
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                 if (profile?.role === 'dietitian') {
-                  Alert.alert('Paket Bilgisi', 'Bu paket danışanlarınıza açık görünmektedir.');
+                  Alert.alert(t('packages.info_title'), t('packages.info_msg'));
                 } else {
                   router.push('/appointments' as any);
                 }
@@ -156,7 +148,7 @@ export default function DietitianPackages() {
             >
               <LinearGradient colors={['#10b981', '#059669']} style={styles.selectBtnGrad}>
                 <Text style={styles.selectBtnText}>
-                  {profile?.role === 'dietitian' ? 'DÜZENLE / DANIŞANA GÖSTER' : 'HEMEN BAŞVUR & RANDEVU AL'}
+                  {profile?.role === 'dietitian' ? t('packages.edit') : t('packages.apply')}
                 </Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -172,23 +164,23 @@ export default function DietitianPackages() {
         >
           <GlassCard style={styles.modalContent}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>✨ Yeni Paket Tanımla</Text>
+              <Text style={styles.modalTitle}>{t('packages.modal_title')}</Text>
               <TouchableOpacity onPress={() => setModalVisible(false)}>
                 <Ionicons name="close-circle" size={24} color="#64748b" />
               </TouchableOpacity>
             </View>
 
             <View style={{ gap: 12 }}>
-              <Text style={styles.label}>PAKET BAŞLIĞI:</Text>
+              <Text style={styles.label}>{t('packages.pkg_title')}</Text>
               <TextInput
                 style={styles.input}
-                placeholder="örn: 1 Aylık Detoks Paketi"
+                placeholder={t('packages.pkg_title_ph')}
                 placeholderTextColor="#64748b"
                 value={newTitle}
                 onChangeText={setNewTitle}
               />
 
-              <Text style={styles.label}>ÜCRET (₺):</Text>
+              <Text style={styles.label}>{t('packages.price')}</Text>
               <TextInput
                 style={styles.input}
                 placeholder="1500"
@@ -198,7 +190,7 @@ export default function DietitianPackages() {
                 onChangeText={setNewPrice}
               />
 
-              <Text style={styles.label}>SÜRE (GÜN):</Text>
+              <Text style={styles.label}>{t('packages.days')}</Text>
               <TextInput
                 style={styles.input}
                 placeholder="30"
@@ -208,18 +200,18 @@ export default function DietitianPackages() {
                 onChangeText={setNewDays}
               />
 
-              <Text style={styles.label}>AÇIKLAMA:</Text>
+              <Text style={styles.label}>{t('packages.desc')}</Text>
               <TextInput
                 style={[styles.input, { height: 70 }]}
                 multiline
-                placeholder="Paket içeriği ve detaylar..."
+                placeholder={t('packages.desc_ph')}
                 placeholderTextColor="#64748b"
                 value={newDesc}
                 onChangeText={setNewDesc}
               />
 
               <TouchableOpacity style={styles.saveBtn} onPress={handleAddPackage}>
-                <Text style={styles.saveBtnText}>YAYINLA</Text>
+                <Text style={styles.saveBtnText}>{t('packages.publish')}</Text>
               </TouchableOpacity>
             </View>
           </GlassCard>

@@ -20,6 +20,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import GlassCard from '../components/GlassCard';
 import { supabase } from '../lib/supabase';
 import { checkTextModeration } from '../lib/profanityFilter';
+import { useTranslation } from '../lib/i18n/i18n';
 
 interface GymItem {
   id: string;
@@ -46,6 +47,12 @@ const FACILITIES_LIST = [
 export default function GymsScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { t, locale } = useTranslation();
+  const facLabel = (f: string) => {
+    const map: Record<string, string> = { 'HEPSİ': 'all', 'Serbest Ağırlık': 'f_weights', Havuz: 'f_pool', Pilates: 'f_pilates', Sauna: 'f_sauna', Boks: 'f_boxing', PT: 'f_pt' };
+    return map[f] ? t(`gyms.${map[f]}`) : f;
+  };
+
 
   const [gyms, setGyms] = useState<GymItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -76,7 +83,7 @@ export default function GymsScreen() {
             id: g.id,
             name: g.name,
             city: g.city || 'İstanbul',
-            district: g.district || 'Merkez',
+            district: g.district || t('gyms.default_district'),
             rating: g.rating || 4.8,
             phone: g.phone || '+902125550000',
             address: g.address || '',
@@ -96,7 +103,7 @@ export default function GymsScreen() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [locale]);
 
   useEffect(() => {
     fetchGyms();
@@ -110,7 +117,7 @@ export default function GymsScreen() {
 
   const handleAddGym = async () => {
     if (!newName || !newCity || !newPhone) {
-      Alert.alert('Eksik Bilgi', 'Lütfen salon adı, şehir ve telefon alanlarını doldurun.');
+      Alert.alert(t('gyms.missing'), t('gyms.missing_msg'));
       return;
     }
 
@@ -118,7 +125,7 @@ export default function GymsScreen() {
     const modResult = checkTextModeration(`${newName} ${newCity} ${newDistrict} ${newAddress} ${newDiscount}`);
     if (!modResult.isClean) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      Alert.alert('İçerik Engellendi 🛑', modResult.reason || 'Lütfen küfür, argo veya uygunsuz ifadeler kullanmayın.');
+      Alert.alert(t('gyms.blocked'), modResult.reason || t('gyms.blocked_msg'));
       return;
     }
 
@@ -129,7 +136,7 @@ export default function GymsScreen() {
       const { error } = await supabase.from('gyms').insert({
         name: newName,
         city: newCity,
-        district: newDistrict || 'Merkez',
+        district: newDistrict || t('gyms.default_district'),
         phone: newPhone,
         address: newAddress,
         discount_code: newDiscount || 'VITATRIBE15',
@@ -141,7 +148,7 @@ export default function GymsScreen() {
       if (error) throw error;
 
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      Alert.alert('🎉 Başarılı', 'Spor salonunuz veritabanına eklendi!');
+      Alert.alert(t('gyms.success'), t('gyms.added'));
       setAddModalVisible(false);
       setNewName('');
       setNewCity('');
@@ -151,7 +158,7 @@ export default function GymsScreen() {
       setNewDiscount('');
       fetchGyms();
     } catch (err: any) {
-      Alert.alert('Hata', err.message || 'Salon eklenirken bir hata oluştu.');
+      Alert.alert(t('common.error'), err.message || t('gyms.add_failed'));
     } finally {
       setSubmitting(false);
     }
@@ -191,8 +198,8 @@ export default function GymsScreen() {
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
         <View style={styles.headerTitles}>
-          <Text style={styles.headerTitle}>FITNESS SALONLARI & STÜDYOLAR 🏋️‍♂️</Text>
-          <Text style={styles.headerSub}>Canlı Veritabanı & İndirimler</Text>
+          <Text style={styles.headerTitle}>{t('gyms.title')}</Text>
+          <Text style={styles.headerSub}>{t('gyms.sub')}</Text>
         </View>
 
         <TouchableOpacity
@@ -203,7 +210,7 @@ export default function GymsScreen() {
           }}
         >
           <Ionicons name="add" size={20} color="#fff" />
-          <Text style={styles.addTriggerText}>EKLE</Text>
+          <Text style={styles.addTriggerText}>{t('gyms.add')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -212,7 +219,7 @@ export default function GymsScreen() {
         <Ionicons name="search" size={18} color="#64748b" />
         <TextInput
           style={styles.searchInput}
-          placeholder="Şehir, ilçe veya salon adı ara..."
+          placeholder={t('gyms.search')}
           placeholderTextColor="#64748b"
           value={search}
           onChangeText={setSearch}
@@ -236,7 +243,7 @@ export default function GymsScreen() {
             }}
           >
             <Text style={[styles.facChipText, selectedFacility === fac && styles.facChipTextActive]}>
-              {fac}
+              {facLabel(fac)}
             </Text>
           </TouchableOpacity>
         ))}
@@ -251,9 +258,9 @@ export default function GymsScreen() {
         ) : filteredGyms.length === 0 ? (
           <GlassCard style={styles.emptyCard}>
             <Text style={{ fontSize: 40, marginBottom: 12 }}>🏋️‍♂️</Text>
-            <Text style={styles.emptyTitle}>Henüz Salon Bulunmuyor</Text>
+            <Text style={styles.emptyTitle}>{t('gyms.empty_title')}</Text>
             <Text style={styles.emptyDesc}>
-              Aramanıza uygun spor salonu bulunamadı. Sağ üstteki "EKLE" butonu ile ilk salonu sen ekleyebilirsin!
+              {t('gyms.empty_desc')}
             </Text>
           </GlassCard>
         ) : (
@@ -276,7 +283,7 @@ export default function GymsScreen() {
               <View style={styles.facRow}>
                 {gym.facilities.map((fac, idx) => (
                   <View key={idx} style={styles.facTag}>
-                    <Text style={styles.facTagText}>{fac}</Text>
+                    <Text style={styles.facTagText}>{facLabel(fac)}</Text>
                   </View>
                 ))}
               </View>
@@ -285,7 +292,7 @@ export default function GymsScreen() {
                 <View style={styles.discountBanner}>
                   <Ionicons name="pricetag" size={14} color="#10b981" />
                   <Text style={styles.discountText}>
-                    VitaTribe Özel İndirim Kodu: <Text style={styles.codeText}>{gym.discount_code}</Text>
+                    {t('gyms.discount')} <Text style={styles.codeText}>{gym.discount_code}</Text>
                   </Text>
                 </View>
               )}
@@ -294,12 +301,12 @@ export default function GymsScreen() {
               <View style={styles.actionsRow}>
                 <TouchableOpacity style={styles.callBtn} onPress={() => handleCallGym(gym.phone)}>
                   <Ionicons name="call" size={16} color="#fff" />
-                  <Text style={styles.btnText}>ARA</Text>
+                  <Text style={styles.btnText}>{t('gyms.call')}</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.mapBtn} onPress={() => handleMapDirections(gym.address)}>
                   <Ionicons name="navigate-circle" size={18} color="#10b981" />
-                  <Text style={[styles.btnText, { color: '#10b981' }]}>YOL TARİFİ</Text>
+                  <Text style={[styles.btnText, { color: '#10b981' }]}>{t('gyms.directions')}</Text>
                 </TouchableOpacity>
               </View>
             </GlassCard>
@@ -312,60 +319,60 @@ export default function GymsScreen() {
         <View style={styles.modalOverlay}>
           <GlassCard style={styles.modalContent}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>🏋️‍♂️ Yeni Spor Salonu Ekle</Text>
+              <Text style={styles.modalTitle}>{t('gyms.modal_title')}</Text>
               <TouchableOpacity onPress={() => setAddModalVisible(false)}>
                 <Ionicons name="close-circle" size={24} color="#64748b" />
               </TouchableOpacity>
             </View>
 
             <ScrollView contentContainerStyle={{ gap: 10 }}>
-              <Text style={styles.label}>SALON ADI:</Text>
+              <Text style={styles.label}>{t('gyms.name')}</Text>
               <TextInput
                 style={styles.input}
-                placeholder="örn: MacFit Levent"
+                placeholder={t('gyms.name_ph')}
                 placeholderTextColor="#64748b"
                 value={newName}
                 onChangeText={setNewName}
               />
 
-              <Text style={styles.label}>ŞEHİR:</Text>
+              <Text style={styles.label}>{t('gyms.city')}</Text>
               <TextInput
                 style={styles.input}
-                placeholder="örn: İstanbul"
+                placeholder={t('gyms.city_ph')}
                 placeholderTextColor="#64748b"
                 value={newCity}
                 onChangeText={setNewCity}
               />
 
-              <Text style={styles.label}>İLÇE:</Text>
+              <Text style={styles.label}>{t('gyms.district')}</Text>
               <TextInput
                 style={styles.input}
-                placeholder="örn: Kadıköy"
+                placeholder={t('gyms.district_ph')}
                 placeholderTextColor="#64748b"
                 value={newDistrict}
                 onChangeText={setNewDistrict}
               />
 
-              <Text style={styles.label}>TELEFON:</Text>
+              <Text style={styles.label}>{t('gyms.phone')}</Text>
               <TextInput
                 style={styles.input}
-                placeholder="örn: +902125550000"
+                placeholder={t('gyms.phone_ph')}
                 placeholderTextColor="#64748b"
                 keyboardType="phone-pad"
                 value={newPhone}
                 onChangeText={setNewPhone}
               />
 
-              <Text style={styles.label}>AÇIK ADRES:</Text>
+              <Text style={styles.label}>{t('gyms.address')}</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Adres bilgisi..."
+                placeholder={t('gyms.address_ph')}
                 placeholderTextColor="#64748b"
                 value={newAddress}
                 onChangeText={setNewAddress}
               />
 
-              <Text style={styles.label}>İNDİRİM KODU (İSTEĞE BAĞLI):</Text>
+              <Text style={styles.label}>{t('gyms.code')}</Text>
               <TextInput
                 style={styles.input}
                 placeholder="VITATRIBE20"
@@ -379,7 +386,7 @@ export default function GymsScreen() {
                 onPress={handleAddGym}
                 disabled={submitting}
               >
-                <Text style={styles.saveBtnText}>{submitting ? 'KAYDEDİLİYOR...' : 'VERİTABANINA EKLE'}</Text>
+                <Text style={styles.saveBtnText}>{submitting ? t('gyms.saving') : t('gyms.submit')}</Text>
               </TouchableOpacity>
             </ScrollView>
           </GlassCard>

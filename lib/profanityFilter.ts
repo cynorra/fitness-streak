@@ -14,6 +14,25 @@ const BAD_WORDS_EN = [
   'nigger', 'faggot', 'whore', 'slut', 'cock', 'motherfucker',
 ];
 
+let moderationLocale = 'tr';
+export function setModerationLocale(locale: string) {
+  moderationLocale = locale === 'tr' ? 'tr' : 'en';
+}
+
+const MESSAGES = {
+  tr: {
+    empty: 'İçerik boş olamaz.',
+    profanity: 'Girdiğiniz ifadeler topluluk kurallarına (argo/küfür/+18) aykırıdır.',
+    phone: 'Güvenliğiniz için sosyal akışta telefon numarası paylaşımı engellenmiştir.',
+  },
+  en: {
+    empty: 'Content cannot be empty.',
+    profanity: 'Your text violates the community guidelines (profanity/explicit content).',
+    phone: 'For your safety, sharing phone numbers in the social feed is not allowed.',
+  },
+};
+const msg = (k: 'empty' | 'profanity' | 'phone') => MESSAGES[moderationLocale as 'tr' | 'en'][k];
+
 export interface ModerationResult {
   isClean: boolean;
   reason?: string;
@@ -21,7 +40,7 @@ export interface ModerationResult {
 
 export function checkTextModeration(text: string): ModerationResult {
   if (!text || text.trim().length === 0) {
-    return { isClean: false, reason: 'İçerik boş olamaz.' };
+    return { isClean: false, reason: msg('empty') };
   }
 
   const lowerText = text.toLowerCase();
@@ -31,7 +50,7 @@ export function checkTextModeration(text: string): ModerationResult {
     if (lowerText.includes(word)) {
       return {
         isClean: false,
-        reason: 'Girdiğiniz ifadeler topluluk kurallarına (argo/küfür/+18) aykırıdır.',
+        reason: msg('profanity'),
       };
     }
   }
@@ -41,7 +60,7 @@ export function checkTextModeration(text: string): ModerationResult {
     if (lowerText.includes(word)) {
       return {
         isClean: false,
-        reason: 'Girdiğiniz ifadeler topluluk kurallarına (argo/küfür/+18) aykırıdır.',
+        reason: msg('profanity'),
       };
     }
   }
@@ -58,7 +77,7 @@ export function checkContentModeration(text: string): ModerationResult {
   if (phoneRegex.test(text)) {
     return {
       isClean: false,
-      reason: 'Güvenliğiniz için sosyal akışta telefon numarası paylaşımı engellenmiştir.',
+      reason: msg('phone'),
     };
   }
 

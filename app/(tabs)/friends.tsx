@@ -7,6 +7,7 @@ import { supabase } from '../../lib/supabase';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../../lib/auth';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from '../../lib/i18n/i18n';
 
 type FriendRow = {
   id: string;
@@ -21,6 +22,7 @@ export default function Friends() {
   const { profile } = useAuth();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { t, locale } = useTranslation();
   const [query, setQuery] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [friends, setFriends] = useState<FriendRow[]>([]);
@@ -94,7 +96,7 @@ export default function Friends() {
       status: 'pending',
     });
     if (error) {
-      Alert.alert('Hata', error.message);
+      Alert.alert(t('friends.error'), error.message);
       return;
     }
     setQuery('');
@@ -137,12 +139,12 @@ export default function Friends() {
             <Text style={styles.msgIcon}>💬</Text>
           </TouchableOpacity>
         </View>
-        <Text style={styles.title}>ARKADAŞLAR</Text>
+        <Text style={styles.title}>{t('friends.title')}</Text>
       </View>
 
       <TextInput
         style={styles.searchInput}
-        placeholder="Kullanıcı adı ara..."
+        placeholder={t('friends.search')}
         placeholderTextColor="#666"
         value={query}
         onChangeText={doSearch}
@@ -161,7 +163,7 @@ export default function Friends() {
               <Text style={styles.handle}>@{item.username} • 🌱 {item.current_streak}</Text>
             </View>
             <TouchableOpacity style={styles.addBtn} onPress={() => sendRequest(item.id)}>
-              <Text style={styles.addBtnText}>+ Ekle</Text>
+              <Text style={styles.addBtnText}>{t('friends.add')}</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -170,7 +172,7 @@ export default function Friends() {
             <View>
               {incoming.length > 0 && (
                 <View>
-                  <Text style={styles.section}>GELEN İSTEKLER</Text>
+                  <Text style={styles.section}>{t('friends.incoming')}</Text>
                   {incoming.map(f => (
                     <View key={f.friendship_id} style={styles.row}>
                       <View style={styles.avatar}><Text style={styles.avatarText}>{f.username[0].toUpperCase()}</Text></View>
@@ -179,7 +181,7 @@ export default function Friends() {
                         <Text style={styles.handle}>@{f.username}</Text>
                       </View>
                       <TouchableOpacity style={styles.acceptBtn} onPress={() => respondRequest(f.friendship_id, true)}>
-                        <Text style={styles.acceptBtnText}>Kabul</Text>
+                        <Text style={styles.acceptBtnText}>{t('friends.accept')}</Text>
                       </TouchableOpacity>
                       <TouchableOpacity style={styles.rejectBtn} onPress={() => respondRequest(f.friendship_id, false)}>
                         <Text style={styles.rejectBtnText}>✕</Text>
@@ -189,10 +191,10 @@ export default function Friends() {
                 </View>
               )}
 
-              <Text style={styles.section}>ARKADAŞLAR ({accepted.length})</Text>
+              <Text style={styles.section}>{t('friends.friends')} ({accepted.length})</Text>
               {accepted.length === 0 ? (
                 <Text style={styles.emptyHint}>
-                  Arkadaşın yok henüz. Yukarıdan ara, ekle.
+                  {t('friends.none')}
                 </Text>
               ) : (
                 accepted.map(f => (
@@ -208,13 +210,13 @@ export default function Friends() {
 
               {outgoing.length > 0 && (
                 <View>
-                  <Text style={styles.section}>BEKLEYEN İSTEKLER</Text>
+                  <Text style={styles.section}>{t('friends.pending')}</Text>
                   {outgoing.map(f => (
                     <View key={f.friendship_id} style={styles.row}>
                       <View style={styles.avatar}><Text style={styles.avatarText}>{f.username[0].toUpperCase()}</Text></View>
                       <View style={{ flex: 1 }}>
                         <Text style={styles.name}>{f.display_name || f.username}</Text>
-                        <Text style={styles.handle}>@{f.username} • bekliyor...</Text>
+                        <Text style={styles.handle}>@{f.username} • {t('friends.waiting')}</Text>
                       </View>
                     </View>
                   ))}

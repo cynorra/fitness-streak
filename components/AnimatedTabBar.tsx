@@ -17,6 +17,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from '../lib/i18n/i18n';
 
 const TABS = [
   { name: 'index',         icon: '🌱', label: 'Streak' },
@@ -37,6 +38,7 @@ function TabButton({
   onPress: () => void;
 }) {
   const scale = useSharedValue(1);
+  const { t, locale } = useTranslation();
   const labelOpacity = useSharedValue(isActive ? 1 : 0.5);
   const dotScale = useSharedValue(isActive ? 1 : 0);
 
@@ -74,7 +76,7 @@ function TabButton({
         {tab.icon}
       </Animated.Text>
       <Animated.Text style={[styles.label, labelStyle, isActive && styles.labelActive]}>
-        {tab.label}
+        {t(`tabs.${tab.name}`)}
       </Animated.Text>
       {/* Active dot indicator */}
       <Animated.View style={[styles.activeDot, dotStyle]} />

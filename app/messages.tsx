@@ -7,8 +7,9 @@ import { supabase } from '../lib/supabase';
 import { useAuth } from '../lib/auth';
 import { useRouter } from 'expo-router';
 import { format } from 'date-fns';
-import { tr } from 'date-fns/locale';
+import { getDateLocale } from '../lib/i18n/dateUtils';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from '../lib/i18n/i18n';
 
 type Conversation = {
   id: string;
@@ -25,6 +26,7 @@ export default function MessagesList() {
   const { profile } = useAuth();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { t, locale } = useTranslation();
   const [items, setItems] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -103,7 +105,7 @@ export default function MessagesList() {
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
           <Text style={styles.backText}>←</Text>
         </TouchableOpacity>
-        <Text style={styles.title}>Mesajlar</Text>
+        <Text style={styles.title}>{t('messages.title')}</Text>
       </View>
 
       <FlatList
@@ -114,7 +116,7 @@ export default function MessagesList() {
         ListEmptyComponent={
           <View style={styles.empty}>
             <Text style={styles.emptyEmoji}>💬</Text>
-            <Text style={styles.emptyText}>Henüz bir mesaj yok.</Text>
+            <Text style={styles.emptyText}>{t('messages.empty')}</Text>
           </View>
         }
         renderItem={({ item }) => (
@@ -131,11 +133,11 @@ export default function MessagesList() {
               <View style={styles.row}>
                 <Text style={styles.name}>{item.other_profile.display_name || item.other_profile.username}</Text>
                 <Text style={styles.date}>
-                  {format(new Date(item.updated_at), 'HH:mm', { locale: tr })}
+                  {format(new Date(item.updated_at), 'HH:mm', { locale: getDateLocale(locale) })}
                 </Text>
               </View>
               <Text style={styles.lastMsg} numberOfLines={1}>
-                {item.last_message || 'Mesaj gönderilmedi.'}
+                {item.last_message || t('messages.none_sent')}
               </Text>
             </View>
           </TouchableOpacity>

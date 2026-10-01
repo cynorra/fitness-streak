@@ -1,3 +1,4 @@
+import * as Localization from 'expo-localization';
 import * as Device from 'expo-device';
 import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
@@ -64,9 +65,10 @@ export async function getLocalizedNotificationStrings(langOverride?: string) {
   let locale = langOverride;
   if (!locale) {
     try {
-      locale = (await AsyncStorage.getItem(LANGUAGE_KEY)) || 'tr';
+      const systemDefault = Localization.getLocales()?.[0]?.languageCode === 'tr' ? 'tr' : 'en';
+      locale = (await AsyncStorage.getItem(LANGUAGE_KEY)) || systemDefault;
     } catch (e) {
-      locale = 'tr';
+      locale = 'en';
     }
   }
 

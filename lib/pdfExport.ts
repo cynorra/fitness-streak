@@ -118,7 +118,7 @@ export const exportNutritionPlanToPDF = async (
           <div class="meal-card">
             <div class="meal-title">${
               loc.mealTypes[meal.meal_type] || meal.meal_type
-            } (Day: ${meal.day_of_week || '1'})</div>
+            } (${langCode === 'tr' ? 'Gün' : 'Day'}: ${meal.day_of_week || '1'})</div>
             <div class="meal-content">${(meal.content || '').replace(/\n/g, '<br/>')}</div>
             <div class="macros">
               ⚡ ${loc.calorieLabel} ${meal.calories || 0} kcal
@@ -140,10 +140,10 @@ export const exportNutritionPlanToPDF = async (
     if (await Sharing.isAvailableAsync()) {
       await Sharing.shareAsync(uri, { UTI: '.pdf', mimeType: 'application/pdf' });
     } else {
-      alert('PDF paylaşımı bu cihazda desteklenmiyor.');
+      alert(langCode === 'tr' ? 'PDF paylaşımı bu cihazda desteklenmiyor.' : 'PDF sharing is not supported on this device.');
     }
   } catch (error) {
     console.error('PDF Export Hatası:', error);
-    alert('PDF oluşturulurken bir hata oluştu.');
+    alert(langCode === 'tr' ? 'PDF oluşturulurken bir hata oluştu.' : 'An error occurred while creating the PDF.');
   }
 };

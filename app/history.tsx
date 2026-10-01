@@ -4,13 +4,17 @@ import { useAuth } from '../lib/auth';
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'expo-router';
 import { format, parseISO } from 'date-fns';
-import { tr } from 'date-fns/locale';
+import { getDateLocale } from '../lib/i18n/dateUtils';
+import { displayWorkoutType } from '../lib/workoutTypes';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from '../lib/i18n/i18n';
 
 export default function WorkoutHistory() {
   const { profile } = useAuth();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { t, locale } = useTranslation();
+  const dateLocale = getDateLocale(locale);
   const [workouts, setWorkouts] = useState<Workout[]>([]);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -35,7 +39,7 @@ export default function WorkoutHistory() {
   };
 
   const groupedWorkouts = workouts.reduce((groups: { [key: string]: Workout[] }, workout) => {
-    const month = format(parseISO(workout.logged_at), 'MMMM yyyy', { locale: tr });
+    const month = format(parseISO(workout.logged_at), 'MMMM yyyy', { locale: dateLocale });
     if (!groups[month]) groups[month] = [];
     groups[month].push(workout);
     return groups;
@@ -47,7 +51,7 @@ export default function WorkoutHistory() {
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
           <Text style={styles.backText}>←</Text>
         </TouchableOpacity>
-        <Text style={styles.title}>ANTRENMAN GEÇMİŞİ</Text>
+        <Text style={styles.title}>{t('history.title')}</Text>
         <View style={{ width: 40 }} />
       </View>
 
@@ -61,12 +65,12 @@ export default function WorkoutHistory() {
             {items.map((w) => (
               <View key={w.id} style={styles.workoutRow}>
                 <View style={styles.workoutInfo}>
-                  <Text style={styles.workoutType}>{w.workout_type}</Text>
+                  <Text style={styles.workoutType}>{displayWorkoutType(w.workout_type, t)}</Text>
                   <Text style={styles.workoutDate}>
-                    {format(parseISO(w.logged_at), 'd MMMM EEEE', { locale: tr })}
+                    {format(parseISO(w.logged_at), 'd MMMM EEEE', { locale: dateLocale })}
                   </Text>
                 </View>
-                <Text style={styles.workoutDuration}>{w.duration_minutes}dk</Text>
+                <Text style={styles.workoutDuration}>{w.duration_minutes}{t('common.minutes_abbr')}</Text>
               </View>
             ))}
           </View>
@@ -74,7 +78,7 @@ export default function WorkoutHistory() {
 
         {workouts.length === 0 && (
           <View style={styles.empty}>
-            <Text style={styles.emptyText}>Henüz antrenman kaydı yok.</Text>
+            <Text style={styles.emptyText}>{t('history.empty')}</Text>
           </View>
         )}
       </ScrollView>

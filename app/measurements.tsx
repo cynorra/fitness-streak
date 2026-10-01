@@ -4,13 +4,16 @@ import { useAuth } from '../lib/auth';
 import { supabase } from '../lib/supabase';
 import { useRouter } from 'expo-router';
 import { format, parseISO } from 'date-fns';
+import { getDateLocale } from '../lib/i18n/dateUtils';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { FadeInDown } from 'react-native-reanimated';
+import { useTranslation } from '../lib/i18n/i18n';
 
 export default function Measurements() {
   const { profile } = useAuth();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { t, locale } = useTranslation();
   
   const [weight, setWeight] = useState('');
   const [waist, setWaist] = useState('');
@@ -40,7 +43,7 @@ export default function Measurements() {
 
   const handleSave = async () => {
     if (!weight) {
-      Alert.alert('Hata', 'Lütfen en azından kilo bilgisini doldurun.');
+      Alert.alert(t('common.error'), t('measurements.fill_weight'));
       return;
     }
 
@@ -58,7 +61,7 @@ export default function Measurements() {
     setLoading(false);
 
     if (error) {
-      Alert.alert('Hata', 'Kaydedilemedi. Lütfen tekrar dene.');
+      Alert.alert(t('common.error'), t('measurements.save_failed'));
     } else {
       setWeight('');
       setWaist('');
@@ -75,43 +78,43 @@ export default function Measurements() {
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
           <Text style={styles.backText}>←</Text>
         </TouchableOpacity>
-        <Text style={styles.title}>Vücut Ölçüleri</Text>
+        <Text style={styles.title}>{t('measurements.title')}</Text>
         <View style={{ width: 44 }} />
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.formCard}>
-          <Text style={styles.sectionTitle}>Yeni Ölçüm Ekle ({format(new Date(), 'dd MMM')})</Text>
+          <Text style={styles.sectionTitle}>{t('measurements.new')} ({format(new Date(), 'dd MMM', { locale: getDateLocale(locale) })})</Text>
 
           <View style={styles.row}>
-            <TextInput style={[styles.input, styles.flex1]} placeholder="Kilo (kg)*" placeholderTextColor="#666" keyboardType="numeric" value={weight} onChangeText={setWeight} />
-            <TextInput style={[styles.input, styles.flex1]} placeholder="Bel (cm)" placeholderTextColor="#666" keyboardType="numeric" value={waist} onChangeText={setWaist} />
+            <TextInput style={[styles.input, styles.flex1]} placeholder={t('measurements.weight')} placeholderTextColor="#666" keyboardType="numeric" value={weight} onChangeText={setWeight} />
+            <TextInput style={[styles.input, styles.flex1]} placeholder={t('measurements.waist')} placeholderTextColor="#666" keyboardType="numeric" value={waist} onChangeText={setWaist} />
           </View>
           <View style={styles.row}>
-            <TextInput style={[styles.input, styles.flex1]} placeholder="Kalça (cm)" placeholderTextColor="#666" keyboardType="numeric" value={hips} onChangeText={setHips} />
-            <TextInput style={[styles.input, styles.flex1]} placeholder="Boyun (cm)" placeholderTextColor="#666" keyboardType="numeric" value={neck} onChangeText={setNeck} />
+            <TextInput style={[styles.input, styles.flex1]} placeholder={t('measurements.hips')} placeholderTextColor="#666" keyboardType="numeric" value={hips} onChangeText={setHips} />
+            <TextInput style={[styles.input, styles.flex1]} placeholder={t('measurements.neck')} placeholderTextColor="#666" keyboardType="numeric" value={neck} onChangeText={setNeck} />
           </View>
           <View style={styles.row}>
-            <TextInput style={[styles.input, styles.flex1]} placeholder="Yağ Oranı (%)" placeholderTextColor="#666" keyboardType="numeric" value={fat} onChangeText={setFat} />
+            <TextInput style={[styles.input, styles.flex1]} placeholder={t('measurements.fat')} placeholderTextColor="#666" keyboardType="numeric" value={fat} onChangeText={setFat} />
           </View>
 
           <TouchableOpacity style={styles.saveBtn} onPress={handleSave} disabled={loading}>
-            <Text style={styles.saveBtnText}>{loading ? 'Kaydediliyor...' : 'Ölçümü Kaydet'}</Text>
+            <Text style={styles.saveBtnText}>{loading ? t('measurements.saving') : t('measurements.save')}</Text>
           </TouchableOpacity>
         </View>
 
-        <Text style={[styles.sectionTitle, { marginTop: 24, marginBottom: 16 }]}>Geçmiş Ölçümler</Text>
-        {logs.length === 0 && <Text style={styles.emptyText}>Henüz ölçüm bulunmuyor.</Text>}
+        <Text style={[styles.sectionTitle, { marginTop: 24, marginBottom: 16 }]}>{t('measurements.history')}</Text>
+        {logs.length === 0 && <Text style={styles.emptyText}>{t('measurements.empty')}</Text>}
         {logs.map((log, index) => (
           <Animated.View key={log.id} entering={FadeInDown.delay(index * 100).springify()} style={styles.logCard}>
             <View style={styles.logHeader}>
-              <Text style={styles.logDate}>{format(parseISO(log.date), 'dd MMM yyyy')}</Text>
+              <Text style={styles.logDate}>{format(parseISO(log.date), 'dd MMM yyyy', { locale: getDateLocale(locale) })}</Text>
               <Text style={styles.logWeight}>{log.weight_kg} kg</Text>
             </View>
             <View style={styles.macrosRow}>
-              {log.waist_cm && <Text style={styles.macroText}>Bel: {log.waist_cm}cm</Text>}
-              {log.hips_cm && <Text style={styles.macroText}>Kalça: {log.hips_cm}cm</Text>}
-              {log.body_fat_percentage && <Text style={styles.macroText}>Yağ: %{log.body_fat_percentage}</Text>}
+              {log.waist_cm && <Text style={styles.macroText}>{t('measurements.waist_l')}: {log.waist_cm}cm</Text>}
+              {log.hips_cm && <Text style={styles.macroText}>{t('measurements.hips_l')}: {log.hips_cm}cm</Text>}
+              {log.body_fat_percentage && <Text style={styles.macroText}>{t('measurements.fat_l')}: %{log.body_fat_percentage}</Text>}
             </View>
           </Animated.View>
         ))}

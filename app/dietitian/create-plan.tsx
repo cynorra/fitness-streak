@@ -19,11 +19,12 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { exportNutritionPlanToPDF } from '../../lib/pdfExport';
 import { useTranslation } from '../../lib/i18n/i18n';
-import { MEAL_TEMPLATES } from '../../lib/nutritionCalc';
+import { getMealTemplates } from '../../lib/nutritionCalc';
 
 export default function CreateNutritionPlan() {
   const { profile } = useAuth();
-  const { locale } = useTranslation();
+  const { t, locale } = useTranslation();
+  const MEAL_TEMPLATES = getMealTemplates(locale);
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
@@ -47,7 +48,8 @@ export default function CreateNutritionPlan() {
     const { data, error } = await supabase
       .from('dietitian_clients')
       .select('client_id, client:profiles!dietitian_clients_client_id_fkey(display_name, username)')
-      .eq('dietitian_id', profile.id);
+      .eq('dietitian_id', profile.id)
+      .eq('status', 'approved');
 
     if (!error && data) {
       setClients(data);
@@ -56,11 +58,11 @@ export default function CreateNutritionPlan() {
     setLoading(false);
   };
 
-  const applyTemplate = (template: typeof MEAL_TEMPLATES[0]) => {
+  const applyTemplate = (template: ReturnType<typeof getMealTemplates>[0]) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     setPlanTitle(template.name);
     setMeals(template.meals);
-    Alert.alert('Şablon Yüklendi', `"${template.name}" başarıyla forma aktarıldı.`);
+    Alert.alert(t('plan.tmpl_loaded'), t('plan.tmpl_loaded_msg', { name: template.name }));
   };
 
   const addMealRow = () => {
@@ -81,7 +83,7 @@ export default function CreateNutritionPlan() {
 
   const handleSavePlan = async () => {
     if (!selectedClient || !planTitle) {
-      Alert.alert('Eksik Bilgi', 'Lütfen danışan seçin ve plan adı girin.');
+      Alert.alert(t('plan.missing'), t('plan.missing_msg'));
       return;
     }
 
@@ -93,7 +95,6 @@ export default function CreateNutritionPlan() {
           dietitian_id: profile?.id,
           client_id: selectedClient.client_id,
           title: planTitle,
-          is_active: true,
         })
         .select()
         .single();
@@ -111,21 +112,21 @@ export default function CreateNutritionPlan() {
       const { error: mealsError } = await supabase.from('nutrition_meals').insert(mealsToInsert);
       if (mealsError) throw mealsError;
 
-      Alert.alert('🎉 Başarılı', 'Beslenme planı oluşturuldu ve danışana iletildi!', [
+      Alert.alert(t('plan.success'), t('plan.created'), [
         {
-          text: '📄 PDF Olarak Paylaş',
+          text: t('plan.share_pdf'),
           onPress: () =>
             exportNutritionPlanToPDF(
               planData,
               mealsToInsert,
-              selectedClient.client?.display_name || selectedClient.client?.username || 'Danışan',
+              selectedClient.client?.display_name || selectedClient.client?.username || t('plan.client'),
               locale
             ),
         },
-        { text: 'Tamam', onPress: () => router.back() },
+        { text: t('plan.ok'), onPress: () => router.back() },
       ]);
     } catch (err: any) {
-      Alert.alert('Hata', err.message || 'Plan kaydedilemedi.');
+      Alert.alert(t('common.error'), err.message || t('plan.save_failed'));
     } finally {
       setSaving(false);
     }
@@ -140,12 +141,12 @@ export default function CreateNutritionPlan() {
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>BESLENME PLANI OLUŞTUR 📋</Text>
+        <Text style={styles.headerTitle}>{t('plan.title')}</Text>
       </View>
 
       <ScrollView contentContainerStyle={styles.scroll}>
         {/* Quick Templates Bar */}
-        <Text style={styles.sectionTitle}>⚡ HAZIR KLİNİK ŞABLONLAR</Text>
+        <Text style={styles.sectionTitle}>{t('plan.templates')}</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.templateScroll}>
           {MEAL_TEMPLATES.map((tmpl, idx) => (
             <TouchableOpacity
@@ -159,11 +160,11 @@ export default function CreateNutritionPlan() {
           ))}
         </ScrollView>
 
-        <Text style={styles.label}>DANIŞAN SEÇİN:</Text>
+        <Text style={styles.label}>{t('plan.pick_client')}</Text>
         {loading ? (
           <ActivityIndicator color="#10b981" />
         ) : clients.length === 0 ? (
-          <Text style={{ color: '#ef4444', marginBottom: 12 }}>Onaylı danışanınız bulunmuyor.</Text>
+          <Text style={{ color: '#ef4444', marginBottom: 12 }}>{t('plan.no_clients')}</Text>
         ) : (
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.clientScroll}>
             {clients.map((c) => (
@@ -183,20 +184,20 @@ export default function CreateNutritionPlan() {
           </ScrollView>
         )}
 
-        <Text style={styles.label}>PLAN BAŞLIĞI:</Text>
+        <Text style={styles.label}>{t('plan.plan_title')}</Text>
         <TextInput
           style={styles.input}
-          placeholder="örn: 1. Hafta Yağ Yakım Programı"
+          placeholder={t('plan.plan_title_ph')}
           placeholderTextColor="#64748b"
           value={planTitle}
           onChangeText={setPlanTitle}
         />
 
-        <Text style={styles.sectionTitle}>ÖĞÜNLER VE MENÜ</Text>
+        <Text style={styles.sectionTitle}>{t('plan.meals_menu')}</Text>
         {meals.map((meal, index) => (
           <View key={index} style={styles.mealCard}>
             <View style={styles.mealHeader}>
-              <Text style={styles.mealNumber}>ÖĞÜN #{index + 1}</Text>
+              <Text style={styles.mealNumber}>{t('plan.meal_n', { n: index + 1 })}</Text>
               {meals.length > 1 && (
                 <TouchableOpacity onPress={() => removeMealRow(index)}>
                   <Ionicons name="trash-outline" size={18} color="#ef4444" />
@@ -206,15 +207,21 @@ export default function CreateNutritionPlan() {
 
             <View style={styles.row}>
               <View style={{ flex: 1 }}>
-                <Text style={styles.subLabel}>TİP:</Text>
-                <TextInput
-                  style={styles.inputSmall}
-                  value={meal.meal_type}
-                  onChangeText={(v) => updateMeal(index, 'meal_type', v)}
-                />
+                <Text style={styles.subLabel}>{t('plan.type')}</Text>
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 4 }}>
+                  {['breakfast', 'lunch', 'dinner', 'snack'].map((mt) => (
+                    <TouchableOpacity
+                      key={mt}
+                      style={[styles.clientChip, meal.meal_type === mt && styles.clientChipActive]}
+                      onPress={() => updateMeal(index, 'meal_type', mt)}
+                    >
+                      <Text style={styles.clientChipText}>{t(`plan.${mt}`)}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={styles.subLabel}>KALORİ (kcal):</Text>
+                <Text style={styles.subLabel}>{t('plan.calories')}</Text>
                 <TextInput
                   style={styles.inputSmall}
                   keyboardType="numeric"
@@ -226,11 +233,11 @@ export default function CreateNutritionPlan() {
               </View>
             </View>
 
-            <Text style={styles.subLabel}>İÇERİK VE TARİF:</Text>
+            <Text style={styles.subLabel}>{t('plan.content')}</Text>
             <TextInput
               style={[styles.input, { height: 70 }]}
               multiline
-              placeholder="Yemek detayları, porsiyon ve notlar..."
+              placeholder={t('plan.content_ph')}
               placeholderTextColor="#64748b"
               value={meal.content}
               onChangeText={(v) => updateMeal(index, 'content', v)}
@@ -240,7 +247,7 @@ export default function CreateNutritionPlan() {
 
         <TouchableOpacity style={styles.addMealBtn} onPress={addMealRow}>
           <Ionicons name="add-circle-outline" size={20} color="#10b981" />
-          <Text style={styles.addMealText}>YENİ ÖĞÜN EKLE</Text>
+          <Text style={styles.addMealText}>{t('plan.add_meal')}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -249,7 +256,7 @@ export default function CreateNutritionPlan() {
           disabled={saving}
         >
           <Text style={styles.saveBtnText}>
-            {saving ? 'KAYDEDİLİYOR...' : 'PLANIBİL KULLANICIYA GÖNDER VE PDF AL'}
+            {saving ? t('plan.saving') : t('plan.save')}
           </Text>
         </TouchableOpacity>
       </ScrollView>

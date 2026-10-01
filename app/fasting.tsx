@@ -22,16 +22,18 @@ import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
 import GlassCard from '../components/GlassCard';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from '../lib/i18n/i18n';
 
 const FASTING_MODES = [
-  { id: '16:8', label: '16:8 Standart', fastHours: 16, eatHours: 8, desc: 'Yağ yakımı ve zindelik' },
-  { id: '18:6', label: '18:6 İleri', fastHours: 18, eatHours: 6, desc: 'Hızlı ketoz ve otofaji' },
-  { id: '20:4', label: '20:4 Savaşçı', fastHours: 20, eatHours: 4, desc: 'Maksimum hücre yenilenmesi' },
+  { id: '16:8', key: 'm168', fastHours: 16, eatHours: 8 },
+  { id: '18:6', key: 'm186', fastHours: 18, eatHours: 6 },
+  { id: '20:4', key: 'm204', fastHours: 20, eatHours: 4 },
 ];
 
 export default function FastingTrackerScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { t, locale } = useTranslation();
   const [selectedMode, setSelectedMode] = useState(FASTING_MODES[0]);
   const [isFasting, setIsFasting] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
@@ -73,12 +75,12 @@ export default function FastingTrackerScreen() {
   const hoursFasted = elapsedSeconds / 3600;
   const currentPhase =
     hoursFasted < 4
-      ? { title: 'Sindirim & Anabolik Evre', color: '#38bdf8', icon: 'nutrition-outline' }
+      ? { title: t('fasting.phase1'), color: '#38bdf8', icon: 'nutrition-outline' }
       : hoursFasted < 8
-      ? { title: 'Kan Şekeri Dengeleme', color: '#fbbf24', icon: 'pulse-outline' }
+      ? { title: t('fasting.phase2'), color: '#fbbf24', icon: 'pulse-outline' }
       : hoursFasted < 12
-      ? { title: 'Ketoz & Yağ Yakımı', color: '#f97316', icon: 'flame-outline' }
-      : { title: 'Otofaji (Hücre Yenilenmesi)', color: '#10b981', icon: 'leaf-outline' };
+      ? { title: t('fasting.phase3'), color: '#f97316', icon: 'flame-outline' }
+      : { title: t('fasting.phase4'), color: '#10b981', icon: 'leaf-outline' };
 
   return (
     <View style={styles.container}>
@@ -98,7 +100,7 @@ export default function FastingTrackerScreen() {
         >
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>ARALIKLI ORUÇ</Text>
+        <Text style={styles.headerTitle}>{t('fasting.title')}</Text>
         <View style={{ width: 44 }} />
       </View>
 
@@ -129,7 +131,7 @@ export default function FastingTrackerScreen() {
                   selectedMode.id === mode.id && styles.modeChipTextActive,
                 ]}
               >
-                {mode.label}
+                {t(`fasting.${mode.key}`)}
               </Text>
             </TouchableOpacity>
           ))}
@@ -148,15 +150,15 @@ export default function FastingTrackerScreen() {
             <View style={styles.ringVisual}>
               <View style={styles.timerCenter}>
                 <Text style={styles.timerStateText}>
-                  {isFasting ? 'ORUÇ TUTULUYOR' : 'ORUÇ BAŞLATILMADI'}
+                  {isFasting ? t('fasting.state_on') : t('fasting.state_off')}
                 </Text>
                 <Text style={styles.timerValue}>
                   {isFasting ? formatTimer(elapsedSeconds) : formatTimer(targetSeconds)}
                 </Text>
                 <Text style={styles.timerSubText}>
                   {isFasting
-                    ? `${formatTimer(remainingSeconds)} kaldı`
-                    : `${selectedMode.fastHours} Saat Hedef`}
+                    ? t('fasting.remaining', { time: formatTimer(remainingSeconds) })
+                    : t('fasting.target', { hours: selectedMode.fastHours })}
                 </Text>
 
                 {/* Progress Bar Line */}
@@ -183,7 +185,7 @@ export default function FastingTrackerScreen() {
                   color="#fff"
                 />
                 <Text style={styles.actionBtnText}>
-                  {isFasting ? 'ORUCU BİTİR' : 'ORUCU BAŞLAT'}
+                  {isFasting ? t('fasting.stop') : t('fasting.start')}
                 </Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -195,7 +197,7 @@ export default function FastingTrackerScreen() {
           entering={FadeInUp.delay(250).duration(500).springify()}
           style={styles.section}
         >
-          <Text style={styles.sectionTitle}>METABOLİK EVRE</Text>
+          <Text style={styles.sectionTitle}>{t('fasting.phase_title')}</Text>
           <GlassCard borderColor="rgba(255, 255, 255, 0.1)">
             <View style={styles.phaseRow}>
               <View
@@ -215,8 +217,7 @@ export default function FastingTrackerScreen() {
                   {currentPhase.title}
                 </Text>
                 <Text style={styles.phaseDesc}>
-                  {hoursFasted.toFixed(1)} saat tamamlandı • Vücudunuz enerjisini hücresel
-                  onarımı desteklemek için kullanıyor.
+                  {t('fasting.phase_desc', { hours: hoursFasted.toFixed(1) })}
                 </Text>
               </View>
             </View>

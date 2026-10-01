@@ -10,6 +10,7 @@ import Animated, {
   interpolate,
 } from 'react-native-reanimated';
 import { StyleSheet, Text, View } from 'react-native';
+import { useTranslation } from '../lib/i18n/i18n';
 
 interface AnimatedStreakNumberProps {
   streak: number;
@@ -23,6 +24,7 @@ interface AnimatedStreakNumberProps {
  * - Glow efekti var
  */
 export default function AnimatedStreakNumber({ streak, emoji = '🌱' }: AnimatedStreakNumberProps) {
+  const { t } = useTranslation();
   const scale = useSharedValue(0.5);
   const opacity = useSharedValue(0);
   const emojiScale = useSharedValue(1);
@@ -83,7 +85,7 @@ export default function AnimatedStreakNumber({ streak, emoji = '🌱' }: Animate
       </Animated.Text>
 
       <Text style={styles.label}>
-        {streak === 1 ? 'GÜNLÜK SERİ' : 'GÜNLÜK SERİ'}
+        {t('streakNumber.label')}
       </Text>
     </View>
   );

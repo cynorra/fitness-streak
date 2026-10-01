@@ -1,0 +1,24 @@
+export const tracker = {
+  tr: {
+    saved: 'Aktivite Kaydedildi! Toplam Mesafe: {{km}} km',
+    title: 'Koşu / Yürüyüş',
+    km: 'Kilometre',
+    time: 'Süre',
+    start: 'BAŞLA',
+    discard: 'Vazgeç',
+    save: 'Kaydet',
+    resume: 'Devam',
+    stop: 'Bitir',
+  },
+  en: {
+    saved: 'Activity saved! Total distance: {{km}} km',
+    title: 'Run / Walk',
+    km: 'Kilometers',
+    time: 'Time',
+    start: 'START',
+    discard: 'Discard',
+    save: 'Save',
+    resume: 'Resume',
+    stop: 'Finish',
+  },
+};

@@ -15,33 +15,28 @@ import { Ionicons } from '@expo/vector-icons';
 import GlassCard from '../components/GlassCard';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '../lib/auth';
+import { useTranslation } from '../lib/i18n/i18n';
 
 const STORE_ITEMS = [
   {
     id: 'streak_freeze',
-    title: 'Streak Freeze (Kalkan)',
-    desc: 'Bir gün antrenman yapamazsan serin bozulmaz, koruma altına alınır.',
+    tk: 'freeze',
     cost: 500,
     icon: 'shield-checkmark',
-    badge: 'EN ÇOK TERCİH EDİLEN',
     gradient: ['#3b82f6', '#1d4ed8'] as const,
   },
   {
     id: 'xp_booster',
-    title: '2X XP Güçlendirici (3 Gün)',
-    desc: 'Tamamladığın tüm antrenmanlardan 2 kat fazla tecrübe puanı kazan.',
+    tk: 'xp',
     cost: 750,
     icon: 'flash',
-    badge: 'POPÜLER',
     gradient: ['#eab308', '#ca8a04'] as const,
   },
   {
     id: 'gold_avatar',
-    title: 'Altın Alev Çerçevesi',
-    desc: 'Profilinde ve liderlik tablosunda ışıldayan özel altın çerçeve.',
+    tk: 'gold',
     cost: 1200,
     icon: 'trophy',
-    badge: 'ÖZEL SKIN',
     gradient: ['#ec4899', '#be185d'] as const,
   },
 ];
@@ -50,13 +45,14 @@ export default function StreakStoreScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { profile } = useAuth();
+  const { t, locale } = useTranslation();
   const [userCoins, setUserCoins] = useState(1500);
   const [hasShield, setHasShield] = useState(true);
 
   const buyItem = (item: (typeof STORE_ITEMS)[0]) => {
     if (userCoins < item.cost) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      Alert.alert('Yetersiz XP', 'Bu eşyayı almak için yeterli XP puanın bulunmuyor!');
+      Alert.alert(t('store.low_xp'), t('store.low_xp_msg'));
       return;
     }
 
@@ -64,7 +60,7 @@ export default function StreakStoreScreen() {
     setUserCoins((prev) => prev - item.cost);
     if (item.id === 'streak_freeze') setHasShield(true);
 
-    Alert.alert('🎉 Başarılı!', `${item.title} başarıyla envanterine eklendi.`);
+    Alert.alert(t('store.success'), t('store.added', { title: t(`store.${item.tk}_title`) }));
   };
 
   return (
@@ -85,7 +81,7 @@ export default function StreakStoreScreen() {
         >
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>STREAK MAĞAZASI</Text>
+        <Text style={styles.headerTitle}>{t('store.title')}</Text>
         <View style={styles.xpBadge}>
           <Ionicons name="star" size={16} color="#fbbf24" />
           <Text style={styles.xpText}>{userCoins} XP</Text>
@@ -121,12 +117,12 @@ export default function StreakStoreScreen() {
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={styles.bannerTitle}>
-                  {hasShield ? 'STREAK KALKANI AKTİF' : 'KALKAN KORUMASI YOK'}
+                  {hasShield ? t('store.shield_on') : t('store.shield_off')}
                 </Text>
                 <Text style={styles.bannerDesc}>
                   {hasShield
-                    ? '1 Günlük serin olası kaçırmalara karşı koruma altında!'
-                    : 'Serinin sıfırlanmaması için mağazadan Streak Freeze satın al.'}
+                    ? t('store.shield_on_desc')
+                    : t('store.shield_off_desc')}
                 </Text>
               </View>
             </View>
@@ -138,12 +134,12 @@ export default function StreakStoreScreen() {
           entering={FadeInUp.delay(150).duration(500).springify()}
           style={styles.section}
         >
-          <Text style={styles.sectionTitle}>MAĞAZA ÜRÜNLERİ</Text>
+          <Text style={styles.sectionTitle}>{t('store.items')}</Text>
           {STORE_ITEMS.map((item, idx) => (
             <GlassCard key={item.id} style={styles.itemCard}>
               <View style={styles.itemHeader}>
                 <View style={styles.badgeBox}>
-                  <Text style={styles.badgeText}>{item.badge}</Text>
+                  <Text style={styles.badgeText}>{t(`store.${item.tk}_badge`)}</Text>
                 </View>
               </View>
 
@@ -152,8 +148,8 @@ export default function StreakStoreScreen() {
                   <Ionicons name={item.icon as any} size={28} color="#a855f7" />
                 </View>
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.itemTitle}>{item.title}</Text>
-                  <Text style={styles.itemDesc}>{item.desc}</Text>
+                  <Text style={styles.itemTitle}>{t(`store.${item.tk}_title`)}</Text>
+                  <Text style={styles.itemDesc}>{t(`store.${item.tk}_desc`)}</Text>
                 </View>
               </View>
 
@@ -162,7 +158,7 @@ export default function StreakStoreScreen() {
                 onPress={() => buyItem(item)}
               >
                 <LinearGradient colors={item.gradient} style={styles.buyBtnGrad}>
-                  <Text style={styles.buyBtnText}>SATIN AL</Text>
+                  <Text style={styles.buyBtnText}>{t('store.buy')}</Text>
                   <View style={styles.priceRow}>
                     <Ionicons name="star" size={14} color="#fff" />
                     <Text style={styles.priceText}>{item.cost}</Text>

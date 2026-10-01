@@ -47,7 +47,7 @@ export default function Login() {
       });
 
       if (error) throw error;
-      if (!data?.url) throw new Error('Google giriş adresi alınamadı.');
+      if (!data?.url) throw new Error(t('login.err_google_url'));
 
       const result = await WebBrowser.openAuthSessionAsync(data.url, redirectUrl);
       if (result.type !== 'success') {
@@ -78,13 +78,13 @@ export default function Login() {
         const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
         if (exchangeError) throw exchangeError;
       } else {
-        throw new Error('Google girişi tamamlanamadı.');
+        throw new Error(t('login.err_google_incomplete'));
       }
 
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } catch (err: any) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      Alert.alert(t('common.error'), err.message || 'Google ile giriş başlatılamadı.');
+      Alert.alert(t('common.error'), err.message || t('login.err_google_start'));
     } finally {
       setLoading(false);
     }
@@ -93,12 +93,12 @@ export default function Login() {
   const handleAuth = async () => {
     if (!email || !password) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      Alert.alert(t('common.error'), 'Lütfen e-posta adresi ve şifrenizi girin.');
+      Alert.alert(t('common.error'), t('login.err_missing_fields'));
       return;
     }
     if (mode === 'signup' && (!username || username.length < 3)) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      Alert.alert(t('common.error'), 'Kullanıcı adı en az 3 karakter olmalıdır.');
+      Alert.alert(t('common.error'), t('login.err_username_short'));
       return;
     }
 
@@ -118,11 +118,11 @@ export default function Login() {
         });
         if (error) throw error;
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-        Alert.alert('🎉 Hoş geldin!', 'Hesabın başarıyla oluşturuldu.');
+        Alert.alert(t('login.welcome_title'), t('login.welcome_message'));
       }
     } catch (err: any) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      Alert.alert(t('common.error'), err.message || 'Giriş yapılamadı.');
+      Alert.alert(t('common.error'), err.message || t('login.err_sign_in'));
     } finally {
       setLoading(false);
     }
@@ -130,7 +130,7 @@ export default function Login() {
 
   const handleForgotPassword = async () => {
     if (!email) {
-      Alert.alert('Şifre Sıfırlama', 'Lütfen şifre sıfırlama bağlantısı göndermek için e-posta adresinizi girin.');
+      Alert.alert(t('login.reset_title'), t('login.reset_need_email'));
       return;
     }
 
@@ -138,7 +138,7 @@ export default function Login() {
     if (error) {
       Alert.alert(t('common.error'), error.message);
     } else {
-      Alert.alert('Şifre Sıfırlama', 'Şifre sıfırlama bağlantısı e-posta adresinize gönderildi.');
+      Alert.alert(t('login.reset_title'), t('login.reset_sent'));
     }
   };
 
@@ -156,7 +156,7 @@ export default function Login() {
       <View style={[styles.langBar, { paddingTop: insets.top + 10 }]}>
         <View style={styles.langPill}>
           <Ionicons name="globe-outline" size={14} color="#10b981" />
-          {['tr', 'en', 'ar', 'de', 'es', 'ru', 'zh', 'ja', 'ko', 'hi'].map((code) => (
+          {['tr', 'en'].map((code) => (
             <TouchableOpacity
               key={code}
               onPress={() => {
@@ -185,9 +185,9 @@ export default function Login() {
         <View style={styles.brand}>
           <Text style={styles.flame}>🔥</Text>
           <Text style={styles.title}>
-            STREAK<Text style={{ color: '#10b981' }}>FIT</Text>
+            VITA<Text style={{ color: '#10b981' }}>TRIBE</Text>
           </Text>
-          <Text style={styles.tagline}>Her gün bir adım. Seri alevin hiç sönmesin.</Text>
+          <Text style={styles.tagline}>{t('login.tagline')}</Text>
         </View>
 
         <GlassCard style={styles.card}>
@@ -199,20 +199,20 @@ export default function Login() {
               disabled={loading}
             >
               <Ionicons name="logo-google" size={20} color="#ea4335" />
-              <Text style={styles.googleBtnText}>GOOGLE İLE İLERLE</Text>
+              <Text style={styles.googleBtnText}>{t('login.google')}</Text>
             </TouchableOpacity>
 
             {/* Divider */}
             <View style={styles.dividerRow}>
               <View style={styles.dividerLine} />
-              <Text style={styles.dividerText}>VEYA E-POSTA İLE</Text>
+              <Text style={styles.dividerText}>{t('login.or_email')}</Text>
               <View style={styles.dividerLine} />
             </View>
 
             {mode === 'signup' && (
               <>
                 <View>
-                  <Text style={styles.label}>HESAP TİPİ SEÇ</Text>
+                  <Text style={styles.label}>{t('login.account_type')}</Text>
                   <View style={styles.roleRow}>
                     <TouchableOpacity
                       style={[
@@ -228,7 +228,7 @@ export default function Login() {
                           selectedRole === 'user' && styles.roleChipTextActive,
                         ]}
                       >
-                        SPORCU / ÜYE
+                        {t('login.role_member')}
                       </Text>
                     </TouchableOpacity>
 
@@ -246,17 +246,17 @@ export default function Login() {
                           selectedRole === 'dietitian' && styles.roleChipTextActive,
                         ]}
                       >
-                        DİYETİSYEN
+                        {t('login.role_dietitian')}
                       </Text>
                     </TouchableOpacity>
                   </View>
                 </View>
 
                 <View>
-                  <Text style={styles.label}>KULLANICI ADI</Text>
+                  <Text style={styles.label}>{t('login.username')}</Text>
                   <TextInput
                     style={styles.input}
-                    placeholder="örn: fit_erene"
+                    placeholder={t('login.username_placeholder')}
                     placeholderTextColor="#64748b"
                     value={username}
                     onChangeText={setUsername}
@@ -268,10 +268,10 @@ export default function Login() {
             )}
 
             <View>
-              <Text style={styles.label}>E-POSTA ADRESİ</Text>
+              <Text style={styles.label}>{t('login.email')}</Text>
               <TextInput
                 style={styles.input}
-                placeholder="ornek@email.com"
+                placeholder={t('login.email_placeholder')}
                 placeholderTextColor="#64748b"
                 value={email}
                 onChangeText={setEmail}
@@ -282,7 +282,7 @@ export default function Login() {
             </View>
 
             <View>
-              <Text style={styles.label}>ŞİFRE</Text>
+              <Text style={styles.label}>{t('login.password')}</Text>
               <TextInput
                 style={styles.input}
                 placeholder="••••••••"
@@ -295,7 +295,7 @@ export default function Login() {
 
             {mode === 'login' && (
               <TouchableOpacity onPress={handleForgotPassword} style={styles.forgotBtn}>
-                <Text style={styles.forgotText}>Şifremi Unuttum?</Text>
+                <Text style={styles.forgotText}>{t('login.forgot')}</Text>
               </TouchableOpacity>
             )}
 
@@ -309,7 +309,7 @@ export default function Login() {
                 style={styles.buttonGrad}
               >
                 <Text style={styles.buttonText}>
-                  {loading ? 'YÜKLENİYOR...' : mode === 'login' ? 'GİRİŞ YAP' : 'HESAP OLUŞTUR'}
+                  {loading ? t('login.loading') : mode === 'login' ? t('login.sign_in') : t('login.create_account')}
                 </Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -322,8 +322,8 @@ export default function Login() {
             >
               <Text style={styles.switchText}>
                 {mode === 'login'
-                  ? 'Hesabın yok mu? Kayıt ol'
-                  : 'Zaten hesabın var mı? Giriş yap'}
+                  ? t('login.switch_to_signup')
+                  : t('login.switch_to_login')}
               </Text>
             </TouchableOpacity>
           </View>

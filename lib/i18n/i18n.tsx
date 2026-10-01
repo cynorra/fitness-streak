@@ -1,30 +1,26 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import * as Localization from 'expo-localization';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { translations, TranslationType } from './translations';
+import { translations as baseTranslations } from './translations';
+import { screenStrings } from './screens';
 
 import { syncNotificationSchedules } from '../notifications';
+import { setModerationLocale } from '../profanityFilter';
 
 const LANGUAGE_KEY = '@app_language';
+
+// Only Turkish and English are fully translated; other locales are intentionally disabled.
+const translations: Record<string, any> = {
+  tr: { ...baseTranslations.tr, ...screenStrings.tr },
+  en: { ...baseTranslations.en, ...screenStrings.en },
+};
 
 export const supportedLanguages = [
   { code: 'tr', name: 'Türkçe 🇹🇷' },
   { code: 'en', name: 'English 🇺🇸' },
-  { code: 'ar', name: 'العربية 🇸🇦' },
-  { code: 'de', name: 'Deutsch 🇩🇪' },
-  { code: 'fr', name: 'Français 🇫🇷' },
-  { code: 'es', name: 'Español 🇪🇸' },
-  { code: 'pt', name: 'Português 🇧🇷' },
-  { code: 'it', name: 'Italiano 🇮🇹' },
-  { code: 'ru', name: 'Русский 🇷🇺' },
-  { code: 'uk', name: 'Українська 🇺🇦' },
-  { code: 'zh', name: '简体中文 🇨🇳' },
-  { code: 'ja', name: '日本語 🇯🇵' },
-  { code: 'ko', name: '한국어 🇰🇷' },
-  { code: 'hi', name: 'हिन्दी 🇮🇳' },
-  { code: 'el', name: 'Ελληνικά 🇬🇷' },
-  { code: 'nl', name: 'Nederlands 🇳🇱' },
 ];
+
+const SUPPORTED_CODES = supportedLanguages.map((l) => l.code);
 
 type I18nContextType = {
   locale: string;
@@ -49,20 +45,17 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     async function loadLanguage() {
       try {
         const savedLanguage = await AsyncStorage.getItem(LANGUAGE_KEY);
-        if (savedLanguage && translations[savedLanguage]) {
+        if (savedLanguage && SUPPORTED_CODES.includes(savedLanguage)) {
           setLocale(savedLanguage);
         } else {
           // Detect system language
           const systemLocales = Localization.getLocales();
           if (systemLocales && systemLocales.length > 0) {
             const systemLang = systemLocales[0].languageCode;
-            if (systemLang && translations[systemLang]) {
-              setLocale(systemLang);
-            } else {
-              setLocale('tr'); // Default fallback
-            }
+            // Turkish devices get Turkish; everything else gets English.
+            setLocale(systemLang === 'tr' ? 'tr' : 'en');
           } else {
-            setLocale('tr');
+            setLocale('en');
           }
         }
       } catch (e) {
@@ -76,7 +69,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const changeLanguage = async (code: string) => {
-    if (translations[code]) {
+    if (SUPPORTED_CODES.includes(code)) {
       setLocale(code);
       try {
         await AsyncStorage.setItem(LANGUAGE_KEY, code);
@@ -110,6 +103,10 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 
     return typeof current === 'string' ? interpolate(current, vars) : keyPath;
   };
+
+  useEffect(() => {
+    setModerationLocale(locale);
+  }, [locale]);
 
   if (loading) {
     return null; // Prevent UI rendering until language is determined

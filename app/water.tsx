@@ -24,6 +24,7 @@ import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
 import GlassCard from '../components/GlassCard';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from '../lib/i18n/i18n';
 
 interface WaterLog {
   id: string;
@@ -34,13 +35,10 @@ interface WaterLog {
 export default function WaterTrackerScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { t, locale } = useTranslation();
   const [dailyGoal, setDailyGoal] = useState<number>(2500);
-  const [currentAmount, setCurrentAmount] = useState<number>(1250);
-  const [logs, setLogs] = useState<WaterLog[]>([
-    { id: '1', amount: 500, time: '08:30' },
-    { id: '2', amount: 250, time: '11:15' },
-    { id: '3', amount: 500, time: '14:00' },
-  ]);
+  const [currentAmount, setCurrentAmount] = useState<number>(0);
+  const [logs, setLogs] = useState<WaterLog[]>([]);
 
   // Wave Animation values
   const fillProgress = useSharedValue(currentAmount / dailyGoal);
@@ -99,7 +97,7 @@ export default function WaterTrackerScreen() {
         >
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>SU TAKİBİ</Text>
+        <Text style={styles.headerTitle}>{t('water.title')}</Text>
         <TouchableOpacity
           style={styles.backBtn}
           onPress={() => {
@@ -145,8 +143,8 @@ export default function WaterTrackerScreen() {
                 <View style={styles.statusBadge}>
                   <Text style={styles.statusText}>
                     {percentage >= 100
-                      ? '🎉 HEDEF TAMAMLANDI!'
-                      : `${dailyGoal - currentAmount} ml KALDI`}
+                      ? t('water.goal_done')
+                      : t('water.left', { ml: dailyGoal - currentAmount })}
                   </Text>
                 </View>
               </View>
@@ -159,7 +157,7 @@ export default function WaterTrackerScreen() {
           entering={FadeInUp.delay(150).duration(500).springify()}
           style={styles.section}
         >
-          <Text style={styles.sectionTitle}>HIZLI SU EKLE</Text>
+          <Text style={styles.sectionTitle}>{t('water.quick_add')}</Text>
           <View style={styles.quickAddRow}>
             {[
               { label: '+250 ml', amount: 250, icon: 'wine-outline' },
@@ -188,7 +186,7 @@ export default function WaterTrackerScreen() {
           entering={FadeInUp.delay(300).duration(500).springify()}
           style={styles.section}
         >
-          <Text style={styles.sectionTitle}>BUGÜNKÜ KAYITLAR ({logs.length})</Text>
+          <Text style={styles.sectionTitle}>{t('water.today_logs')} ({logs.length})</Text>
           {logs.map((log, idx) => (
             <GlassCard
               key={log.id}
@@ -200,7 +198,7 @@ export default function WaterTrackerScreen() {
                   <Ionicons name="water" size={20} color="#38bdf8" />
                 </View>
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.logAmount}>+{log.amount} ml Su</Text>
+                  <Text style={styles.logAmount}>+{log.amount} ml {t('water.water')}</Text>
                   <Text style={styles.logTime}>{log.time}</Text>
                 </View>
                 <Ionicons name="checkmark-circle" size={20} color="#10b981" />

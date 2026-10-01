@@ -17,6 +17,7 @@ import { supabase, Workout } from '../../lib/supabase';
 import { format, parseISO, subDays } from 'date-fns';
 import { useTranslation } from '../../lib/i18n/i18n';
 import { getDateLocale } from '../../lib/i18n/dateUtils';
+import { displayWorkoutType } from '../../lib/workoutTypes';
 import AnimatedStreakNumber from '../../components/AnimatedStreakNumber';
 import AdMobBanner from '../../components/AdMobBanner';
 import * as Haptics from 'expo-haptics';
@@ -191,14 +192,14 @@ export default function StreakHome() {
             onPress={() => router.push('/leaderboard' as any)}
           >
             <Text style={styles.gamificationIcon}>🏆</Text>
-            <Text style={styles.gamificationLabel}>Liderlik Tablosu</Text>
+            <Text style={styles.gamificationLabel}>{t('home.leaderboard')}</Text>
           </TouchableOpacity>
           <TouchableOpacity 
             style={styles.gamificationCard}
             onPress={() => router.push('/challenges' as any)}
           >
             <Text style={styles.gamificationIcon}>🎯</Text>
-            <Text style={styles.gamificationLabel}>Görevler</Text>
+            <Text style={styles.gamificationLabel}>{t('home.challenges')}</Text>
           </TouchableOpacity>
         </Animated.View>
 
@@ -207,7 +208,7 @@ export default function StreakHome() {
           entering={FadeInUp.delay(380).duration(450).springify()}
           style={styles.quickModulesSection}
         >
-          <Text style={styles.sectionTitle}>HIZLI ERİŞİM VE ARAÇLAR</Text>
+          <Text style={styles.sectionTitle}>{t('home.quick')}</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.modulesScroll}>
             <TouchableOpacity
               style={[styles.moduleCard, { borderColor: '#38bdf840' }]}
@@ -217,8 +218,8 @@ export default function StreakHome() {
               }}
             >
               <Text style={styles.moduleIcon}>💧</Text>
-              <Text style={styles.moduleTitle}>Su Takibi</Text>
-              <Text style={styles.moduleSub}>Hidrasyon</Text>
+              <Text style={styles.moduleTitle}>{t('home.water')}</Text>
+              <Text style={styles.moduleSub}>{t('home.water_sub')}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -229,8 +230,8 @@ export default function StreakHome() {
               }}
             >
               <Text style={styles.moduleIcon}>⏱️</Text>
-              <Text style={styles.moduleTitle}>Aralıklı Oruç</Text>
-              <Text style={styles.moduleSub}>Zamanlayıcı</Text>
+              <Text style={styles.moduleTitle}>{t('home.fasting')}</Text>
+              <Text style={styles.moduleSub}>{t('home.fasting_sub')}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -241,8 +242,8 @@ export default function StreakHome() {
               }}
             >
               <Text style={styles.moduleIcon}>📊</Text>
-              <Text style={styles.moduleTitle}>Analiz & Grafikler</Text>
-              <Text style={styles.moduleSub}>Performans</Text>
+              <Text style={styles.moduleTitle}>{t('home.analytics')}</Text>
+              <Text style={styles.moduleSub}>{t('home.analytics_sub')}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -253,8 +254,8 @@ export default function StreakHome() {
               }}
             >
               <Text style={styles.moduleIcon}>🛡️</Text>
-              <Text style={styles.moduleTitle}>Streak Mağazası</Text>
-              <Text style={styles.moduleSub}>Koruma & XP</Text>
+              <Text style={styles.moduleTitle}>{t('home.store')}</Text>
+              <Text style={styles.moduleSub}>{t('home.store_sub')}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -265,8 +266,8 @@ export default function StreakHome() {
               }}
             >
               <Text style={styles.moduleIcon}>📍</Text>
-              <Text style={styles.moduleTitle}>GPS Harita</Text>
-              <Text style={styles.moduleSub}>Koşu/Yürüyüş</Text>
+              <Text style={styles.moduleTitle}>{t('home.gps')}</Text>
+              <Text style={styles.moduleSub}>{t('home.gps_sub')}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -277,8 +278,8 @@ export default function StreakHome() {
               }}
             >
               <Text style={styles.moduleIcon}>📖</Text>
-              <Text style={styles.moduleTitle}>VitaTribe Blog</Text>
-              <Text style={styles.moduleSub}>Rehber & Yazılar</Text>
+              <Text style={styles.moduleTitle}>{t('home.blog')}</Text>
+              <Text style={styles.moduleSub}>{t('home.blog_sub')}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -289,8 +290,8 @@ export default function StreakHome() {
               }}
             >
               <Text style={styles.moduleIcon}>🏋️‍♂️</Text>
-              <Text style={styles.moduleTitle}>Fitness Salonları</Text>
-              <Text style={styles.moduleSub}>Harita & İndirimler</Text>
+              <Text style={styles.moduleTitle}>{t('home.gyms')}</Text>
+              <Text style={styles.moduleSub}>{t('home.gyms_sub')}</Text>
             </TouchableOpacity>
           </ScrollView>
         </Animated.View>
@@ -314,7 +315,7 @@ export default function StreakHome() {
                 style={styles.workoutRow}
               >
                 <View>
-                  <Text style={styles.workoutType}>{w.workout_type}</Text>
+                  <Text style={styles.workoutType}>{displayWorkoutType(w.workout_type, t)}</Text>
                   <Text style={styles.workoutDate}>
                     {format(parseISO(w.logged_at), 'd MMM • HH:mm', { locale: dateLocale })}
                   </Text>

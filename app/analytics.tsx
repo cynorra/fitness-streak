@@ -15,20 +15,22 @@ import { Ionicons } from '@expo/vector-icons';
 import GlassCard from '../components/GlassCard';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Rect, Line, Circle, Path, Text as SvgText } from 'react-native-svg';
+import { useTranslation } from '../lib/i18n/i18n';
 
 const WEEKLY_CALORIES = [
-  { day: 'Pzt', val: 420 },
-  { day: 'Sal', val: 650 },
-  { day: 'Çar', val: 380 },
-  { day: 'Per', val: 720 },
-  { day: 'Cum', val: 510 },
-  { day: 'Cmt', val: 890 },
-  { day: 'Paz', val: 600 },
+  { dayKey: 'd1', val: 420 },
+  { dayKey: 'd2', val: 650 },
+  { dayKey: 'd3', val: 380 },
+  { dayKey: 'd4', val: 720 },
+  { dayKey: 'd5', val: 510 },
+  { dayKey: 'd6', val: 890 },
+  { dayKey: 'd7', val: 600 },
 ];
 
 export default function AnalyticsScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { t, locale } = useTranslation();
   const [timeframe, setTimeframe] = useState<'week' | 'month'>('week');
   const { width } = useWindowDimensions();
   const CHART_WIDTH = width - 72;
@@ -53,7 +55,7 @@ export default function AnalyticsScreen() {
         >
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>PERFORMANS VE ANALİZ</Text>
+        <Text style={styles.headerTitle}>{t('analytics.title')}</Text>
         <View style={{ width: 44 }} />
       </View>
 
@@ -69,12 +71,12 @@ export default function AnalyticsScreen() {
           <GlassCard style={styles.statCard}>
             <Ionicons name="flame" size={24} color="#f97316" />
             <Text style={styles.statVal}>4,170</Text>
-            <Text style={styles.statLbl}>TOPLAM KALORİ (KCAL)</Text>
+            <Text style={styles.statLbl}>{t('analytics.cal')}</Text>
           </GlassCard>
           <GlassCard style={styles.statCard}>
             <Ionicons name="time" size={24} color="#10b981" />
             <Text style={styles.statVal}>340</Text>
-            <Text style={styles.statLbl}>TOPLAM DAKİKA</Text>
+            <Text style={styles.statLbl}>{t('analytics.min')}</Text>
           </GlassCard>
         </Animated.View>
 
@@ -84,7 +86,7 @@ export default function AnalyticsScreen() {
           style={styles.section}
         >
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>KALORİ HARCAMA GRAFİĞİ</Text>
+            <Text style={styles.sectionTitle}>{t('analytics.chart')}</Text>
             <View style={styles.toggleRow}>
               <TouchableOpacity
                 style={[
@@ -99,7 +101,7 @@ export default function AnalyticsScreen() {
                     timeframe === 'week' && styles.toggleTextActive,
                   ]}
                 >
-                  HAFTA
+                  {t('analytics.week')}
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -115,7 +117,7 @@ export default function AnalyticsScreen() {
                     timeframe === 'month' && styles.toggleTextActive,
                   ]}
                 >
-                  AY
+                  {t('analytics.month')}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -175,7 +177,7 @@ export default function AnalyticsScreen() {
                       fontWeight="bold"
                       textAnchor="middle"
                     >
-                      {item.day}
+                      {t(`analytics.${item.dayKey}`)}
                     </SvgText>
                   </React.Fragment>
                 );
@@ -189,7 +191,7 @@ export default function AnalyticsScreen() {
           entering={FadeInUp.delay(300).duration(500).springify()}
           style={styles.section}
         >
-          <Text style={styles.sectionTitle}>30 GÜNLÜK SERİ TUTARLILIĞI</Text>
+          <Text style={styles.sectionTitle}>{t('analytics.matrix')}</Text>
           <GlassCard style={{ padding: 16 }}>
             <View style={styles.matrixGrid}>
               {Array.from({ length: 28 }).map((_, i) => {

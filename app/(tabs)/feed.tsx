@@ -118,7 +118,7 @@ export default function Feed() {
     const modResult = checkContentModeration(newPostContent.trim());
     if (!modResult.isClean) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      Alert.alert('Topluluk Kuralları Engeli 🛑', modResult.reason);
+      Alert.alert(t('feed2.rules_blocked'), modResult.reason);
       return;
     }
 
@@ -133,7 +133,7 @@ export default function Feed() {
     setIsPosting(false);
     
     if (error) {
-      Alert.alert(t('common.error'), `${t('common.error')}: Failed to publish post. (${error.message})`);
+      Alert.alert(t('common.error'), `${t('feed2.publish_failed')} (${error.message})`);
     } else {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       setNewPostContent('');
@@ -144,29 +144,29 @@ export default function Feed() {
   const handleReportPost = (item: PostItem) => {
     if (!profile) return;
     Alert.alert(
-      'Gönderiyi Şikayet Et',
-      'Bu gönderiyi neden şikayet ediyorsun?',
+      t('feed2.report_title'),
+      t('feed2.report_question'),
       [
-        { text: 'Vazgeç', style: 'cancel' },
+        { text: t('feed2.cancel'), style: 'cancel' },
         {
-          text: 'Uygunsuz İçerik / Küfür',
+          text: t('feed2.r_inappropriate'),
           onPress: async () => {
-            const result = await reportUser(profile.id, item.user_id, 'Uygunsuz içerik / küfür', 'post', item.id);
-            Alert.alert(result.error ? 'Hata' : 'Şikayet Alındı', result.error || 'Şikayetin ekibimize iletildi, en kısa sürede incelenecek.');
+            const result = await reportUser(profile.id, item.user_id, t('feed2.r_inappropriate_val'), 'post', item.id);
+            Alert.alert(result.error ? t('common.error') : t('feed2.report_received'), result.error || t('feed2.report_sent'));
           },
         },
         {
-          text: 'Spam',
+          text: t('feed2.r_spam'),
           onPress: async () => {
-            const result = await reportUser(profile.id, item.user_id, 'Spam', 'post', item.id);
-            Alert.alert(result.error ? 'Hata' : 'Şikayet Alındı', result.error || 'Şikayetin ekibimize iletildi, en kısa sürede incelenecek.');
+            const result = await reportUser(profile.id, item.user_id, t('feed2.r_spam'), 'post', item.id);
+            Alert.alert(result.error ? t('common.error') : t('feed2.report_received'), result.error || t('feed2.report_sent'));
           },
         },
         {
-          text: 'Taciz / Rahatsız Edici',
+          text: t('feed2.r_harass'),
           onPress: async () => {
-            const result = await reportUser(profile.id, item.user_id, 'Taciz / Rahatsız edici', 'post', item.id);
-            Alert.alert(result.error ? 'Hata' : 'Şikayet Alındı', result.error || 'Şikayetin ekibimize iletildi, en kısa sürede incelenecek.');
+            const result = await reportUser(profile.id, item.user_id, t('feed2.r_harass_val'), 'post', item.id);
+            Alert.alert(result.error ? t('common.error') : t('feed2.report_received'), result.error || t('feed2.report_sent'));
           },
         },
       ]
@@ -291,22 +291,22 @@ export default function Feed() {
                   {/* Role Badges */}
                   {item.profile?.role === 'dietitian' ? (
                     <View style={styles.dietitianBadge}>
-                      <Text style={styles.dietitianBadgeText}>🩺 Diyetisyen</Text>
+                      <Text style={styles.dietitianBadgeText}>{t('feed2.badge_dietitian')}</Text>
                     </View>
                   ) : (item.profile?.current_streak || 0) >= 30 ? (
                     <View style={styles.proBadge}>
-                      <Text style={styles.proBadgeText}>🏆 Pro Sporcu</Text>
+                      <Text style={styles.proBadgeText}>{t('feed2.badge_pro')}</Text>
                     </View>
                   ) : (
                     <View style={styles.userBadge}>
-                      <Text style={styles.userBadgeText}>💪 Üye</Text>
+                      <Text style={styles.userBadgeText}>{t('feed2.badge_member')}</Text>
                     </View>
                   )}
 
                   <Text style={styles.userHandle}>@{item.profile?.username}</Text>
                 </View>
                 <Text style={styles.userMeta}>
-                  {format(parseISO(item.created_at), 'd MMM HH:mm', { locale: dateLocale })}
+                  {format(parseISO(item.created_at), t('feed2.date_fmt'), { locale: dateLocale })}
                 </Text>
               </View>
               {item.user_id !== profile?.id && (
@@ -340,12 +340,12 @@ export default function Feed() {
                 onPress={() => {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                   Share.share({
-                    message: `🔥 VitaTribe Spor Serisi Paylaşımı: "${item.content}" - Sen de katıl! #VitaTribe #Fitness #Diyet`,
+                    message: t('feed2.share_msg', { content: item.content }),
                   });
                 }}
               >
                 <Text style={styles.actionEmoji}>📸</Text>
-                <Text style={styles.actionCount}>Hikayede Paylaş</Text>
+                <Text style={styles.actionCount}>{t('feed2.share_story')}</Text>
               </TouchableOpacity>
             </View>
           </Animated.View>

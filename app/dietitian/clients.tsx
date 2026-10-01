@@ -19,11 +19,13 @@ import { useAuth } from '../../lib/auth';
 import { supabase } from '../../lib/supabase';
 import GlassCard from '../../components/GlassCard';
 import { calculateNutritionTargets, BMRParams } from '../../lib/nutritionCalc';
+import { useTranslation } from '../../lib/i18n/i18n';
 
 export default function DietitianClients() {
   const { profile } = useAuth();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { t, locale } = useTranslation();
 
   const [clients, setClients] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -66,6 +68,46 @@ export default function DietitianClients() {
     }
   };
 
+  // Find (or create) the conversation with a client; the chat route expects a conversation id.
+  const openChat = async (clientId?: string) => {
+    if (!profile || !clientId) return;
+    try {
+      const { data: existing } = await supabase
+        .from('conversations')
+        .select('id')
+        .or(
+          `and(participant_1.eq.${profile.id},participant_2.eq.${clientId}),and(participant_1.eq.${clientId},participant_2.eq.${profile.id})`
+        )
+        .limit(1);
+      let conversationId = existing?.[0]?.id;
+      if (!conversationId) {
+        const { data: created, error } = await supabase
+          .from('conversations')
+          .insert({ participant_1: profile.id, participant_2: clientId })
+          .select('id')
+          .single();
+        if (error) throw error;
+        conversationId = created.id;
+      }
+      router.push(`/chat/${conversationId}` as any);
+    } catch (err: any) {
+      Alert.alert(t('common.error'), err?.message || t('clients.chat_failed'));
+    }
+  };
+
+  const respondToRequest = async (requestId: string, approve: boolean) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    const { error } = await supabase
+      .from('dietitian_clients')
+      .update({ status: approve ? 'approved' : 'rejected' })
+      .eq('id', requestId);
+    if (error) {
+      Alert.alert(t('common.error'), error.message);
+      return;
+    }
+    loadClients();
+  };
+
   const handleCalculateBMR = () => {
     const result = calculateNutritionTargets(calcParams);
     setCalcResult(result);
@@ -90,8 +132,8 @@ export default function DietitianClients() {
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
         <View style={styles.headerTitles}>
-          <Text style={styles.headerTitle}>DANIŞAN KONTROL MERKEZİ 🩺</Text>
-          <Text style={styles.headerSub}>Aktif Danışan Takibi & BMR Hesaplayıcı</Text>
+          <Text style={styles.headerTitle}>{t('clients.title')}</Text>
+          <Text style={styles.headerSub}>{t('clients.sub')}</Text>
         </View>
         <TouchableOpacity
           onPress={() => {
@@ -109,7 +151,7 @@ export default function DietitianClients() {
         <Ionicons name="search" size={18} color="#64748b" />
         <TextInput
           style={styles.searchInput}
-          placeholder="Danışan adı ile ara..."
+          placeholder={t('clients.search')}
           placeholderTextColor="#64748b"
           value={search}
           onChangeText={setSearch}
@@ -121,30 +163,30 @@ export default function DietitianClients() {
         <GlassCard style={styles.statsCard}>
           <View style={styles.statBox}>
             <Text style={styles.statVal}>{clients.length}</Text>
-            <Text style={styles.statLbl}>TOPLAM DANIŞAN</Text>
+            <Text style={styles.statLbl}>{t('clients.total')}</Text>
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statBox}>
-            <Text style={[styles.statVal, { color: '#10b981' }]}>%92</Text>
-            <Text style={styles.statLbl}>ORTALAMA UYUM</Text>
+            <Text style={[styles.statVal, { color: '#10b981' }]}>{clients.filter((c) => c.status === 'approved').length}</Text>
+            <Text style={styles.statLbl}>{t('clients.approved')}</Text>
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statBox}>
-            <Text style={[styles.statVal, { color: '#f59e0b' }]}>24</Text>
-            <Text style={styles.statLbl}>BU HAFTA SEANS</Text>
+            <Text style={[styles.statVal, { color: '#f59e0b' }]}>{clients.filter((c) => c.status === 'pending').length}</Text>
+            <Text style={styles.statLbl}>{t('clients.pending')}</Text>
           </View>
         </GlassCard>
 
-        <Text style={styles.sectionTitle}>AKTİF DANIŞANLAR</Text>
+        <Text style={styles.sectionTitle}>{t('clients.active')}</Text>
 
         {loading ? (
           <ActivityIndicator size="large" color="#10b981" style={{ marginTop: 40 }} />
         ) : filteredClients.length === 0 ? (
           <GlassCard style={styles.emptyCard}>
             <Text style={{ fontSize: 40, marginBottom: 12 }}>🩺</Text>
-            <Text style={styles.emptyTitle}>Henüz Danışanınız Bulunmuyor</Text>
+            <Text style={styles.emptyTitle}>{t('clients.empty_title')}</Text>
             <Text style={styles.emptyDesc}>
-              Kullanıcılar profilinizden size randevu talebi gönderdiğinde burada listelenecektir.
+              {t('clients.empty_desc')}
             </Text>
           </GlassCard>
         ) : (
@@ -162,14 +204,31 @@ export default function DietitianClients() {
                     {item.client?.display_name || item.client?.username}
                   </Text>
                   <Text style={styles.clientStreak}>
-                    🔥 {item.client?.current_streak || 0} Günlük Seri | Status: {item.status}
+                    {t('clients.streak_line', { n: item.client?.current_streak || 0 })}
                   </Text>
                 </View>
 
                 <View style={styles.complianceBadge}>
-                  <Text style={styles.complianceText}>%95 UYUM</Text>
+                  <Text style={styles.complianceText}>{t(`clients.st_${item.status}`)}</Text>
                 </View>
               </View>
+
+              {item.status === 'pending' && (
+                <View style={[styles.actionsRow, { marginBottom: 10 }]}>
+                  <TouchableOpacity
+                    style={[styles.actionBtn, { backgroundColor: '#10b98120', borderColor: '#10b981' }]}
+                    onPress={() => respondToRequest(item.id, true)}
+                  >
+                    <Text style={[styles.actionBtnText, { color: '#10b981' }]}>{t('clients.approve')}</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.actionBtn, { backgroundColor: '#ef444420', borderColor: '#ef4444' }]}
+                    onPress={() => respondToRequest(item.id, false)}
+                  >
+                    <Text style={[styles.actionBtnText, { color: '#ef4444' }]}>{t('clients.reject')}</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
 
               {/* Action Buttons */}
               <View style={styles.actionsRow}>
@@ -184,21 +243,18 @@ export default function DietitianClients() {
                   }}
                 >
                   <Ionicons name="document-text-outline" size={16} color="#10b981" />
-                  <Text style={[styles.actionBtnText, { color: '#10b981' }]}>Diyet Yaz</Text>
+                  <Text style={[styles.actionBtnText, { color: '#10b981' }]}>{t('clients.write_diet')}</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
                   style={[styles.actionBtn, { backgroundColor: '#3b82f620', borderColor: '#3b82f6' }]}
                   onPress={() => {
                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                    router.push({
-                      pathname: '/chat/[id]' as any,
-                      params: { id: item.client?.id },
-                    });
+                    openChat(item.client?.id);
                   }}
                 >
                   <Ionicons name="chatbubble-ellipses-outline" size={16} color="#3b82f6" />
-                  <Text style={[styles.actionBtnText, { color: '#3b82f6' }]}>Mesaj At</Text>
+                  <Text style={[styles.actionBtnText, { color: '#3b82f6' }]}>{t('clients.message')}</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -209,7 +265,7 @@ export default function DietitianClients() {
                   }}
                 >
                   <Ionicons name="calendar-outline" size={16} color="#f59e0b" />
-                  <Text style={[styles.actionBtnText, { color: '#f59e0b' }]}>Seans Notu</Text>
+                  <Text style={[styles.actionBtnText, { color: '#f59e0b' }]}>{t('clients.session')}</Text>
                 </TouchableOpacity>
               </View>
             </GlassCard>
@@ -222,14 +278,14 @@ export default function DietitianClients() {
         <View style={styles.modalOverlay}>
           <GlassCard style={styles.modalContent}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>🧮 Klinik BMR & TDEE Hesaplayıcı</Text>
+              <Text style={styles.modalTitle}>{t('clients.calc_title')}</Text>
               <TouchableOpacity onPress={() => setCalcModalVisible(false)}>
                 <Ionicons name="close-circle" size={24} color="#64748b" />
               </TouchableOpacity>
             </View>
 
             <ScrollView contentContainerStyle={{ gap: 12 }}>
-              <Text style={styles.inputLabel}>KİLO (kg):</Text>
+              <Text style={styles.inputLabel}>{t('clients.weight')}</Text>
               <TextInput
                 style={styles.modalInput}
                 keyboardType="numeric"
@@ -237,7 +293,7 @@ export default function DietitianClients() {
                 onChangeText={(v) => setCalcParams({ ...calcParams, weightKg: Number(v) || 70 })}
               />
 
-              <Text style={styles.inputLabel}>BOY (cm):</Text>
+              <Text style={styles.inputLabel}>{t('clients.height')}</Text>
               <TextInput
                 style={styles.modalInput}
                 keyboardType="numeric"
@@ -245,7 +301,7 @@ export default function DietitianClients() {
                 onChangeText={(v) => setCalcParams({ ...calcParams, heightCm: Number(v) || 170 })}
               />
 
-              <Text style={styles.inputLabel}>YAŞ:</Text>
+              <Text style={styles.inputLabel}>{t('clients.age')}</Text>
               <TextInput
                 style={styles.modalInput}
                 keyboardType="numeric"
@@ -254,15 +310,15 @@ export default function DietitianClients() {
               />
 
               <TouchableOpacity style={styles.calcBtn} onPress={handleCalculateBMR}>
-                <Text style={styles.calcBtnText}>HESAPLA</Text>
+                <Text style={styles.calcBtnText}>{t('clients.calc')}</Text>
               </TouchableOpacity>
 
               {calcResult && (
                 <View style={styles.resultBox}>
-                  <Text style={styles.resultRow}>⚡ Bazal Metabolizma (BMR): <Text style={styles.resHighlight}>{calcResult.bmr} kcal</Text></Text>
-                  <Text style={styles.resultRow}>🔥 Harcanan Enerji (TDEE): <Text style={styles.resHighlight}>{calcResult.tdee} kcal</Text></Text>
-                  <Text style={styles.resultRow}>🎯 Hedef Kalori: <Text style={[styles.resHighlight, { color: '#10b981' }]}>{calcResult.targetCalories} kcal</Text></Text>
-                  <Text style={styles.resultRow}>🥩 Protein: {calcResult.macros.proteinGrams}g | 🌾 Karb: {calcResult.macros.carbsGrams}g | 🥑 Yağ: {calcResult.macros.fatGrams}g</Text>
+                  <Text style={styles.resultRow}>{t('clients.bmr')} <Text style={styles.resHighlight}>{calcResult.bmr} kcal</Text></Text>
+                  <Text style={styles.resultRow}>{t('clients.tdee')} <Text style={styles.resHighlight}>{calcResult.tdee} kcal</Text></Text>
+                  <Text style={styles.resultRow}>{t('clients.target')} <Text style={[styles.resHighlight, { color: '#10b981' }]}>{calcResult.targetCalories} kcal</Text></Text>
+                  <Text style={styles.resultRow}>{t('clients.protein')}: {calcResult.macros.proteinGrams}g | {t('clients.carbs')}: {calcResult.macros.carbsGrams}g | {t('clients.fat')}: {calcResult.macros.fatGrams}g</Text>
                 </View>
               )}
             </ScrollView>

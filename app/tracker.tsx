@@ -7,8 +7,10 @@ import MapTracker from '../components/MapTracker';
 import { StatusBar } from 'expo-status-bar';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from '../lib/i18n/i18n';
 
 export default function TrackerScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
@@ -59,7 +61,7 @@ export default function TrackerScreen() {
 
   const handleSave = () => {
     // In a real app, save to Supabase here
-    alert(`Aktivite Kaydedildi! Toplam Mesafe: ${(distance / 1000).toFixed(2)} km`);
+    alert(t('tracker.saved', { km: (distance / 1000).toFixed(2) }));
     router.back();
   };
 
@@ -75,7 +77,7 @@ export default function TrackerScreen() {
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
           <Ionicons name="close" size={28} color="#fff" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Koşu / Yürüyüş</Text>
+        <Text style={styles.headerTitle}>{t('tracker.title')}</Text>
         <View style={{ width: 44 }} />
       </SafeAreaView>
 
@@ -85,7 +87,7 @@ export default function TrackerScreen() {
         <View style={styles.metricsRow}>
           <View style={styles.metricCard}>
             <Text style={styles.metricValue}>{(distance / 1000).toFixed(2)}</Text>
-            <Text style={styles.metricLabel}>Kilometre</Text>
+            <Text style={styles.metricLabel}>{t('tracker.km')}</Text>
           </View>
           <View style={styles.metricCard}>
             <Text style={styles.metricValue}>{formatPace(distance, duration)}</Text>
@@ -93,7 +95,7 @@ export default function TrackerScreen() {
           </View>
           <View style={styles.metricCard}>
             <Text style={styles.metricValue}>{formatDuration(duration)}</Text>
-            <Text style={styles.metricLabel}>Süre</Text>
+            <Text style={styles.metricLabel}>{t('tracker.time')}</Text>
           </View>
         </View>
 
@@ -101,15 +103,15 @@ export default function TrackerScreen() {
         <View style={styles.controlsRow}>
           {!hasStarted ? (
             <TouchableOpacity style={[styles.startButton, { width: width * 0.8 }]} onPress={handleStart}>
-              <Text style={styles.startButtonText}>BAŞLA</Text>
+              <Text style={styles.startButtonText}>{t('tracker.start')}</Text>
             </TouchableOpacity>
           ) : isFinished ? (
             <View style={styles.finishControls}>
               <TouchableOpacity style={[styles.discardButton, { width: width * 0.3 }]} onPress={() => router.back()}>
-                <Text style={styles.discardButtonText}>Vazgeç</Text>
+                <Text style={styles.discardButtonText}>{t('tracker.discard')}</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.saveButton, { width: width * 0.6 }]} onPress={handleSave}>
-                <Text style={styles.saveButtonText}>Kaydet</Text>
+                <Text style={styles.saveButtonText}>{t('tracker.save')}</Text>
               </TouchableOpacity>
             </View>
           ) : (
@@ -121,10 +123,10 @@ export default function TrackerScreen() {
               ) : (
                 <View style={styles.pausedStateRow}>
                   <TouchableOpacity style={[styles.resumeButton, { width: width * 0.4 }]} onPress={handleResume}>
-                    <Text style={styles.resumeButtonText}>Devam</Text>
+                    <Text style={styles.resumeButtonText}>{t('tracker.resume')}</Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={[styles.stopButton, { width: width * 0.4 }]} onPress={handleStop}>
-                    <Text style={styles.stopButtonText}>Bitir</Text>
+                    <Text style={styles.stopButtonText}>{t('tracker.stop')}</Text>
                   </TouchableOpacity>
                 </View>
               )}
