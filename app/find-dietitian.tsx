@@ -198,6 +198,14 @@ export default function FindDietitian() {
                     </Text>
                   </TouchableOpacity>
                 )}
+                {status === 'approved' && (
+                  <TouchableOpacity
+                    style={[styles.rateBtn, { borderColor: '#ec4899' }]}
+                    onPress={() => router.push({ pathname: '/share-card' as any, params: { variant: 'together', partnerId: item.id } })}
+                  >
+                    <Text style={[styles.rateText, { color: '#ec4899' }]}>🤝 {t('share.v_together')}</Text>
+                  </TouchableOpacity>
+                )}
               </View>
             );
           }}

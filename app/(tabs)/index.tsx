@@ -203,6 +203,27 @@ export default function StreakHome() {
           </TouchableOpacity>
         </Animated.View>
 
+        {/* Growth links: share card + learn feed */}
+        <Animated.View
+          entering={FadeInUp.delay(365).duration(450).springify()}
+          style={[styles.gamificationRow, { marginTop: 10 }]}
+        >
+          <TouchableOpacity
+            style={styles.gamificationCard}
+            onPress={() => router.push('/share-card' as any)}
+          >
+            <Text style={styles.gamificationIcon}>📸</Text>
+            <Text style={styles.gamificationLabel}>{t('share.link')}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.gamificationCard}
+            onPress={() => router.push('/learn' as any)}
+          >
+            <Text style={styles.gamificationIcon}>💡</Text>
+            <Text style={styles.gamificationLabel}>{t('learn.link')}</Text>
+          </TouchableOpacity>
+        </Animated.View>
+
         {/* Quick Feature Modules Grid */}
         <Animated.View
           entering={FadeInUp.delay(380).duration(450).springify()}

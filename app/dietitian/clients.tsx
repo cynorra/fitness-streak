@@ -365,6 +365,19 @@ export default function DietitianClients() {
                 </TouchableOpacity>
               )}
 
+              {item.status === 'approved' && (
+                <TouchableOpacity
+                  style={[styles.actionBtn, { backgroundColor: '#ec489920', borderColor: '#ec4899', marginBottom: 10 }]}
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    router.push({ pathname: '/share-card' as any, params: { variant: 'together', partnerId: item.client?.id } });
+                  }}
+                >
+                  <Ionicons name="share-social-outline" size={16} color="#ec4899" />
+                  <Text style={[styles.actionBtnText, { color: '#ec4899' }]}>{t('share.v_together')}</Text>
+                </TouchableOpacity>
+              )}
+
               {/* Action Buttons */}
               <View style={styles.actionsRow}>
                 <TouchableOpacity
