@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "18654508953",
+    "project_id": "streakfit-1aec0",
+    "storage_bucket": "streakfit-1aec0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:18654508953:android:51b7f38fc89bca3f910508",
+        "android_client_info": {
+          "package_name": "com.vitatribe.fitness.spor.diyet.diyetisyen"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAMi6dGwjo3WG3BoDGowvjH57Ub-5ahVM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

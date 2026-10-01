@@ -29,6 +29,7 @@
       },
       "package": "com.vitatribe.fitness.spor.diyet.diyetisyen",
       "versionCode": 5,
+      "googleServicesFile": "./android/app/google-services.json",
       "permissions": [
         "INTERNET",
         "ACCESS_COARSE_LOCATION",
