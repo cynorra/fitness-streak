@@ -22,6 +22,15 @@ export const supportedLanguages = [
 
 const SUPPORTED_CODES = supportedLanguages.map((l) => l.code);
 
+// Turkish devices get Turkish; every other device language gets English.
+function detectDeviceLocale(): string {
+  try {
+    return Localization.getLocales()?.[0]?.languageCode === 'tr' ? 'tr' : 'en';
+  } catch {
+    return 'en';
+  }
+}
+
 type I18nContextType = {
   locale: string;
   t: (key: string, vars?: Record<string, string | number>) => string;
@@ -48,19 +57,11 @@ export function I18nProvider({ children }: { children: ReactNode }) {
         if (savedLanguage && SUPPORTED_CODES.includes(savedLanguage)) {
           setLocale(savedLanguage);
         } else {
-          // Detect system language
-          const systemLocales = Localization.getLocales();
-          if (systemLocales && systemLocales.length > 0) {
-            const systemLang = systemLocales[0].languageCode;
-            // Turkish devices get Turkish; everything else gets English.
-            setLocale(systemLang === 'tr' ? 'tr' : 'en');
-          } else {
-            setLocale('en');
-          }
+          setLocale(detectDeviceLocale());
         }
       } catch (e) {
         console.warn('Error loading language', e);
-        setLocale('tr');
+        setLocale(detectDeviceLocale());
       } finally {
         setLoading(false);
       }
