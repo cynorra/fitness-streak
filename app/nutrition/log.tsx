@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { useAuth } from '../../lib/auth';
 import { supabase } from '../../lib/supabase';
@@ -7,6 +7,7 @@ import { format } from 'date-fns';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useTranslation } from '../../lib/i18n/i18n';
+import { searchFoods, scaleFood, FoodItem } from '../../lib/foodSearch';
 
 export default function NutritionLog() {
   const { profile } = useAuth();
@@ -24,6 +25,78 @@ export default function NutritionLog() {
   const [todayLogs, setTodayLogs] = useState<any[]>([]);
 
   const todayStr = format(new Date(), 'yyyy-MM-dd');
+
+  // Food search (Open Food Facts + USDA)
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState<FoodItem[]>([]);
+  const [searching, setSearching] = useState(false);
+  const [searchState, setSearchState] = useState<'idle' | 'done' | 'failed'>('idle');
+  const [selected, setSelected] = useState<FoodItem | null>(null);
+  const [gramsText, setGramsText] = useState('100');
+  const searchSeq = useRef(0);
+  const autoContent = useRef('');
+
+  useEffect(() => {
+    const q = query.trim();
+    if (q.length < 2) {
+      setResults([]);
+      setSearchState('idle');
+      setSearching(false);
+      return;
+    }
+    const seq = ++searchSeq.current;
+    setSearching(true);
+    const timer = setTimeout(async () => {
+      try {
+        const found = await searchFoods(q, locale === 'tr' ? 'tr' : 'en');
+        if (seq !== searchSeq.current) return; // a newer query superseded this one
+        setResults(found);
+        setSearchState('done');
+      } catch {
+        if (seq !== searchSeq.current) return;
+        setResults([]);
+        setSearchState('failed');
+      } finally {
+        if (seq === searchSeq.current) setSearching(false);
+      }
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [query, locale]);
+
+  // Keep calories/macros (and the auto-generated meal text) in step with the chosen food and amount.
+  useEffect(() => {
+    if (!selected) return;
+    const grams = parseFloat(gramsText.replace(',', '.'));
+    if (!(grams > 0 && grams <= 5000)) return;
+    const v = scaleFood(selected, grams);
+    setCalories(String(v.calories));
+    setProtein(String(v.protein));
+    setCarbs(String(v.carbs));
+    setFat(String(v.fat));
+    const text = `${selected.name}${selected.brand ? ` (${selected.brand})` : ''} – ${grams} g`;
+    setContent((cur) => (cur === '' || cur === autoContent.current ? text : cur));
+    autoContent.current = text;
+  }, [selected, gramsText]);
+
+  const pickFood = (food: FoodItem) => {
+    autoContent.current = '';
+    setContent('');
+    setGramsText('100');
+    setSelected(food);
+    setQuery('');
+    setResults([]);
+    setSearchState('idle');
+  };
+
+  const clearSelection = () => {
+    setSelected(null);
+    setContent('');
+    setCalories('');
+    setProtein('');
+    setCarbs('');
+    setFat('');
+    autoContent.current = '';
+  };
 
   const loadLogs = async () => {
     if (!profile) return;
@@ -69,6 +142,8 @@ export default function NutritionLog() {
       setProtein('');
       setCarbs('');
       setFat('');
+      setSelected(null);
+      autoContent.current = '';
       loadLogs();
     }
   };
@@ -107,6 +182,53 @@ export default function NutritionLog() {
               </TouchableOpacity>
             ))}
           </View>
+
+          {/* Food search */}
+          <Text style={styles.searchLabel}>{t('nutritionLog.search_title')}</Text>
+          <TextInput
+            style={[styles.input, { marginBottom: 8 }]}
+            placeholder={t('nutritionLog.search_ph')}
+            placeholderTextColor="#666"
+            value={query}
+            onChangeText={setQuery}
+            autoCorrect={false}
+            returnKeyType="search"
+          />
+          {searching && <Text style={styles.searchInfo}>{t('nutritionLog.searching')}</Text>}
+          {!searching && searchState === 'failed' && <Text style={styles.searchError}>{t('nutritionLog.search_failed')}</Text>}
+          {!searching && searchState === 'done' && results.length === 0 && (
+            <Text style={styles.searchInfo}>{t('nutritionLog.no_results')}</Text>
+          )}
+          {results.slice(0, 10).map((food) => (
+            <TouchableOpacity key={food.id} style={styles.resultRow} onPress={() => pickFood(food)}>
+              <Text style={styles.resultName} numberOfLines={2}>
+                {food.name}{food.brand ? ` · ${food.brand}` : ''}
+              </Text>
+              <Text style={styles.resultMacros}>
+                {food.kcal} kcal · {t('nutritionLog.p')} {food.protein} · {t('nutritionLog.c')} {food.carbs} · {t('nutritionLog.f')} {food.fat}  ({t('nutritionLog.per100')})
+              </Text>
+            </TouchableOpacity>
+          ))}
+
+          {selected && (
+            <View style={styles.selectedBox}>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.selectedTitle}>{t('nutritionLog.selected')}</Text>
+                <Text style={styles.selectedName} numberOfLines={2}>{selected.name}</Text>
+              </View>
+              <Text style={styles.gramsLabel}>{t('nutritionLog.grams')}</Text>
+              <TextInput
+                style={styles.gramsInput}
+                keyboardType="decimal-pad"
+                value={gramsText}
+                onChangeText={setGramsText}
+              />
+              <TouchableOpacity onPress={clearSelection} style={styles.clearBtn}>
+                <Text style={styles.clearText}>✕</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+          <Text style={styles.sourceNote}>{t('nutritionLog.source_note')}</Text>
 
           <TextInput
             style={styles.inputMulti}
@@ -174,6 +296,20 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', gap: 12, marginBottom: 12 },
   input: { backgroundColor: '#0a0a0a', borderWidth: 1, borderColor: '#222', borderRadius: 12, padding: 16, color: '#fff' },
   flex1: { flex: 1 },
+  searchLabel: { color: '#94a3b8', fontSize: 11, fontWeight: '800', letterSpacing: 1, marginBottom: 8, textTransform: 'uppercase' },
+  searchInfo: { color: '#888', fontSize: 12, marginBottom: 8 },
+  searchError: { color: '#f87171', fontSize: 12, marginBottom: 8 },
+  resultRow: { backgroundColor: '#0a0a0a', borderWidth: 1, borderColor: '#222', borderRadius: 12, padding: 12, marginBottom: 6 },
+  resultName: { color: '#fff', fontSize: 13, fontWeight: '700' },
+  resultMacros: { color: '#10b981', fontSize: 11, fontWeight: '700', marginTop: 4 },
+  selectedBox: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: '#10b98115', borderWidth: 1, borderColor: '#10b98150', borderRadius: 12, padding: 12, marginBottom: 8 },
+  selectedTitle: { color: '#10b981', fontSize: 10, fontWeight: '900', letterSpacing: 1, textTransform: 'uppercase' },
+  selectedName: { color: '#fff', fontSize: 13, fontWeight: '700', marginTop: 2 },
+  gramsLabel: { color: '#94a3b8', fontSize: 11, fontWeight: '700' },
+  gramsInput: { backgroundColor: '#0a0a0a', borderWidth: 1, borderColor: '#222', borderRadius: 10, paddingVertical: 8, paddingHorizontal: 10, color: '#fff', minWidth: 64, textAlign: 'center' },
+  clearBtn: { padding: 6 },
+  clearText: { color: '#94a3b8', fontSize: 16, fontWeight: '900' },
+  sourceNote: { color: '#555', fontSize: 10, marginBottom: 12 },
   saveBtn: { backgroundColor: '#10b981', padding: 16, borderRadius: 12, alignItems: 'center', marginTop: 8 },
   saveBtnText: { color: '#fff', fontSize: 14, fontWeight: '900', letterSpacing: 1 },
   logCard: { backgroundColor: '#111', padding: 16, borderRadius: 16, marginBottom: 12, borderWidth: 1, borderColor: '#222' },
