@@ -35,16 +35,20 @@ export default function ChatScreen() {
     if (!profile || !id) return;
 
     const fetchOtherProfile = async () => {
-      const { data: conv } = await supabase
-        .from('conversations')
-        .select('participant_1, participant_2')
-        .eq('id', id)
-        .single();
-      
-      if (conv) {
-        const otherId = conv.participant_1 === profile.id ? conv.participant_2 : conv.participant_1;
-        const { data: p } = await supabase.from('profiles').select('*').eq('id', otherId).single();
-        setOtherProfile(p);
+      try {
+        const { data: conv } = await supabase
+          .from('conversations')
+          .select('participant_1, participant_2')
+          .eq('id', id)
+          .single();
+
+        if (conv) {
+          const otherId = conv.participant_1 === profile.id ? conv.participant_2 : conv.participant_1;
+          const { data: p } = await supabase.from('profiles').select('*').eq('id', otherId).single();
+          setOtherProfile(p);
+        }
+      } catch (e) {
+        console.log('[Chat] fetchOtherProfile failed:', e);
       }
     };
 
