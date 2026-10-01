@@ -37,7 +37,7 @@ export default function Login() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     try {
-      const redirectUrl = Linking.createURL('');
+      const redirectUrl = Linking.createURL('auth-callback');
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
