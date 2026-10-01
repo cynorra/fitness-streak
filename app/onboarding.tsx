@@ -45,20 +45,37 @@ export default function Onboarding() {
     setLoading(true);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     try {
-      const { error } = await supabase
+      const patch = { role: selectedRole, onboarding_completed: true };
+      const { data, error } = await supabase
         .from('profiles')
-        .update({ 
-          role: selectedRole, 
-          onboarding_completed: true 
-        })
-        .eq('id', session.user.id);
-      
+        .update(patch)
+        .eq('id', session.user.id)
+        .select('id');
+
       if (error) throw error;
+
+      // Google ile ilk girişte profil satırı yoksa update 0 satır etkiler; oluştur.
+      if (!data || data.length === 0) {
+        const meta: any = session.user.user_metadata ?? {};
+        const base = String(
+          meta.username || (session.user.email ?? '').split('@')[0] || 'user'
+        ).replace(/[^a-zA-Z0-9_]/g, '');
+        const username = `${base.slice(0, 11) || 'user'}_${session.user.id.slice(0, 6)}`;
+        const { error: insertError } = await supabase.from('profiles').insert({
+          id: session.user.id,
+          username,
+          display_name: meta.full_name || meta.name || meta.display_name || base || 'Yeni Kullanıcı',
+          avatar_url: meta.avatar_url || meta.picture || null,
+          ...patch,
+        });
+        if (insertError) throw insertError;
+      }
+
       await refreshProfile();
       router.replace('/(tabs)');
     } catch (err: any) {
       console.error('Onboarding update error:', err);
-      alert('Bir hata oluştu. Lütfen tekrar dene.');
+      alert(`Bir hata oluştu: ${err?.message ?? 'bilinmeyen hata'}`);
     } finally {
       setLoading(false);
     }
