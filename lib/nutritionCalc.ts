@@ -182,6 +182,26 @@ const MEAL_TEMPLATES_TR = [
       },
     ],
   },
+  {
+    name: '🏃 Maraton / Dayanıklılık Hazırlığı',
+    desc: 'Uzun koşular için yüksek karbonhidratlı, glikojen depolarını dolduran plan.',
+    meals: [
+      { meal_type: 'breakfast', day_of_week: 1, content: '80g yulaf ezmesi sütle, 1 muz, 1 yemek kaşığı bal, 2 haşlanmış yumurta.', calories: '620' },
+      { meal_type: 'lunch', day_of_week: 1, content: '200g tam buğday makarna, 150g ızgara tavuk, zeytinyağlı sebze, 1 dilim ekmek.', calories: '780' },
+      { meal_type: 'snack', day_of_week: 1, content: '1 muz, 30g kuru kayısı, 1 su bardağı ayran. Antrenmandan önce/sonra tüketilebilir.', calories: '320' },
+      { meal_type: 'dinner', day_of_week: 1, content: '200g somon, 200g haşlanmış patates veya pirinç, buğulama brokoli.', calories: '720' },
+    ],
+  },
+  {
+    name: '🔻 Yağ Yakımı (Kalori Açığı)',
+    desc: 'Kas kaybını önleyen yüksek proteinli, orta karbonhidratlı hafif kalori açığı planı.',
+    meals: [
+      { meal_type: 'breakfast', day_of_week: 1, content: '2 yumurta, 1 dilim tam buğday ekmeği, domates, salatalık, 1 fincan sade kahve.', calories: '320' },
+      { meal_type: 'lunch', day_of_week: 1, content: '150g ızgara tavuk göğsü, 100g haşlanmış bulgur, bol yeşil salata (1 tatlı kaşığı zeytinyağı).', calories: '480' },
+      { meal_type: 'snack', day_of_week: 1, content: '200g süzme yoğurt, 1 yeşil elma, 5 adet badem.', calories: '230' },
+      { meal_type: 'dinner', day_of_week: 1, content: '150g ızgara balık, buğulama sebze, mercimek çorbası (1 kase).', calories: '420' },
+    ],
+  },
 ];
 
 const MEAL_TEMPLATES_EN: typeof MEAL_TEMPLATES_TR = [
@@ -213,6 +233,26 @@ const MEAL_TEMPLATES_EN: typeof MEAL_TEMPLATES_TR = [
       { meal_type: 'lunch', day_of_week: 1, content: '1 plate of green beans / lentils in olive oil, 1 bowl bulgur pilaf, 1 bowl tzatziki.', calories: '520' },
       { meal_type: 'snack', day_of_week: 1, content: '1 green apple, 2 whole walnuts, 1 cup green tea.', calories: '180' },
       { meal_type: 'dinner', day_of_week: 1, content: '150g grilled fish or chicken, seasonal salad with plenty of lemon, 1 slice spelt bread.', calories: '480' },
+    ],
+  },
+  {
+    name: '🏃 Marathon / Endurance Prep',
+    desc: 'High-carbohydrate plan that tops up glycogen stores for long runs.',
+    meals: [
+      { meal_type: 'breakfast', day_of_week: 1, content: '80g oats with milk, 1 banana, 1 tbsp honey, 2 boiled eggs.', calories: '620' },
+      { meal_type: 'lunch', day_of_week: 1, content: '200g whole wheat pasta, 150g grilled chicken, vegetables in olive oil, 1 slice bread.', calories: '780' },
+      { meal_type: 'snack', day_of_week: 1, content: '1 banana, 30g dried apricots, 1 glass of ayran. Can be eaten before/after training.', calories: '320' },
+      { meal_type: 'dinner', day_of_week: 1, content: '200g salmon, 200g boiled potatoes or rice, steamed broccoli.', calories: '720' },
+    ],
+  },
+  {
+    name: '🔻 Fat Loss (Calorie Deficit)',
+    desc: 'Mild calorie deficit with high protein and moderate carbs to protect muscle.',
+    meals: [
+      { meal_type: 'breakfast', day_of_week: 1, content: '2 eggs, 1 slice whole wheat bread, tomato, cucumber, 1 cup black coffee.', calories: '320' },
+      { meal_type: 'lunch', day_of_week: 1, content: '150g grilled chicken breast, 100g boiled bulgur, large green salad (1 tsp olive oil).', calories: '480' },
+      { meal_type: 'snack', day_of_week: 1, content: '200g strained yogurt, 1 green apple, 5 almonds.', calories: '230' },
+      { meal_type: 'dinner', day_of_week: 1, content: '150g grilled fish, steamed vegetables, 1 bowl lentil soup.', calories: '420' },
     ],
   },
 ];
