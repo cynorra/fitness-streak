@@ -13,6 +13,10 @@ export interface NotificationSettings {
   waterEnabled: boolean;
   motivationEnabled: boolean;
   dietitianEnabled: boolean;
+  // Pre/post-workout nutrition nudges, anchored to the user's usual training time (off until chosen).
+  workoutNutritionEnabled: boolean;
+  workoutHour: number;
+  workoutMinute: number;
 }
 
 export const DEFAULT_SETTINGS: NotificationSettings = {
@@ -22,6 +26,9 @@ export const DEFAULT_SETTINGS: NotificationSettings = {
   waterEnabled: true,
   motivationEnabled: true,
   dietitianEnabled: true,
+  workoutNutritionEnabled: false,
+  workoutHour: 18,
+  workoutMinute: 0,
 };
 
 const SETTINGS_KEY = '@vitatribe_notification_settings';
@@ -143,6 +150,10 @@ export async function getLocalizedNotificationStrings(langOverride?: string) {
       ] },
       testTitle: '🚀 VitaTribe Test Notification',
       testBody: 'Success! VitaTribe background notifications are working perfectly on your device! 🔥',
+      workoutPreTitle: '⏱️ Pre-workout fuel',
+      workoutPre: '2 hours to your workout: time for ~40 g of complex carbs (oats, rice, banana) for steady energy. 🍌',
+      workoutPostTitle: '🔋 Recovery window',
+      workoutPost: 'Recovery window is open: aim for ~25 g of protein plus some carbs within the next hour. 🥛',
       comebackTitle: '👋 VitaTribe misses you!',
       comebacks: [
         { days: 3, body: "It's been 3 days. One short workout is enough to get your streak rolling again! 🌱" },
@@ -197,6 +208,10 @@ export async function getLocalizedNotificationStrings(langOverride?: string) {
     ] },
     testTitle: '🚀 VitaTribe Test Bildirimi',
     testBody: 'Tebrikler! VitaTribe bildirimleri cihazınızda uygulama kapalıyken de sorunsuz çalışıyor! 🔥',
+    workoutPreTitle: '⏱️ Antrenman öncesi yakıt',
+    workoutPre: 'Antrenmana 2 saat kaldı: sabit enerji için ~40 g kompleks karbonhidrat zamanı (yulaf, pirinç, muz). 🍌',
+    workoutPostTitle: '🔋 Toparlanma penceresi',
+    workoutPost: 'Toparlanma penceresi açık: önümüzdeki 1 saat içinde ~25 g protein ve biraz karbonhidrat al. 🥛',
     comebackTitle: '👋 VitaTribe seni özledi!',
     comebacks: [
       { days: 3, body: '3 gündür yoksun. Serini yeniden başlatmak için kısa bir antrenman yeter! 🌱' },
@@ -439,6 +454,22 @@ async function syncNow(customSettings?: NotificationSettings) {
           trigger: { type: T.DATE, date: when },
         });
       }
+    }
+
+    // 5a. Pre/post-workout nutrition nudges: 2 h before and ~90 min after the usual workout start.
+    if (settings.workoutNutritionEnabled) {
+      const at = (offsetMinutes: number) => {
+        const total = (settings.workoutHour * 60 + settings.workoutMinute + offsetMinutes + 24 * 60) % (24 * 60);
+        return { hour: Math.floor(total / 60), minute: total % 60 };
+      };
+      await Notifications.scheduleNotificationAsync({
+        content: { title: localized.workoutPreTitle, body: localized.workoutPre, sound: true, channelId: 'vitatribe_motivation', data: { screen: 'nutrition/log' } } as any,
+        trigger: { type: T.DAILY, ...at(-120) },
+      });
+      await Notifications.scheduleNotificationAsync({
+        content: { title: localized.workoutPostTitle, body: localized.workoutPost, sound: true, channelId: 'vitatribe_motivation', data: { screen: 'nutrition/log' } } as any,
+        trigger: { type: T.DAILY, ...at(90) },
+      });
     }
 
     // 5. Dietitian-only reminders

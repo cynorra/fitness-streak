@@ -33,6 +33,16 @@ const TIME_OPTIONS = [
   { label: '22:00', hour: 22, minute: 0 },
 ];
 
+const WORKOUT_TIME_OPTIONS = [
+  { label: '06:00', hour: 6, minute: 0 },
+  { label: '07:30', hour: 7, minute: 30 },
+  { label: '12:00', hour: 12, minute: 0 },
+  { label: '17:00', hour: 17, minute: 0 },
+  { label: '18:00', hour: 18, minute: 0 },
+  { label: '19:00', hour: 19, minute: 0 },
+  { label: '20:00', hour: 20, minute: 0 },
+];
+
 export default function NotificationSettingsScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -47,6 +57,9 @@ export default function NotificationSettingsScreen() {
     waterEnabled: true,
     motivationEnabled: true,
     dietitianEnabled: true,
+    workoutNutritionEnabled: false,
+    workoutHour: 18,
+    workoutMinute: 0,
   });
 
   useEffect(() => {
@@ -242,6 +255,48 @@ export default function NotificationSettingsScreen() {
                 thumbColor="#fff"
               />
             </View>
+          </GlassCard>
+        </Animated.View>
+
+        {/* 3b. Pre/post-workout nutrition timer */}
+        <Animated.View entering={FadeInDown.delay(420).duration(400)}>
+          <View style={styles.sectionHeader}>
+            <Ionicons name="barbell" size={18} color="#f97316" />
+            <Text style={styles.sectionTitle}>{t('notifSettings.wo_sec')}</Text>
+          </View>
+          <GlassCard style={styles.settingCard}>
+            <View style={styles.row}>
+              <View style={styles.rowTextCol}>
+                <Text style={styles.settingLabel}>{t('notifSettings.wo_label')}</Text>
+                <Text style={styles.settingSub}>{t('notifSettings.wo_sub')}</Text>
+              </View>
+              <Switch
+                value={settings.workoutNutritionEnabled}
+                onValueChange={(val) => updateSetting({ workoutNutritionEnabled: val })}
+                trackColor={{ false: '#333', true: '#f97316' }}
+                thumbColor="#fff"
+              />
+            </View>
+
+            {settings.workoutNutritionEnabled && (
+              <View style={styles.timePickerContainer}>
+                <Text style={styles.timePickerLabel}>{t('notifSettings.wo_pick')}</Text>
+                <View style={styles.timeChipsRow}>
+                  {WORKOUT_TIME_OPTIONS.map((opt) => {
+                    const isSelected = settings.workoutHour === opt.hour && settings.workoutMinute === opt.minute;
+                    return (
+                      <TouchableOpacity
+                        key={opt.label}
+                        style={[styles.timeChip, isSelected && styles.timeChipSelected]}
+                        onPress={() => updateSetting({ workoutHour: opt.hour, workoutMinute: opt.minute })}
+                      >
+                        <Text style={[styles.timeChipText, isSelected && styles.timeChipTextSelected]}>{opt.label}</Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+              </View>
+            )}
           </GlassCard>
         </Animated.View>
 

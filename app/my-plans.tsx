@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator, RefreshControl, Modal, Share } from 'react-native';
+import { buildShoppingList, ShoppingGroup } from '../lib/shoppingList';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { format, parseISO } from 'date-fns';
@@ -27,6 +28,21 @@ export default function MyPlans() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [failed, setFailed] = useState(false);
+  const [shopping, setShopping] = useState<{ title: string; groups: ShoppingGroup[] } | null>(null);
+
+  const openShopping = (plan: Plan) => {
+    setShopping({ title: plan.title || '', groups: buildShoppingList(plan.meals.map((m) => m.content)) });
+  };
+
+  const shareShopping = async () => {
+    if (!shopping) return;
+    const lines = shopping.groups.flatMap((g) => [
+      t(`dietitianCare.cat_${g.category}`),
+      ...g.items.map((i) => `• ${i.name}${i.quantity ? ` — ${i.quantity}` : ''}`),
+      '',
+    ]);
+    await Share.share({ message: `${t('dietitianCare.shop_title')} – ${shopping.title}\n\n${lines.join('\n')}` }).catch(() => {});
+  };
 
   const load = useCallback(async () => {
     if (!profile) return;
@@ -114,6 +130,10 @@ export default function MyPlans() {
                   {format(parseISO(plan.created_at), 'd MMM yyyy', { locale: getDateLocale(locale) })}
                 </Text>
 
+                <TouchableOpacity style={styles.shopBtn} onPress={() => openShopping(plan)}>
+                  <Text style={styles.shopBtnText}>{t('dietitianCare.shop_btn')}</Text>
+                </TouchableOpacity>
+
                 {days.map((day) => {
                   const dayMeals = plan.meals.filter((m) => m.day_of_week === day);
                   const total = dayMeals.reduce((a, m) => a + (m.calories || 0), 0);
@@ -140,6 +160,38 @@ export default function MyPlans() {
           })
         )}
       </ScrollView>
+
+      <Modal visible={!!shopping} transparent animationType="slide" onRequestClose={() => setShopping(null)}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalCard}>
+            <Text style={styles.modalTitle}>{t('dietitianCare.shop_title')}</Text>
+            <Text style={styles.modalSub}>{shopping?.title}</Text>
+            <ScrollView style={{ maxHeight: 420 }}>
+              {shopping && shopping.groups.length === 0 && <Text style={styles.empty}>{t('dietitianCare.shop_empty')}</Text>}
+              {shopping?.groups.map((g) => (
+                <View key={g.category} style={{ marginTop: 12 }}>
+                  <Text style={styles.catTitle}>{t(`dietitianCare.cat_${g.category}`)}</Text>
+                  {g.items.map((i) => (
+                    <View key={i.name} style={styles.itemRow}>
+                      <Text style={styles.itemName}>• {i.name}</Text>
+                      {!!i.quantity && <Text style={styles.itemQty}>{i.quantity}</Text>}
+                    </View>
+                  ))}
+                </View>
+              ))}
+            </ScrollView>
+            <Text style={styles.note}>{t('dietitianCare.shop_note')}</Text>
+            <View style={styles.modalActions}>
+              <TouchableOpacity style={styles.closeBtn} onPress={() => setShopping(null)}>
+                <Text style={styles.closeText}>{t('dietitianCare.shop_close')}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.shareBtn} onPress={shareShopping}>
+                <Text style={styles.shareText}>{t('dietitianCare.shop_share')}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -153,6 +205,22 @@ const styles = StyleSheet.create({
   card: { backgroundColor: '#111', borderWidth: 1, borderColor: '#222', borderRadius: 18, padding: 18, marginBottom: 16 },
   planTitle: { color: '#fff', fontSize: 17, fontWeight: '900' },
   planMeta: { color: '#10b981', fontSize: 12, fontWeight: '700', marginTop: 4, marginBottom: 12 },
+  shopBtn: { borderWidth: 1, borderColor: '#10b981', borderRadius: 12, paddingVertical: 10, alignItems: 'center', marginBottom: 6 },
+  shopBtnText: { color: '#10b981', fontSize: 13, fontWeight: '800' },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.75)', justifyContent: 'flex-end' },
+  modalCard: { backgroundColor: '#111', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 20, borderWidth: 1, borderColor: '#222' },
+  modalTitle: { color: '#fff', fontSize: 17, fontWeight: '900' },
+  modalSub: { color: '#10b981', fontSize: 12, fontWeight: '700', marginTop: 2 },
+  catTitle: { color: '#f59e0b', fontSize: 13, fontWeight: '900', marginBottom: 6 },
+  itemRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4, gap: 10 },
+  itemName: { color: '#fff', fontSize: 14, flex: 1 },
+  itemQty: { color: '#a1a1aa', fontSize: 13, fontWeight: '600' },
+  note: { color: '#71717a', fontSize: 11, marginTop: 12 },
+  modalActions: { flexDirection: 'row', gap: 10, marginTop: 14, paddingBottom: 8 },
+  closeBtn: { flex: 1, backgroundColor: '#1a1a1a', borderRadius: 12, paddingVertical: 13, alignItems: 'center' },
+  closeText: { color: '#aaa', fontWeight: '800' },
+  shareBtn: { flex: 1, backgroundColor: '#10b981', borderRadius: 12, paddingVertical: 13, alignItems: 'center' },
+  shareText: { color: '#fff', fontWeight: '900' },
   dayBlock: { marginTop: 8 },
   dayHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 },
   dayTitle: { color: '#f59e0b', fontSize: 12, fontWeight: '900', letterSpacing: 1, textTransform: 'uppercase' },
