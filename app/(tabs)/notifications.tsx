@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+﻿import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'expo-router';
 import {
   View, Text, StyleSheet, FlatList, TouchableOpacity,
@@ -103,105 +103,9 @@ export default function Notifications() {
         dietitian_approved: "approved your request.",
         repost: "reposted your post.",
         default: "performed an action."
-      },
-      de: {
-        like: "hat deinen Beitrag geliked.",
-        comment: "hat deinen Beitrag kommentiert.",
-        dietitian_request: "möchte mit dir arbeiten!",
-        dietitian_approved: "hat deine Anfrage bestätigt.",
-        repost: "hat deinen Beitrag geteilt.",
-        default: "hat eine Aktion durchgeführt."
-      },
-      fr: {
-        like: "a aimé votre publication.",
-        comment: "a commenté votre publication.",
-        dietitian_request: "veut travailler avec vous !",
-        dietitian_approved: "a approuvé votre demande.",
-        repost: "a repartagé votre publication.",
-        default: "a effectué une action."
-      },
-      it: {
-        like: "ha messo mi piace al tuo post.",
-        comment: "ha commentato il tuo post.",
-        dietitian_request: "vuole lavorare con te!",
-        dietitian_approved: "ha approvato la tua richiesta.",
-        repost: "ha ricondiviso il tuo post.",
-        default: "ha eseguito un'azione."
-      },
-      es: {
-        like: "le gustó tu publicación.",
-        comment: "comentó tu publicación.",
-        dietitian_request: "quiere trabajar contigo!",
-        dietitian_approved: "aprobó tu solicitud.",
-        repost: "compartió tu publicación.",
-        default: "realizó una acción."
-      },
-      pt: {
-        like: "curtiu sua publicação.",
-        comment: "comentou em sua publicação.",
-        dietitian_request: "quer trabalhar com você!",
-        dietitian_approved: "aprovou sua solicitação.",
-        repost: "recompartilhou sua publicação.",
-        default: "realizou uma ação."
-      },
-      ru: {
-        like: "понравилась ваша публикация.",
-        comment: "прокомментировал вашу публикацию.",
-        dietitian_request: "хочет работать с вами!",
-        dietitian_approved: "одобрил ваш запрос.",
-        repost: "поделился вашей публикацией.",
-        default: "выполнил действие."
-      },
-      uk: {
-        like: "сподобалась ваша публікація.",
-        comment: "прокоментував вашу публікацію.",
-        dietitian_request: "хоче працювати з вами!",
-        dietitian_approved: "схвалив ваш запит.",
-        repost: "поділився вашою публікацією.",
-        default: "виконав дію."
-      },
-      zh: {
-        like: "赞了你的动态。",
-        comment: "评论了你的动态。",
-        dietitian_request: "想和你合作！",
-        dietitian_approved: "批准 your 请求。",
-        repost: "转发了你的动态。",
-        default: "进行了操作。"
-      },
-      ja: {
-        like: "があなたの投稿にいいねしました。",
-        comment: "があなたの投稿にコメントしました。",
-        dietitian_request: "があなたと一緒に働きたいと言っています！",
-        dietitian_approved: "があなたのリクエストを承認しました。",
-        repost: "があなたの投稿をリポストしました。",
-        default: "がアクションを実行しました。"
-      },
-      ko: {
-        like: "님이 회원님의 게시물을 좋아합니다.",
-        comment: "님이 회원님의 게시물에 댓글을 남겼습니다.",
-        dietitian_request: "님이 회원님과 함께 일하고 싶어 합니다!",
-        dietitian_approved: "님이 회원님의 요청을 승인했습니다.",
-        repost: "님이 회원님의 게시물을 공유했습니다.",
-        default: "님이 작업을 수행했습니다."
-      },
-      hi: {
-        like: "ने आपकी पोस्ट पसंद की।",
-        comment: "ने आपकी पोस्ट पर टिप्पणी की।",
-        dietitian_request: "आपके साथ काम करना चाहता है!",
-        dietitian_approved: "ने आपके अनुरोध को मंजूरी दी।",
-        repost: "ने आपकी पोस्ट को रीपोस्ट किया।",
-        default: "ने एक क्रिया की।"
-      },
-      el: {
-        like: "του άρεσε η δημοσίευσή σας.",
-        comment: "σχολίασε τη δημοσίευσή σας.",
-        dietitian_request: "θέλει να συνεργαστεί μαζί σας!",
-        dietitian_approved: "ενέκρινε το αίτημά σας.",
-        repost: "αναδημοσίευσε τη δημοσίευσή σας.",
-        default: "έκανε μια ενέργεια."
       }
     };
-    
+
     const msgs = messages[locale] || messages['en'];
     const msg = msgs[notif.type] || msgs['default'];
     return `${name} ${msg}`;
