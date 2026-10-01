@@ -24,6 +24,24 @@ export default function Profile() {
     ]);
   };
 
+  const deleteAccount = () => {
+    Alert.alert(t('profile.delete_account'), t('profile.delete_account_confirm'), [
+      { text: t('common.cancel'), style: 'cancel' },
+      {
+        text: t('profile.delete_account'),
+        style: 'destructive',
+        onPress: async () => {
+          const { error } = await supabase.rpc('delete_my_account');
+          if (error) {
+            Alert.alert(t('common.error'), error.message);
+            return;
+          }
+          await supabase.auth.signOut();
+        },
+      },
+    ]);
+  };
+
   const updateProfile = async () => {
     if (!profile) return;
     setUpdating(true);
@@ -257,12 +275,12 @@ export default function Profile() {
 
       <TouchableOpacity 
         style={styles.deleteBtn} 
-        onPress={() => Alert.alert(t('profile.delete_account'), t('profile.delete_account_confirm'))}
+        onPress={deleteAccount}
       >
         <Text style={styles.deleteText}>{t('profile.delete_account')}</Text>
       </TouchableOpacity>
 
-      <Text style={styles.version}>VITATRIBE v1.0.1</Text>
+      <Text style={styles.version}>VITATRIBE v1.0.4</Text>
     </ScrollView>
   );
 }
