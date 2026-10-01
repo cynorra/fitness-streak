@@ -10,7 +10,7 @@ export const ADMOB_CONFIG = {
 
   INTERSTITIAL_ID: __DEV__
     ? TestIds.INTERSTITIAL
-    : (process.env.EXPO_PUBLIC_ADMOB_INTERSTITIAL_ID || TestIds.INTERSTITIAL),
+    : (process.env.EXPO_PUBLIC_ADMOB_INTERSTITIAL_ID || ''),
 };
 
 // UMP (User Messaging Platform) ile rıza toplama + reklam SDK başlatma.
@@ -37,6 +37,7 @@ export async function initializeAds() {
 let interstitialAd: InterstitialAd | null = null;
 
 export function loadInterstitialAd() {
+  if (!ADMOB_CONFIG.INTERSTITIAL_ID) return;
   try {
     interstitialAd = InterstitialAd.createForAdRequest(ADMOB_CONFIG.INTERSTITIAL_ID, {
       requestNonPersonalizedAdsOnly: true,

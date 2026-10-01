@@ -35,15 +35,15 @@ function RootLayoutNav() {
     }
     
     if (session?.user && profile) {
-      registerForPushNotificationsAsync(session.user.id);
-      syncNotificationSchedules();
+      registerForPushNotificationsAsync(session.user.id).catch((e) => console.log('[Push] register failed:', e));
+      Promise.resolve(syncNotificationSchedules()).catch((e) => console.log('[Push] sync failed:', e));
     }
     
     SplashScreen.hideAsync();
   }, [session, loading, segments, profile?.onboarding_completed]);
 
   useEffect(() => {
-    initializeAds();
+    initializeAds().catch((e) => console.log('[AdMob] init failed:', e));
   }, []);
 
   useEffect(() => {
