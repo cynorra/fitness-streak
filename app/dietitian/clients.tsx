@@ -43,6 +43,10 @@ export default function DietitianClients() {
     goal: 'lose_weight',
   });
   const [calcResult, setCalcResult] = useState<any>(null);
+  // Free-text fields so the user can clear/retype values (including decimals) without snapping back.
+  const [weightText, setWeightText] = useState('75');
+  const [heightText, setHeightText] = useState('175');
+  const [ageText, setAgeText] = useState('28');
 
   useEffect(() => {
     loadClients();
@@ -110,7 +114,20 @@ export default function DietitianClients() {
   };
 
   const handleCalculateBMR = () => {
-    const result = calculateNutritionTargets(calcParams);
+    const num = (v: string) => parseFloat(v.replace(',', '.'));
+    const weightKg = num(weightText);
+    const heightCm = num(heightText);
+    const ageYears = num(ageText);
+    if (
+      !(weightKg >= 20 && weightKg <= 300) ||
+      !(heightCm >= 100 && heightCm <= 250) ||
+      !(ageYears >= 10 && ageYears <= 100)
+    ) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      Alert.alert(t('common.error'), t('clients.calc_invalid'));
+      return;
+    }
+    const result = calculateNutritionTargets({ ...calcParams, weightKg, heightCm, ageYears });
     setCalcResult(result);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
   };
@@ -286,29 +303,68 @@ export default function DietitianClients() {
             </View>
 
             <ScrollView contentContainerStyle={{ gap: 12 }}>
+              <Text style={styles.inputLabel}>{t('clients.gender')}</Text>
+              <View style={styles.chipRow}>
+                {(['male', 'female'] as const).map((g) => (
+                  <TouchableOpacity
+                    key={g}
+                    style={[styles.chip, calcParams.gender === g && styles.chipActive]}
+                    onPress={() => setCalcParams({ ...calcParams, gender: g })}
+                  >
+                    <Text style={[styles.chipText, calcParams.gender === g && styles.chipTextActive]}>{t(`clients.${g}`)}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+
               <Text style={styles.inputLabel}>{t('clients.weight')}</Text>
               <TextInput
                 style={styles.modalInput}
-                keyboardType="numeric"
-                value={String(calcParams.weightKg)}
-                onChangeText={(v) => setCalcParams({ ...calcParams, weightKg: Number(v) || 70 })}
+                keyboardType="decimal-pad"
+                value={weightText}
+                onChangeText={setWeightText}
               />
 
               <Text style={styles.inputLabel}>{t('clients.height')}</Text>
               <TextInput
                 style={styles.modalInput}
-                keyboardType="numeric"
-                value={String(calcParams.heightCm)}
-                onChangeText={(v) => setCalcParams({ ...calcParams, heightCm: Number(v) || 170 })}
+                keyboardType="decimal-pad"
+                value={heightText}
+                onChangeText={setHeightText}
               />
 
               <Text style={styles.inputLabel}>{t('clients.age')}</Text>
               <TextInput
                 style={styles.modalInput}
-                keyboardType="numeric"
-                value={String(calcParams.ageYears)}
-                onChangeText={(v) => setCalcParams({ ...calcParams, ageYears: Number(v) || 25 })}
+                keyboardType="number-pad"
+                value={ageText}
+                onChangeText={setAgeText}
               />
+
+              <Text style={styles.inputLabel}>{t('clients.activity')}</Text>
+              <View style={styles.chipRow}>
+                {(['sedentary', 'light', 'moderate', 'active', 'very_active'] as const).map((a) => (
+                  <TouchableOpacity
+                    key={a}
+                    style={[styles.chip, calcParams.activityLevel === a && styles.chipActive]}
+                    onPress={() => setCalcParams({ ...calcParams, activityLevel: a })}
+                  >
+                    <Text style={[styles.chipText, calcParams.activityLevel === a && styles.chipTextActive]}>{t(`clients.act_${a}`)}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+
+              <Text style={styles.inputLabel}>{t('clients.goal')}</Text>
+              <View style={styles.chipRow}>
+                {([['lose_weight', 'goal_lose'], ['maintain', 'goal_maintain'], ['gain_weight', 'goal_gain'], ['build_muscle', 'goal_muscle']] as const).map(([g, key]) => (
+                  <TouchableOpacity
+                    key={g}
+                    style={[styles.chip, calcParams.goal === g && styles.chipActive]}
+                    onPress={() => setCalcParams({ ...calcParams, goal: g })}
+                  >
+                    <Text style={[styles.chipText, calcParams.goal === g && styles.chipTextActive]}>{t(`clients.${key}`)}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
 
               <TouchableOpacity style={styles.calcBtn} onPress={handleCalculateBMR}>
                 <Text style={styles.calcBtnText}>{t('clients.calc')}</Text>
@@ -319,7 +375,8 @@ export default function DietitianClients() {
                   <Text style={styles.resultRow}>{t('clients.bmr')} <Text style={styles.resHighlight}>{calcResult.bmr} kcal</Text></Text>
                   <Text style={styles.resultRow}>{t('clients.tdee')} <Text style={styles.resHighlight}>{calcResult.tdee} kcal</Text></Text>
                   <Text style={styles.resultRow}>{t('clients.target')} <Text style={[styles.resHighlight, { color: '#10b981' }]}>{calcResult.targetCalories} kcal</Text></Text>
-                  <Text style={styles.resultRow}>{t('clients.protein')}: {calcResult.macros.proteinGrams}g | {t('clients.carbs')}: {calcResult.macros.carbsGrams}g | {t('clients.fat')}: {calcResult.macros.fatGrams}g</Text>
+                  <Text style={styles.resultRow}>{t('clients.protein')}: {calcResult.macros.proteinGrams}g ({calcResult.macros.proteinPct}%) | {t('clients.carbs')}: {calcResult.macros.carbsGrams}g ({calcResult.macros.carbsPct}%) | {t('clients.fat')}: {calcResult.macros.fatGrams}g ({calcResult.macros.fatPct}%)</Text>
+                  <Text style={styles.calcNote}>{t('clients.calc_note')}</Text>
                 </View>
               )}
             </ScrollView>
@@ -416,6 +473,12 @@ const styles = StyleSheet.create({
   modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
   modalTitle: { color: '#fff', fontSize: 16, fontWeight: '900' },
   inputLabel: { color: '#94a3b8', fontSize: 10, fontWeight: '900', marginTop: 8 },
+  chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  chip: { paddingVertical: 8, paddingHorizontal: 12, borderRadius: 999, borderWidth: 1, borderColor: '#334155', backgroundColor: '#0f172a' },
+  chipActive: { borderColor: '#10b981', backgroundColor: '#10b98122' },
+  chipText: { color: '#94a3b8', fontSize: 12, fontWeight: '700' },
+  chipTextActive: { color: '#10b981' },
+  calcNote: { color: '#64748b', fontSize: 11, marginTop: 8 },
   modalInput: {
     backgroundColor: 'rgba(255, 255, 255, 0.08)',
     borderRadius: 12,
