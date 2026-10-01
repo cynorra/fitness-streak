@@ -2,6 +2,7 @@
   "expo": {
     "name": "VitaTribe",
     "slug": "vitatribe",
+    "owner": "ernsmsr",
     "version": "1.0.2",
     "description": "Share workout & diet streaks with friends and dietitians, track habits & stay motivated!",
     "orientation": "portrait",
@@ -71,6 +72,11 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "f1d63b01-b691-46d1-9f77-05d4a060181c"
+      }
     }
   }
 }
