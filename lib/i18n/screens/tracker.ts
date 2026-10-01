@@ -9,6 +9,7 @@ export const tracker = {
     save: 'Kaydet',
     resume: 'Devam',
     stop: 'Bitir',
+    location_denied: 'Konum izni verilmedi. Aktivite takibi çalışmayacak.',
   },
   en: {
     saved: 'Activity saved! Total distance: {{km}} km',
@@ -20,5 +21,6 @@ export const tracker = {
     save: 'Save',
     resume: 'Resume',
     stop: 'Finish',
+    location_denied: 'Location permission denied. Activity tracking will not work.',
   },
 };

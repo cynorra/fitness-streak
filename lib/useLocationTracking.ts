@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import * as Location from 'expo-location';
 import { getDistance } from 'geolib';
+import { useTranslation } from './i18n/i18n';
 
 export type ActivityLocation = {
   latitude: number;
@@ -10,6 +11,7 @@ export type ActivityLocation = {
 };
 
 export const useLocationTracking = () => {
+  const { t } = useTranslation();
   const [isTracking, setIsTracking] = useState(false);
   const [locations, setLocations] = useState<ActivityLocation[]>([]);
   const [distance, setDistance] = useState(0); // in meters
@@ -27,7 +29,7 @@ export const useLocationTracking = () => {
   const requestPermissions = async () => {
     const { status: foregroundStatus } = await Location.requestForegroundPermissionsAsync();
     if (foregroundStatus !== 'granted') {
-      alert('Konum izni verilmedi. Aktivite takibi çalışmayacak.');
+      alert(t('tracker.location_denied'));
       return false;
     }
     return true;

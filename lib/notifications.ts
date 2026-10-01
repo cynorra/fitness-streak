@@ -35,10 +35,21 @@ Notifications.setNotificationHandler({
   }),
 });
 
+async function resolveLocale(): Promise<'tr' | 'en'> {
+  try {
+    const saved = await AsyncStorage.getItem(LANGUAGE_KEY);
+    if (saved === 'tr' || saved === 'en') return saved;
+    return Localization.getLocales()?.[0]?.languageCode === 'tr' ? 'tr' : 'en';
+  } catch {
+    return 'en';
+  }
+}
+
 export async function setupNotificationChannels() {
   if (Platform.OS === 'android') {
+    const en = (await resolveLocale()) === 'en';
     await Notifications.setNotificationChannelAsync('vitatribe_streak', {
-      name: 'Seri & Antrenman Hatırlatıcıları',
+      name: en ? 'Streak & Workout Reminders' : 'Seri & Antrenman Hatırlatıcıları',
       importance: Notifications.AndroidImportance.MAX,
       vibrationPattern: [0, 250, 250, 250],
       lightColor: '#10b981',
@@ -46,7 +57,7 @@ export async function setupNotificationChannels() {
     });
 
     await Notifications.setNotificationChannelAsync('vitatribe_water', {
-      name: 'Su Takibi Hatırlatıcıları',
+      name: en ? 'Water Tracking Reminders' : 'Su Takibi Hatırlatıcıları',
       importance: Notifications.AndroidImportance.HIGH,
       vibrationPattern: [0, 200, 200],
       lightColor: '#3b82f6',
@@ -54,7 +65,7 @@ export async function setupNotificationChannels() {
     });
 
     await Notifications.setNotificationChannelAsync('vitatribe_motivation', {
-      name: 'Motivasyon Bildirimleri',
+      name: en ? 'Motivation Notifications' : 'Motivasyon Bildirimleri',
       importance: Notifications.AndroidImportance.DEFAULT,
       lightColor: '#f59e0b',
     });
@@ -257,7 +268,11 @@ export async function sendInstantTestNotification() {
   if (!perm.granted && perm.status !== 'granted') {
     const req: any = await Notifications.requestPermissionsAsync();
     if (!req.granted && req.status !== 'granted') {
-      alert('Bildirim izni gerekli. Lütfen cihaz ayarlarınızdan izin verin.');
+      alert(
+        (await resolveLocale()) === 'en'
+          ? 'Notification permission is required. Please allow it in your device settings.'
+          : 'Bildirim izni gerekli. Lütfen cihaz ayarlarınızdan izin verin.'
+      );
       return false;
     }
   }
