@@ -54,7 +54,9 @@ for each row execute function public.touch_dietitian_review();
 --   up to 70 pts  Bayesian-smoothed star rating (prior 3.5 worth 5 reviews, so one 5-star review cannot max it out)
 --   up to 20 pts  approved client count (capped at 20 clients)
 --   up to 10 pts  profile completeness (bio 5 + specialty 5)
-create or replace function public.get_dietitian_scores()
+-- Return shape changed over time (growth migration adds referral_count): always recreate.
+drop function if exists public.get_dietitian_scores();
+create function public.get_dietitian_scores()
 returns table (
   dietitian_id uuid,
   review_count int,

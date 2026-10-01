@@ -278,7 +278,7 @@ as $$
     (select count(*)::int from public.referrals r join public.profiles p on p.id = r.referred_id
        where r.referrer_id = auth.uid() and p.onboarding_completed),
     exists (select 1 from public.referrals where referred_id = auth.uid());
-$;
+$$;
 
 revoke all on function public.my_referral_stats() from public, anon;
 grant execute on function public.my_referral_stats() to authenticated;

@@ -35,8 +35,9 @@ import { net } from './net';
 import { dietitianCare } from './dietitianCare';
 import { share } from './share';
 import { referral } from './referral';
+import { learn } from './learn';
 
-const modules: Record<string, { tr: Record<string, string>; en: Record<string, string> }> = { referral, share, dietitianCare, net, streakNumber, plan, packages, clients, gyms, blog, fasting, water, ad, tabs, tracker, store, notifSettings, nutritionLog, workoutPlayer, chat, messages, sessionNotes, appointments, analytics, measurements, leaderboard, challenges, history, log, workoutTypes, profile2, home, feed2, workouts, friends, login, onboarding };
+const modules: Record<string, { tr: Record<string, string>; en: Record<string, string> }> = { learn, referral, share, dietitianCare, net, streakNumber, plan, packages, clients, gyms, blog, fasting, water, ad, tabs, tracker, store, notifSettings, nutritionLog, workoutPlayer, chat, messages, sessionNotes, appointments, analytics, measurements, leaderboard, challenges, history, log, workoutTypes, profile2, home, feed2, workouts, friends, login, onboarding };
 
 type Locale = 'tr' | 'en';
 const build = (l: Locale) =>
