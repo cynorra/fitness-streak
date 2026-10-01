@@ -248,6 +248,25 @@ export default function DietitianClients() {
                 </View>
               )}
 
+              {item.status === 'approved' && (
+                <TouchableOpacity
+                  style={[styles.actionBtn, { backgroundColor: '#8b5cf620', borderColor: '#8b5cf6', marginBottom: 10 }]}
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    router.push({
+                      pathname: '/dietitian/client-meals' as any,
+                      params: {
+                        clientId: item.client?.id,
+                        name: item.client?.display_name || item.client?.username || '',
+                      },
+                    });
+                  }}
+                >
+                  <Ionicons name="restaurant-outline" size={16} color="#8b5cf6" />
+                  <Text style={[styles.actionBtnText, { color: '#8b5cf6' }]}>{t('dietitianCare.view_meals')}</Text>
+                </TouchableOpacity>
+              )}
+
               {/* Action Buttons */}
               <View style={styles.actionsRow}>
                 <TouchableOpacity

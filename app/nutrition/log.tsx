@@ -23,6 +23,7 @@ export default function NutritionLog() {
   const [fat, setFat] = useState('');
   const [loading, setLoading] = useState(false);
   const [todayLogs, setTodayLogs] = useState<any[]>([]);
+  const [feedback, setFeedback] = useState<{ id: string; log_id: string; message: string }[]>([]);
 
   const todayStr = format(new Date(), 'yyyy-MM-dd');
 
@@ -107,7 +108,20 @@ export default function NutritionLog() {
       .eq('log_date', todayStr)
       .order('created_at', { ascending: false });
     
-    if (data) setTodayLogs(data);
+    if (data) {
+      setTodayLogs(data);
+      if (data.length) {
+        // Recommendations written by the user's dietitian (RLS lets only the client/dietitian read them).
+        const { data: fb } = await supabase
+          .from('meal_feedback')
+          .select('id, log_id, message')
+          .in('log_id', data.map((l: any) => l.id))
+          .order('created_at', { ascending: true });
+        setFeedback(fb || []);
+      } else {
+        setFeedback([]);
+      }
+    }
   };
 
   useEffect(() => {
@@ -165,6 +179,10 @@ export default function NutritionLog() {
           <Text style={styles.summaryTitle}>{t('nutritionLog.today_cals')}</Text>
           <Text style={styles.summaryValue}>{totalCals} kcal</Text>
         </View>
+
+        <TouchableOpacity style={styles.plansLink} onPress={() => router.push('/my-plans' as any)}>
+          <Text style={styles.plansLinkText}>{t('dietitianCare.my_plans_link')}</Text>
+        </TouchableOpacity>
 
         <View style={styles.formCard}>
           <Text style={styles.sectionTitle}>{t('nutritionLog.new')}</Text>
@@ -268,6 +286,12 @@ export default function NutritionLog() {
               <Text style={styles.macroText}>{t('nutritionLog.c')}: {log.carbs_g}g</Text>
               <Text style={styles.macroText}>{t('nutritionLog.f')}: {log.fat_g}g</Text>
             </View>
+            {feedback.filter((f) => f.log_id === log.id).map((f) => (
+              <View key={f.id} style={styles.feedbackBox}>
+                <Text style={styles.feedbackLabel}>🥗 {t('dietitianCare.from_dietitian')}</Text>
+                <Text style={styles.feedbackText}>{f.message}</Text>
+              </View>
+            ))}
           </Animated.View>
         ))}
       </ScrollView>
@@ -318,5 +342,10 @@ const styles = StyleSheet.create({
   logCals: { color: '#10b981', fontSize: 14, fontWeight: '900' },
   logContent: { color: '#fff', fontSize: 14, marginBottom: 12 },
   macrosRow: { flexDirection: 'row', gap: 16 },
-  macroText: { color: '#666', fontSize: 11, fontWeight: '700' }
+  macroText: { color: '#666', fontSize: 11, fontWeight: '700' },
+  feedbackBox: { backgroundColor: '#8b5cf61a', borderLeftWidth: 3, borderLeftColor: '#8b5cf6', borderRadius: 8, padding: 10, marginTop: 10 },
+  feedbackLabel: { color: '#a78bfa', fontSize: 10, fontWeight: '900', letterSpacing: 0.5, textTransform: 'uppercase' },
+  feedbackText: { color: '#fff', fontSize: 13, marginTop: 2 },
+  plansLink: { backgroundColor: '#8b5cf61a', borderWidth: 1, borderColor: '#8b5cf650', borderRadius: 14, padding: 14, alignItems: 'center', marginBottom: 16 },
+  plansLinkText: { color: '#a78bfa', fontSize: 14, fontWeight: '800' }
 });

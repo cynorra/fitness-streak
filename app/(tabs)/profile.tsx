@@ -223,15 +223,44 @@ export default function Profile() {
         <Text style={styles.menuBtnText}>{t('profile2.measure')}</Text>
       </TouchableOpacity>
 
-      {/* Dietitian Link */}
+      {/* Dietitian links */}
       {profile?.role === 'dietitian' && (
-        <TouchableOpacity 
-          style={styles.menuBtn} 
-          onPress={() => router.push('/dietitian/create-plan' as any)}
-        >
-          <Text style={styles.menuBtnIcon}>📋</Text>
-          <Text style={styles.menuBtnText}>{t('profile2.create_plan')}</Text>
-        </TouchableOpacity>
+        <>
+          <TouchableOpacity
+            style={styles.menuBtn}
+            onPress={() => router.push('/dietitian/clients' as any)}
+          >
+            <Text style={styles.menuBtnIcon}>🩺</Text>
+            <Text style={styles.menuBtnText}>{t('dietitianCare.my_clients')}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.menuBtn}
+            onPress={() => router.push('/dietitian/create-plan' as any)}
+          >
+            <Text style={styles.menuBtnIcon}>📋</Text>
+            <Text style={styles.menuBtnText}>{t('profile2.create_plan')}</Text>
+          </TouchableOpacity>
+        </>
+      )}
+
+      {/* Member links: find a dietitian + see the plans written for me */}
+      {profile?.role !== 'dietitian' && (
+        <>
+          <TouchableOpacity
+            style={styles.menuBtn}
+            onPress={() => router.push('/find-dietitian' as any)}
+          >
+            <Text style={styles.menuBtnIcon}>🔎</Text>
+            <Text style={styles.menuBtnText}>{t('dietitianCare.find_link')}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.menuBtn}
+            onPress={() => router.push('/my-plans' as any)}
+          >
+            <Text style={styles.menuBtnIcon}>📋</Text>
+            <Text style={styles.menuBtnText}>{t('dietitianCare.my_plans')}</Text>
+          </TouchableOpacity>
+        </>
       )}
 
       {/* Language Selector Section */}

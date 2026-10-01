@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { useAuth } from '../../lib/auth';
 import { supabase } from '../../lib/supabase';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
@@ -27,6 +27,7 @@ export default function CreateNutritionPlan() {
   const { t, locale } = useTranslation();
   const MEAL_TEMPLATES = getMealTemplates(locale);
   const router = useRouter();
+  const { clientId } = useLocalSearchParams<{ clientId?: string }>();
   const insets = useSafeAreaInsets();
 
   const [clients, setClients] = useState<any[]>([]);
@@ -54,7 +55,9 @@ export default function CreateNutritionPlan() {
 
     if (!error && data) {
       setClients(data);
-      if (data.length > 0) setSelectedClient(data[0]);
+      // Preselect the client the dietitian came from (param), otherwise the first one.
+      const preselected = data.find((c: any) => c.client_id === clientId);
+      if (data.length > 0) setSelectedClient(preselected || data[0]);
     }
     setLoading(false);
   };
@@ -204,6 +207,19 @@ export default function CreateNutritionPlan() {
                   <Ionicons name="trash-outline" size={18} color="#ef4444" />
                 </TouchableOpacity>
               )}
+            </View>
+
+            <Text style={styles.subLabel}>{t('plan.day')}</Text>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 4, marginBottom: 10 }}>
+              {[1, 2, 3, 4, 5, 6, 7].map((d) => (
+                <TouchableOpacity
+                  key={d}
+                  style={[styles.clientChip, Number(meal.day_of_week) === d && styles.clientChipActive]}
+                  onPress={() => updateMeal(index, 'day_of_week', String(d))}
+                >
+                  <Text style={styles.clientChipText}>{t('dietitianCare.day_n', { n: d })}</Text>
+                </TouchableOpacity>
+              ))}
             </View>
 
             <View style={styles.row}>
