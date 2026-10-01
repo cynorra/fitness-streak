@@ -17,6 +17,8 @@ export default function Profile() {
   const [instagram, setInstagram] = useState((profile as any)?.instagram_handle || 'vitatribe_user');
   const [tiktok, setTiktok] = useState((profile as any)?.tiktok_handle || 'vitatribe_user');
   const [updating, setUpdating] = useState(false);
+  const [specialty, setSpecialty] = useState((profile as any)?.specialty || '');
+  const [bio, setBio] = useState((profile as any)?.bio || '');
 
   const signOut = () => {
     Alert.alert(t('profile.logout_dialog_title'), t('profile.logout_dialog_message'), [
@@ -48,7 +50,11 @@ export default function Profile() {
     setUpdating(true);
     const { error } = await supabase
       .from('profiles')
-      .update({ display_name: newName })
+      .update(
+        profile.role === 'dietitian'
+          ? { display_name: newName, specialty: specialty.trim() || null, bio: bio.trim() || null }
+          : { display_name: newName }
+      )
       .eq('id', profile.id);
     
     if (error) {
@@ -128,6 +134,33 @@ export default function Profile() {
                 placeholderTextColor="#444"
               />
             </View>
+            {profile?.role === 'dietitian' && (
+              <>
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>{t('dietitianCare.specialty_label')}</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={specialty}
+                    onChangeText={setSpecialty}
+                    placeholder={t('dietitianCare.specialty_ph')}
+                    placeholderTextColor="#444"
+                    maxLength={80}
+                  />
+                </View>
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>{t('dietitianCare.bio_label')}</Text>
+                  <TextInput
+                    style={[styles.input, { minHeight: 70, textAlignVertical: 'top' }]}
+                    value={bio}
+                    onChangeText={setBio}
+                    placeholder={t('dietitianCare.bio_ph')}
+                    placeholderTextColor="#444"
+                    multiline
+                    maxLength={300}
+                  />
+                </View>
+              </>
+            )}
             <View style={styles.modalActions}>
               <TouchableOpacity style={styles.cancelBtn} onPress={() => setEditModal(false)}>
                 <Text style={styles.cancelBtnText}>{t('common.cancel')}</Text>

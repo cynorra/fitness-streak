@@ -21,6 +21,8 @@ import GlassCard from '../../components/GlassCard';
 import { calculateNutritionTargets, BMRParams } from '../../lib/nutritionCalc';
 import { useTranslation } from '../../lib/i18n/i18n';
 import { friendlyError } from '../../lib/useOnline';
+import StarRating from '../../components/StarRating';
+import { fetchDietitianScores, trustColor, DietitianScore } from '../../lib/dietitianScores';
 
 export default function DietitianClients() {
   const { profile } = useAuth();
@@ -43,6 +45,26 @@ export default function DietitianClients() {
     goal: 'lose_weight',
   });
   const [calcResult, setCalcResult] = useState<any>(null);
+  // The dietitian's own trust score + latest reviews
+  const [myScore, setMyScore] = useState<DietitianScore | null>(null);
+  const [latestReviews, setLatestReviews] = useState<{ id: string; rating: number; comment: string | null }[]>([]);
+
+  useEffect(() => {
+    if (!profile) return;
+    (async () => {
+      const scoreMap = await fetchDietitianScores();
+      setMyScore(scoreMap.get(profile.id) || null);
+      const { data } = await supabase
+        .from('dietitian_reviews')
+        .select('id, rating, comment')
+        .eq('dietitian_id', profile.id)
+        .not('comment', 'is', null)
+        .order('created_at', { ascending: false })
+        .limit(3);
+      setLatestReviews((data || []) as any);
+    })();
+  }, [profile]);
+
   // Free-text fields so the user can clear/retype values (including decimals) without snapping back.
   const [weightText, setWeightText] = useState('75');
   const [heightText, setHeightText] = useState('175');
@@ -194,6 +216,32 @@ export default function DietitianClients() {
             <Text style={styles.statLbl}>{t('clients.pending')}</Text>
           </View>
         </GlassCard>
+
+        {myScore && (
+          <GlassCard style={styles.scoreCard}>
+            <View style={styles.scoreRow}>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.scoreTitle}>{t('dietitianCare.my_score')}</Text>
+                <StarRating value={myScore.avg_rating} size={20} />
+                <Text style={styles.scoreSub}>
+                  {myScore.review_count > 0
+                    ? `${myScore.avg_rating.toFixed(1)} · ${t('dietitianCare.reviews_n', { n: myScore.review_count })}`
+                    : t('dietitianCare.no_reviews')}
+                </Text>
+              </View>
+              <View style={[styles.scorePill, { borderColor: trustColor(myScore.trust_score) }]}>
+                <Text style={[styles.scoreValue, { color: trustColor(myScore.trust_score) }]}>{myScore.trust_score}</Text>
+                <Text style={styles.scoreLabel}>{t('dietitianCare.trust')}</Text>
+              </View>
+            </View>
+            {latestReviews.map((r) => (
+              <View key={r.id} style={styles.reviewRow}>
+                <StarRating value={r.rating} size={12} />
+                <Text style={styles.reviewText}>{r.comment}</Text>
+              </View>
+            ))}
+          </GlassCard>
+        )}
 
         <Text style={styles.sectionTitle}>{t('clients.active')}</Text>
 
@@ -492,6 +540,15 @@ const styles = StyleSheet.create({
   modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
   modalTitle: { color: '#fff', fontSize: 16, fontWeight: '900' },
   inputLabel: { color: '#94a3b8', fontSize: 10, fontWeight: '900', marginTop: 8 },
+  scoreCard: { padding: 16, marginBottom: 16 },
+  scoreRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  scoreTitle: { color: '#94a3b8', fontSize: 11, fontWeight: '900', letterSpacing: 1, textTransform: 'uppercase', marginBottom: 4 },
+  scoreSub: { color: '#a1a1aa', fontSize: 12, fontWeight: '600', marginTop: 4 },
+  scorePill: { borderWidth: 1, borderRadius: 14, paddingVertical: 8, paddingHorizontal: 14, alignItems: 'center' },
+  scoreValue: { fontSize: 26, fontWeight: '900' },
+  scoreLabel: { color: '#71717a', fontSize: 9, fontWeight: '800', textTransform: 'uppercase' },
+  reviewRow: { marginTop: 10, gap: 4 },
+  reviewText: { color: '#d4d4d8', fontSize: 12 },
   chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   chip: { paddingVertical: 8, paddingHorizontal: 12, borderRadius: 999, borderWidth: 1, borderColor: '#334155', backgroundColor: '#0f172a' },
   chipActive: { borderColor: '#10b981', backgroundColor: '#10b98122' },

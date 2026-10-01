@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, TextInput, ActivityIndicator, Alert, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, TextInput, ActivityIndicator, Alert, RefreshControl, Modal } from 'react-native';
+import StarRating from '../components/StarRating';
+import { fetchDietitianScores, trustColor, DietitianScore } from '../lib/dietitianScores';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
@@ -24,9 +26,23 @@ export default function FindDietitian() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [scores, setScores] = useState<Map<string, DietitianScore>>(new Map());
+  const [myReviews, setMyReviews] = useState<Record<string, { rating: number; comment: string | null }>>({});
+  const [rateTarget, setRateTarget] = useState<Dietitian | null>(null);
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState('');
+  const [savingReview, setSavingReview] = useState(false);
 
   const load = useCallback(async () => {
     if (!profile) return;
+    const [scoreMap, reviewsRes] = await Promise.all([
+      fetchDietitianScores(),
+      supabase.from('dietitian_reviews').select('dietitian_id, rating, comment').eq('client_id', profile.id),
+    ]);
+    setScores(scoreMap);
+    setMyReviews(
+      Object.fromEntries((reviewsRes.data || []).map((r: any) => [r.dietitian_id, { rating: r.rating, comment: r.comment }]))
+    );
     const [list, mine] = await Promise.all([
       supabase
         .from('profiles')
@@ -69,10 +85,41 @@ export default function FindDietitian() {
     if (!error) Alert.alert(t('dietitianCare.request_sent'), t('dietitianCare.request_sent_msg'));
   };
 
+  const openRate = (d: Dietitian) => {
+    const mine = myReviews[d.id];
+    setRating(mine?.rating || 0);
+    setComment(mine?.comment || '');
+    setRateTarget(d);
+  };
+
+  const saveReview = async () => {
+    if (!profile || !rateTarget) return;
+    if (rating < 1) {
+      Alert.alert(t('common.error'), t('dietitianCare.rate_pick'));
+      return;
+    }
+    setSavingReview(true);
+    // upsert on the unique (dietitian, client) pair: first rating inserts, later ones edit it.
+    const { error } = await supabase.from('dietitian_reviews').upsert(
+      { dietitian_id: rateTarget.id, client_id: profile.id, rating, comment: comment.trim() || null },
+      { onConflict: 'dietitian_id,client_id' }
+    );
+    setSavingReview(false);
+    if (error) {
+      Alert.alert(t('common.error'), friendlyError(error.message, t) || t('dietitianCare.rate_failed'));
+      return;
+    }
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    setRateTarget(null);
+    Alert.alert('⭐', t('dietitianCare.rate_saved'));
+    load();
+  };
+
   const q = search.trim().toLowerCase();
-  const filtered = dietitians.filter((d) =>
-    !q || `${d.display_name || ''} ${d.username} ${d.specialty || ''}`.toLowerCase().includes(q)
-  );
+  // Highest trust score first; the score itself rises with ratings.
+  const filtered = dietitians
+    .filter((d) => !q || `${d.display_name || ''} ${d.username} ${d.specialty || ''}`.toLowerCase().includes(q))
+    .sort((a, b) => (scores.get(b.id)?.trust_score ?? 0) - (scores.get(a.id)?.trust_score ?? 0));
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
@@ -102,6 +149,7 @@ export default function FindDietitian() {
           ListEmptyComponent={<Text style={styles.empty}>{t('dietitianCare.find_empty')}</Text>}
           renderItem={({ item }) => {
             const status = statusById[item.id];
+            const score = scores.get(item.id);
             return (
               <View style={styles.card}>
                 <View style={styles.row}>
@@ -111,7 +159,21 @@ export default function FindDietitian() {
                   <View style={{ flex: 1 }}>
                     <Text style={styles.name}>{item.display_name || item.username}</Text>
                     {!!item.specialty && <Text style={styles.specialty}>{item.specialty}</Text>}
+                    <View style={styles.ratingRow}>
+                      <StarRating value={score?.avg_rating || 0} size={15} />
+                      <Text style={styles.ratingText}>
+                        {score && score.review_count > 0
+                          ? `${score.avg_rating.toFixed(1)} · ${t('dietitianCare.reviews_n', { n: score.review_count })}`
+                          : t('dietitianCare.no_reviews')}
+                      </Text>
+                    </View>
                   </View>
+                  {score && (
+                    <View style={[styles.trustPill, { borderColor: trustColor(score.trust_score) }]}>
+                      <Text style={[styles.trustValue, { color: trustColor(score.trust_score) }]}>{score.trust_score}</Text>
+                      <Text style={styles.trustLabel}>{t('dietitianCare.trust')}</Text>
+                    </View>
+                  )}
                 </View>
                 {!!item.bio && <Text style={styles.bio} numberOfLines={3}>{item.bio}</Text>}
 
@@ -128,11 +190,53 @@ export default function FindDietitian() {
                     <Text style={styles.requestText}>{t('dietitianCare.request')}</Text>
                   </TouchableOpacity>
                 )}
+
+                {status === 'approved' && (
+                  <TouchableOpacity style={styles.rateBtn} onPress={() => openRate(item)}>
+                    <Text style={styles.rateText}>
+                      ⭐ {myReviews[item.id] ? t('dietitianCare.rate_edit') : t('dietitianCare.rate')}
+                    </Text>
+                  </TouchableOpacity>
+                )}
               </View>
             );
           }}
         />
       )}
+
+      <Modal visible={!!rateTarget} transparent animationType="fade" onRequestClose={() => setRateTarget(null)}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalCard}>
+            <Text style={styles.modalTitle}>{t('dietitianCare.rate_title')}</Text>
+            <Text style={styles.modalName}>{rateTarget?.display_name || rateTarget?.username}</Text>
+            <View style={{ alignItems: 'center', marginVertical: 14 }}>
+              <StarRating value={rating} size={38} onChange={setRating} />
+            </View>
+            <TextInput
+              style={styles.commentInput}
+              placeholder={t('dietitianCare.rate_ph')}
+              placeholderTextColor="#666"
+              value={comment}
+              onChangeText={setComment}
+              multiline
+              maxLength={500}
+            />
+            <Text style={styles.trustInfo}>{t('dietitianCare.trust_info')}</Text>
+            <View style={styles.modalActions}>
+              <TouchableOpacity style={styles.cancelBtn} onPress={() => setRateTarget(null)}>
+                <Text style={styles.cancelText}>{t('dietitianCare.rate_cancel')}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.saveBtn, savingReview && { opacity: 0.5 }]}
+                disabled={savingReview}
+                onPress={saveReview}
+              >
+                <Text style={styles.saveText}>{t('common.save')}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -157,4 +261,22 @@ const styles = StyleSheet.create({
   badgeOk: { backgroundColor: '#10b98122' },
   badgeNo: { backgroundColor: '#ef444422' },
   badgeText: { color: '#fff', fontSize: 12, fontWeight: '800' },
+  ratingRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 4 },
+  ratingText: { color: '#a1a1aa', fontSize: 11, fontWeight: '600' },
+  trustPill: { borderWidth: 1, borderRadius: 12, paddingVertical: 6, paddingHorizontal: 10, alignItems: 'center', minWidth: 58 },
+  trustValue: { fontSize: 18, fontWeight: '900' },
+  trustLabel: { color: '#71717a', fontSize: 9, fontWeight: '800', textTransform: 'uppercase' },
+  rateBtn: { borderWidth: 1, borderColor: '#fbbf24', borderRadius: 12, paddingVertical: 10, alignItems: 'center', marginTop: 8 },
+  rateText: { color: '#fbbf24', fontSize: 13, fontWeight: '800' },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.75)', justifyContent: 'center', padding: 20 },
+  modalCard: { backgroundColor: '#111', borderRadius: 20, padding: 20, borderWidth: 1, borderColor: '#222' },
+  modalTitle: { color: '#fff', fontSize: 16, fontWeight: '900', textAlign: 'center' },
+  modalName: { color: '#10b981', fontSize: 14, fontWeight: '700', textAlign: 'center', marginTop: 4 },
+  commentInput: { backgroundColor: '#0a0a0a', borderWidth: 1, borderColor: '#222', borderRadius: 12, padding: 12, color: '#fff', minHeight: 80, textAlignVertical: 'top' },
+  trustInfo: { color: '#71717a', fontSize: 11, marginTop: 10 },
+  modalActions: { flexDirection: 'row', gap: 10, marginTop: 16 },
+  cancelBtn: { flex: 1, borderRadius: 12, paddingVertical: 12, alignItems: 'center', backgroundColor: '#1a1a1a' },
+  cancelText: { color: '#aaa', fontWeight: '800' },
+  saveBtn: { flex: 1, borderRadius: 12, paddingVertical: 12, alignItems: 'center', backgroundColor: '#10b981' },
+  saveText: { color: '#fff', fontWeight: '900' },
 });
