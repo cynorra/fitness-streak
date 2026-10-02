@@ -12,6 +12,7 @@ import { useEffect } from 'react';
 import { useTranslation } from '../lib/i18n/i18n';
 import { markWorkoutLoggedToday } from '../lib/notifications';
 import { isNetworkError } from '../lib/useOnline';
+import AppIcon from '../components/AppIcon';
 
 export default function LogWorkout() {
   const { profile, refreshProfile } = useAuth();
@@ -83,7 +84,7 @@ export default function LogWorkout() {
             <Text style={styles.logoText}>STREAK<Text style={{color: '#10b981'}}>FIT</Text></Text>
           </View>
           <TouchableOpacity onPress={() => router.push('/messages' as any)} style={styles.msgBtn}>
-            <Text style={styles.msgIcon}>💬</Text>
+            <AppIcon name="paper-plane-outline" color="#10b981" size={20} bare />
           </TouchableOpacity>
         </View>
         <Text style={styles.title}>{t('log.title')}</Text>

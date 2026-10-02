@@ -85,7 +85,7 @@ function RootLayoutNav() {
   if (loading) return null;
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
+    <Stack screenOptions={{ headerShown: false, animation: 'slide_from_right', animationDuration: 280 }}>
       {/* Auth ekranları: alttan yukarı slide */}
       <Stack.Screen
         name="(auth)"

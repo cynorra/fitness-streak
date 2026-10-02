@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useTranslation } from '../lib/i18n/i18n';
 import AdMobBanner from '../components/AdMobBanner';
+import AppIcon from '../components/AppIcon';
 
 export default function Leaderboard() {
   const router = useRouter();
@@ -76,7 +77,7 @@ export default function Leaderboard() {
               <Text style={styles.handle}>@{u.username}</Text>
             </View>
             <View style={styles.streakBox}>
-              <Text style={styles.streakIcon}>🔥</Text>
+              <AppIcon name="flame" color="#f97316" size={16} bare style={{ marginRight: 6 }} />
               <Text style={styles.streakCount}>{u.current_streak}</Text>
             </View>
           </Animated.View>

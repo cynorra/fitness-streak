@@ -8,6 +8,7 @@ import { supabase } from '../lib/supabase';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { useTranslation } from '../lib/i18n/i18n';
+import AppIcon from '../components/AppIcon';
 
 const SLIDE_KEYS = [
   { key: 's1', icon: '🔥' },
@@ -97,7 +98,7 @@ export default function Onboarding() {
         </Animated.View>
       ) : (
         <Animated.View entering={SlideInRight.duration(400)} style={styles.slide}>
-          <Text style={styles.icon}>🎯</Text>
+          <AppIcon name="locate" color="#ef4444" size={88} style={{ marginBottom: 24 }} />
           <Text style={styles.title}>{t('onboarding.who_title')}</Text>
           <Text style={styles.description}>
             {t('onboarding.who_desc')}
@@ -108,7 +109,7 @@ export default function Onboarding() {
               style={[styles.roleCard, selectedRole === 'user' && styles.roleCardActive]}
               onPress={() => setSelectedRole('user')}
             >
-              <Text style={styles.roleIcon}>💪</Text>
+              <AppIcon name="fitness" color="#10b981" size={56} style={{ marginBottom: 12 }} />
               <Text style={styles.roleTitle}>{t('onboarding.role_user')}</Text>
               <Text style={styles.roleDesc}>{t('onboarding.role_user_desc')}</Text>
             </TouchableOpacity>
@@ -117,7 +118,7 @@ export default function Onboarding() {
               style={[styles.roleCard, selectedRole === 'dietitian' && styles.roleCardActive]}
               onPress={() => setSelectedRole('dietitian')}
             >
-              <Text style={styles.roleIcon}>🩺</Text>
+              <AppIcon name="medkit" color="#10b981" size={56} style={{ marginBottom: 12 }} />
               <Text style={styles.roleTitle}>{t('onboarding.role_dietitian')}</Text>
               <Text style={styles.roleDesc}>{t('onboarding.role_dietitian_desc')}</Text>
             </TouchableOpacity>

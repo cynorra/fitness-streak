@@ -9,6 +9,7 @@ import { getDateLocale } from '../lib/i18n/dateUtils';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import SessionNotes from '../components/SessionNotes';
 import { useTranslation } from '../lib/i18n/i18n';
+import AppIcon from '../components/AppIcon';
 
 export default function Appointments() {
   const { profile } = useAuth();
@@ -73,7 +74,7 @@ export default function Appointments() {
           style={styles.quickHubCard}
           onPress={() => router.push('/dietitian/clients' as any)}
         >
-          <Text style={styles.quickHubIcon}>🩺</Text>
+          <AppIcon name="medkit" color="#10b981" size={40} />
           <View>
             <Text style={styles.quickHubTitle}>{t('appointments.client_control')}</Text>
             <Text style={styles.quickHubSub}>{t('appointments.client_control_sub')}</Text>
@@ -84,7 +85,7 @@ export default function Appointments() {
           style={styles.quickHubCard}
           onPress={() => router.push('/dietitian/packages' as any)}
         >
-          <Text style={styles.quickHubIcon}>💎</Text>
+          <AppIcon name="diamond" color="#38bdf8" size={40} />
           <View>
             <Text style={styles.quickHubTitle}>{t('appointments.packages')}</Text>
             <Text style={styles.quickHubSub}>{t('appointments.packages_sub')}</Text>
@@ -98,7 +99,7 @@ export default function Appointments() {
       >
         {appointments.length === 0 ? (
           <View style={styles.empty}>
-            <Text style={styles.emptyIcon}>📅</Text>
+            <AppIcon name="calendar" color="#3b82f6" size={80} style={{ marginBottom: 16 }} />
             <Text style={styles.emptyText}>{t('appointments.empty')}</Text>
             <TouchableOpacity 
               style={styles.connectBtn}

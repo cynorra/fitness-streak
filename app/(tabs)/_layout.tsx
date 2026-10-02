@@ -4,7 +4,7 @@ import AnimatedTabBar from '../../components/AnimatedTabBar';
 export default function TabsLayout() {
   return (
     <Tabs
-      screenOptions={{ headerShown: false }}
+      screenOptions={{ headerShown: false, animation: 'shift' }}
       tabBar={(props) => <AnimatedTabBar {...props} />}
     >
       <Tabs.Screen name="index" />

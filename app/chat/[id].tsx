@@ -14,6 +14,7 @@ import { checkContentModeration } from '../../lib/profanityFilter';
 import { blockUser, reportUser } from '../../lib/blocking';
 import { useTranslation } from '../../lib/i18n/i18n';
 import { friendlyError } from '../../lib/useOnline';
+import AppIcon from '../../components/AppIcon';
 
 type Message = {
   id: string;
@@ -242,7 +243,7 @@ export default function ChatScreen() {
           multiline
         />
         <TouchableOpacity style={styles.sendBtn} onPress={sendMessage}>
-          <Text style={styles.sendIcon}>➔</Text>
+          <AppIcon name="paper-plane" color="#ffffff" size={20} bare />
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>

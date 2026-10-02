@@ -20,6 +20,7 @@ import GlassCard from '../../components/GlassCard';
 import { useTranslation, supportedLanguages } from '../../lib/i18n/i18n';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { friendlyError } from '../../lib/useOnline';
+import AppIcon from '../../components/AppIcon';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -222,7 +223,7 @@ export default function Login() {
                       ]}
                       onPress={() => setSelectedRole('user')}
                     >
-                      <Text style={styles.roleChipIcon}>💪</Text>
+                      <AppIcon name="fitness" color="#10b981" size={18} bare />
                       <Text
                         style={[
                           styles.roleChipText,
@@ -240,7 +241,7 @@ export default function Login() {
                       ]}
                       onPress={() => setSelectedRole('dietitian')}
                     >
-                      <Text style={styles.roleChipIcon}>🩺</Text>
+                      <AppIcon name="medkit" color="#10b981" size={18} bare />
                       <Text
                         style={[
                           styles.roleChipText,

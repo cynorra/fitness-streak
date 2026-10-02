@@ -8,6 +8,8 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import InviteCard from '../../components/InviteCard';
 import { friendlyError } from '../../lib/useOnline';
+import AppIcon from '../../components/AppIcon';
+import PressableScale from '../../components/PressableScale';
 
 export default function Profile() {
   const { profile, session, refreshProfile } = useAuth();
@@ -191,105 +193,105 @@ export default function Profile() {
       </View>
 
       {/* Notifications Settings Link */}
-      <TouchableOpacity 
+      <PressableScale index={0} 
         style={styles.menuBtn} 
         onPress={() => router.push('/notification-settings' as any)}
       >
-        <Text style={styles.menuBtnIcon}>🔔</Text>
+        <AppIcon name="notifications" color="#f59e0b" size={40} style={{ marginRight: 14 }} />
         <Text style={styles.menuBtnText}>{t('profile2.notif')}</Text>
-      </TouchableOpacity>
+      </PressableScale>
 
       {/* Analytics Link */}
-      <TouchableOpacity 
+      <PressableScale index={1} 
         style={styles.menuBtn} 
         onPress={() => router.push('/analytics' as any)}
       >
-        <Text style={styles.menuBtnIcon}>📊</Text>
+        <AppIcon name="stats-chart" color="#3b82f6" size={40} style={{ marginRight: 14 }} />
         <Text style={styles.menuBtnText}>{t('profile2.analytics')}</Text>
-      </TouchableOpacity>
+      </PressableScale>
 
       {/* Water Tracking Link */}
-      <TouchableOpacity 
+      <PressableScale index={2} 
         style={styles.menuBtn} 
         onPress={() => router.push('/water' as any)}
       >
-        <Text style={styles.menuBtnIcon}>💧</Text>
+        <AppIcon name="water" color="#38bdf8" size={40} style={{ marginRight: 14 }} />
         <Text style={styles.menuBtnText}>{t('profile2.water')}</Text>
-      </TouchableOpacity>
+      </PressableScale>
 
       {/* Fasting Link */}
-      <TouchableOpacity 
+      <PressableScale index={3} 
         style={styles.menuBtn} 
         onPress={() => router.push('/fasting' as any)}
       >
-        <Text style={styles.menuBtnIcon}>⏱️</Text>
+        <AppIcon name="timer" color="#f97316" size={40} style={{ marginRight: 14 }} />
         <Text style={styles.menuBtnText}>{t('profile2.fasting')}</Text>
-      </TouchableOpacity>
+      </PressableScale>
 
       {/* Appointments Link */}
-      <TouchableOpacity 
+      <PressableScale index={4} 
         style={styles.menuBtn} 
         onPress={() => router.push('/appointments' as any)}
       >
-        <Text style={styles.menuBtnIcon}>📅</Text>
+        <AppIcon name="calendar" color="#3b82f6" size={40} style={{ marginRight: 14 }} />
         <Text style={styles.menuBtnText}>{t('profile2.appts')}</Text>
-      </TouchableOpacity>
+      </PressableScale>
 
       {/* Nutrition Log Link */}
-      <TouchableOpacity 
+      <PressableScale index={5} 
         style={styles.menuBtn} 
         onPress={() => router.push('/nutrition/log' as any)}
       >
-        <Text style={styles.menuBtnIcon}>🥗</Text>
+        <AppIcon name="nutrition" color="#22c55e" size={40} style={{ marginRight: 14 }} />
         <Text style={styles.menuBtnText}>{t('profile2.nutrition')}</Text>
-      </TouchableOpacity>
+      </PressableScale>
 
       {/* Measurements Link */}
-      <TouchableOpacity 
+      <PressableScale index={6} 
         style={styles.menuBtn} 
         onPress={() => router.push('/measurements' as any)}
       >
-        <Text style={styles.menuBtnIcon}>📏</Text>
+        <AppIcon name="resize" color="#06b6d4" size={40} style={{ marginRight: 14 }} />
         <Text style={styles.menuBtnText}>{t('profile2.measure')}</Text>
-      </TouchableOpacity>
+      </PressableScale>
 
       {/* Dietitian links */}
       {profile?.role === 'dietitian' && (
         <>
-          <TouchableOpacity
+          <PressableScale index={7}
             style={styles.menuBtn}
             onPress={() => router.push('/dietitian/clients' as any)}
           >
-            <Text style={styles.menuBtnIcon}>🩺</Text>
+            <AppIcon name="medkit" color="#10b981" size={40} style={{ marginRight: 14 }} />
             <Text style={styles.menuBtnText}>{t('dietitianCare.my_clients')}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
+          </PressableScale>
+          <PressableScale index={8}
             style={styles.menuBtn}
             onPress={() => router.push('/dietitian/create-plan' as any)}
           >
-            <Text style={styles.menuBtnIcon}>📋</Text>
+            <AppIcon name="clipboard" color="#94a3b8" size={40} style={{ marginRight: 14 }} />
             <Text style={styles.menuBtnText}>{t('profile2.create_plan')}</Text>
-          </TouchableOpacity>
+          </PressableScale>
         </>
       )}
 
       {/* Member links: find a dietitian + see the plans written for me */}
       {profile?.role !== 'dietitian' && (
         <>
-          <TouchableOpacity
+          <PressableScale index={9}
             style={styles.menuBtn}
             onPress={() => router.push('/find-dietitian' as any)}
           >
-            <Text style={styles.menuBtnIcon}>🔎</Text>
+            <AppIcon name="search" color="#3b82f6" size={40} style={{ marginRight: 14 }} />
             <Text style={styles.menuBtnText}>{t('dietitianCare.find_link')}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
+          </PressableScale>
+          <PressableScale index={10}
             style={styles.menuBtn}
             onPress={() => router.push('/my-plans' as any)}
           >
-            <Text style={styles.menuBtnIcon}>📋</Text>
+            <AppIcon name="clipboard" color="#94a3b8" size={40} style={{ marginRight: 14 }} />
             <Text style={styles.menuBtnText}>{t('dietitianCare.my_plans')}</Text>
-          </TouchableOpacity>
+          </PressableScale>
         </>
       )}
 

@@ -23,6 +23,8 @@ import AnimatedStreakNumber from '../../components/AnimatedStreakNumber';
 import AdMobBanner from '../../components/AdMobBanner';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import AppIcon from '../../components/AppIcon';
+import PressableScale from '../../components/PressableScale';
 
 const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
 
@@ -188,20 +190,20 @@ export default function StreakHome() {
           entering={FadeInUp.delay(350).duration(450).springify()}
           style={styles.gamificationRow}
         >
-          <TouchableOpacity 
+          <PressableScale index={0} 
             style={styles.gamificationCard}
             onPress={() => router.push('/leaderboard' as any)}
           >
-            <Text style={styles.gamificationIcon}>🏆</Text>
+            <AppIcon name="trophy" color="#eab308" size={44} style={{ marginBottom: 8 }} />
             <Text style={styles.gamificationLabel}>{t('home.leaderboard')}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
+          </PressableScale>
+          <PressableScale index={1} 
             style={styles.gamificationCard}
             onPress={() => router.push('/challenges' as any)}
           >
-            <Text style={styles.gamificationIcon}>🎯</Text>
+            <AppIcon name="locate" color="#ef4444" size={44} style={{ marginBottom: 8 }} />
             <Text style={styles.gamificationLabel}>{t('home.challenges')}</Text>
-          </TouchableOpacity>
+          </PressableScale>
         </Animated.View>
 
         {/* Growth links: share card + learn feed */}
@@ -209,20 +211,20 @@ export default function StreakHome() {
           entering={FadeInUp.delay(365).duration(450).springify()}
           style={[styles.gamificationRow, { marginTop: 10 }]}
         >
-          <TouchableOpacity
+          <PressableScale index={2}
             style={styles.gamificationCard}
             onPress={() => router.push('/share-card' as any)}
           >
-            <Text style={styles.gamificationIcon}>📸</Text>
+            <AppIcon name="camera" color="#ec4899" size={44} style={{ marginBottom: 8 }} />
             <Text style={styles.gamificationLabel}>{t('share.link')}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
+          </PressableScale>
+          <PressableScale index={3}
             style={styles.gamificationCard}
             onPress={() => router.push('/learn' as any)}
           >
-            <Text style={styles.gamificationIcon}>💡</Text>
+            <AppIcon name="bulb" color="#facc15" size={44} style={{ marginBottom: 8 }} />
             <Text style={styles.gamificationLabel}>{t('learn.link')}</Text>
-          </TouchableOpacity>
+          </PressableScale>
         </Animated.View>
 
         {/* Quick Feature Modules Grid */}
@@ -232,77 +234,77 @@ export default function StreakHome() {
         >
           <Text style={styles.sectionTitle}>{t('home.quick')}</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.modulesScroll}>
-            <TouchableOpacity
+            <PressableScale index={4}
               style={[styles.moduleCard, { borderColor: '#38bdf840' }]}
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                 router.push('/water' as any);
               }}
             >
-              <Text style={styles.moduleIcon}>💧</Text>
+              <AppIcon name="water" color="#38bdf8" size={48} style={{ marginBottom: 6 }} />
               <Text style={styles.moduleTitle}>{t('home.water')}</Text>
               <Text style={styles.moduleSub}>{t('home.water_sub')}</Text>
-            </TouchableOpacity>
+            </PressableScale>
 
-            <TouchableOpacity
+            <PressableScale index={5}
               style={[styles.moduleCard, { borderColor: '#f9731640' }]}
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                 router.push('/fasting' as any);
               }}
             >
-              <Text style={styles.moduleIcon}>⏱️</Text>
+              <AppIcon name="timer" color="#f97316" size={48} style={{ marginBottom: 6 }} />
               <Text style={styles.moduleTitle}>{t('home.fasting')}</Text>
               <Text style={styles.moduleSub}>{t('home.fasting_sub')}</Text>
-            </TouchableOpacity>
+            </PressableScale>
 
-            <TouchableOpacity
+            <PressableScale index={6}
               style={[styles.moduleCard, { borderColor: '#3b82f640' }]}
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                 router.push('/analytics' as any);
               }}
             >
-              <Text style={styles.moduleIcon}>📊</Text>
+              <AppIcon name="stats-chart" color="#3b82f6" size={48} style={{ marginBottom: 6 }} />
               <Text style={styles.moduleTitle}>{t('home.analytics')}</Text>
               <Text style={styles.moduleSub}>{t('home.analytics_sub')}</Text>
-            </TouchableOpacity>
+            </PressableScale>
 
-            <TouchableOpacity
+            <PressableScale index={7}
               style={[styles.moduleCard, { borderColor: '#10b98140' }]}
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                 router.push('/tracker' as any);
               }}
             >
-              <Text style={styles.moduleIcon}>📍</Text>
+              <AppIcon name="location" color="#10b981" size={48} style={{ marginBottom: 6 }} />
               <Text style={styles.moduleTitle}>{t('home.gps')}</Text>
               <Text style={styles.moduleSub}>{t('home.gps_sub')}</Text>
-            </TouchableOpacity>
+            </PressableScale>
 
-            <TouchableOpacity
+            <PressableScale index={8}
               style={[styles.moduleCard, { borderColor: '#ec489940' }]}
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                 router.push('/blog' as any);
               }}
             >
-              <Text style={styles.moduleIcon}>📖</Text>
+              <AppIcon name="book" color="#ec4899" size={48} style={{ marginBottom: 6 }} />
               <Text style={styles.moduleTitle}>{t('home.blog')}</Text>
               <Text style={styles.moduleSub}>{t('home.blog_sub')}</Text>
-            </TouchableOpacity>
+            </PressableScale>
 
-            <TouchableOpacity
+            <PressableScale index={9}
               style={[styles.moduleCard, { borderColor: '#eab30840' }]}
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                 router.push('/gyms' as any);
               }}
             >
-              <Text style={styles.moduleIcon}>🏋️‍♂️</Text>
+              <AppIcon name="barbell" color="#a855f7" size={48} style={{ marginBottom: 6 }} />
               <Text style={styles.moduleTitle}>{t('home.gyms')}</Text>
               <Text style={styles.moduleSub}>{t('home.gyms_sub')}</Text>
-            </TouchableOpacity>
+            </PressableScale>
           </ScrollView>
         </Animated.View>
 
