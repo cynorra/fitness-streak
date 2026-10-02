@@ -13,6 +13,7 @@ import { supabase } from '../../lib/supabase';
 import { useTranslation } from '../../lib/i18n/i18n';
 import { getDateLocale } from '../../lib/i18n/dateUtils';
 import { friendlyError } from '../../lib/useOnline';
+import AmbientBackground from '../../components/AmbientBackground';
 
 type MealLog = {
   id: string;
@@ -131,6 +132,7 @@ export default function ClientMeals() {
 
   return (
     <KeyboardAvoidingView style={[styles.container, { paddingTop: insets.top }]} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <AmbientBackground />
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.iconBtn}>
           <Ionicons name="arrow-back" size={24} color="#fff" />
@@ -261,7 +263,7 @@ export default function ClientMeals() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#050607' },
   header: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 12, paddingBottom: 8 },
   iconBtn: { width: 44, height: 44, justifyContent: 'center', alignItems: 'center' },
   title: { color: '#fff', fontSize: 17, fontWeight: '900', letterSpacing: 0.5 },
@@ -274,7 +276,7 @@ const styles = StyleSheet.create({
   summaryMacros: { color: '#aaa', fontSize: 12, fontWeight: '700', marginTop: 4 },
   summaryAvg: { color: '#888', fontSize: 11, marginTop: 6 },
   empty: { color: '#888', textAlign: 'center', marginTop: 30, fontSize: 14 },
-  card: { backgroundColor: '#111', borderWidth: 1, borderColor: '#222', borderRadius: 16, padding: 16, marginBottom: 14 },
+  card: { backgroundColor: 'rgba(255,255,255,0.05)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)', borderRadius: 16, padding: 16, marginBottom: 14 },
   cardHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 },
   mealType: { color: '#f59e0b', fontSize: 12, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 1 },
   kcal: { color: '#10b981', fontSize: 14, fontWeight: '900' },
@@ -284,10 +286,10 @@ const styles = StyleSheet.create({
   noteLabel: { color: '#a78bfa', fontSize: 10, fontWeight: '900', letterSpacing: 0.5, textTransform: 'uppercase' },
   noteText: { color: '#fff', fontSize: 13, marginTop: 2 },
   reactRow: { flexDirection: 'row', gap: 8, marginBottom: 8 },
-  reactChip: { backgroundColor: '#1a1a1a', borderWidth: 1, borderColor: '#2a2a2a', borderRadius: 999, paddingVertical: 6, paddingHorizontal: 12 },
+  reactChip: { backgroundColor: 'rgba(255,255,255,0.05)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)', borderRadius: 999, paddingVertical: 6, paddingHorizontal: 12 },
   reactEmoji: { fontSize: 18 },
   composer: { flexDirection: 'row', gap: 8, alignItems: 'flex-end', marginTop: 4 },
-  composerInput: { flex: 1, backgroundColor: '#0a0a0a', borderWidth: 1, borderColor: '#222', borderRadius: 12, padding: 10, color: '#fff', minHeight: 44, maxHeight: 100 },
+  composerInput: { flex: 1, backgroundColor: '#0a0a0a', borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)', borderRadius: 12, padding: 10, color: '#fff', minHeight: 44, maxHeight: 100 },
   sendBtn: { backgroundColor: '#8b5cf6', borderRadius: 12, paddingHorizontal: 14, height: 44, justifyContent: 'center' },
   sendText: { color: '#fff', fontWeight: '900', fontSize: 13 },
   footer: { position: 'absolute', left: 0, right: 0, bottom: 0, paddingHorizontal: 20, paddingTop: 10, backgroundColor: '#0a0a0aee' },

@@ -9,6 +9,8 @@ import { displayWorkoutType } from '../lib/workoutTypes';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from '../lib/i18n/i18n';
 import AdMobBanner from '../components/AdMobBanner';
+import AmbientBackground from '../components/AmbientBackground';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function WorkoutHistory() {
   const { profile } = useAuth();
@@ -48,9 +50,10 @@ export default function WorkoutHistory() {
 
   return (
     <View style={styles.container}>
+      <AmbientBackground />
       <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <Text style={styles.backText}>←</Text>
+          <Ionicons name="arrow-back" size={22} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.title}>{t('history.title')}</Text>
         <View style={{ width: 40 }} />
@@ -90,11 +93,11 @@ export default function WorkoutHistory() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#050607' },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingBottom: 20,
-    backgroundColor: '#0a0a0a', borderBottomWidth: 1, borderBottomColor: '#1a1a1a',
+    backgroundColor: 'transparent', borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.08)',
   },
   backBtn: { width: 40, height: 40, justifyContent: 'center' },
   backText: { color: '#fff', fontSize: 24, fontWeight: '900' },
@@ -103,10 +106,10 @@ const styles = StyleSheet.create({
   monthSection: { marginBottom: 32 },
   monthTitle: { color: '#444', fontSize: 10, fontWeight: '900', letterSpacing: 3, marginBottom: 16 },
   workoutRow: {
-    backgroundColor: '#111', padding: 20, borderRadius: 20,
+    backgroundColor: 'rgba(255,255,255,0.05)', padding: 20, borderRadius: 20,
     marginBottom: 12, flexDirection: 'row',
     justifyContent: 'space-between', alignItems: 'center',
-    borderWidth: 1, borderColor: '#222',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)',
   },
   workoutInfo: { flex: 1 },
   workoutType: { color: '#fff', fontSize: 15, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 0.5 },

@@ -12,6 +12,8 @@ import * as Haptics from 'expo-haptics';
 import { useTranslation } from '../lib/i18n/i18n';
 import { checkContentModeration } from '../lib/profanityFilter';
 import { friendlyError } from '../lib/useOnline';
+import AmbientBackground from '../components/AmbientBackground';
+import { Ionicons } from '@expo/vector-icons';
 
 type GoalType = 'workouts' | 'meal_log_days';
 const DURATIONS = [7, 14, 30];
@@ -136,9 +138,10 @@ export default function Challenges() {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
+      <AmbientBackground />
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <Text style={styles.backText}>←</Text>
+          <Ionicons name="arrow-back" size={22} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.title}>{t('challenges.title')}</Text>
         <View style={{ width: 44 }} />
@@ -256,7 +259,7 @@ export default function Challenges() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#050607' },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingBottom: 20 },
   backBtn: { width: 44, height: 44, justifyContent: 'center', alignItems: 'flex-start' },
   backText: { color: '#fff', fontSize: 28 },
@@ -268,7 +271,7 @@ const styles = StyleSheet.create({
   createBtn: { backgroundColor: '#8b5cf620', borderWidth: 1, borderColor: '#8b5cf6', borderRadius: 14, paddingVertical: 14, alignItems: 'center', marginBottom: 16 },
   createBtnText: { color: '#a78bfa', fontSize: 14, fontWeight: '900', letterSpacing: 0.5 },
 
-  card: { backgroundColor: '#111', padding: 20, borderRadius: 16, marginBottom: 16, borderWidth: 1, borderColor: '#222' },
+  card: { backgroundColor: 'rgba(255,255,255,0.05)', padding: 20, borderRadius: 16, marginBottom: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)' },
   cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 },
   challengeTitle: { color: '#fff', fontSize: 16, fontWeight: '900', flex: 1 },
   creator: { color: '#a78bfa', fontSize: 12, fontWeight: '700', marginBottom: 8 },
@@ -277,7 +280,7 @@ const styles = StyleSheet.create({
   metaRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 14 },
   metaChip: { color: '#d4d4d8', fontSize: 11, fontWeight: '700', backgroundColor: '#1c1c1f', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, overflow: 'hidden' },
 
-  joinBtn: { backgroundColor: '#1a1a1a', padding: 16, borderRadius: 12, alignItems: 'center', borderWidth: 1, borderColor: '#2a2a2a' },
+  joinBtn: { backgroundColor: 'rgba(255,255,255,0.05)', padding: 16, borderRadius: 12, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)' },
   joinBtnText: { color: '#10b981', fontSize: 14, fontWeight: '900', letterSpacing: 1 },
 
   progressContainer: { marginTop: 4 },
@@ -288,10 +291,10 @@ const styles = StyleSheet.create({
   progressBarFill: { height: '100%', backgroundColor: '#10b981', borderRadius: 4 },
 
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.75)', justifyContent: 'flex-end' },
-  modalCard: { backgroundColor: '#111', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 20, borderWidth: 1, borderColor: '#222' },
+  modalCard: { backgroundColor: 'rgba(255,255,255,0.05)', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)' },
   modalTitle: { color: '#fff', fontSize: 17, fontWeight: '900', marginBottom: 8 },
   label: { color: '#94a3b8', fontSize: 10, fontWeight: '900', letterSpacing: 1, marginTop: 10, marginBottom: 6 },
-  input: { backgroundColor: '#0a0a0a', borderWidth: 1, borderColor: '#222', borderRadius: 12, padding: 12, color: '#fff' },
+  input: { backgroundColor: '#0a0a0a', borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)', borderRadius: 12, padding: 12, color: '#fff' },
   chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   chip: { paddingVertical: 8, paddingHorizontal: 14, borderRadius: 999, borderWidth: 1, borderColor: '#334155' },
   chipActive: { borderColor: '#10b981', backgroundColor: '#10b98122' },
@@ -299,7 +302,7 @@ const styles = StyleSheet.create({
   chipTextActive: { color: '#10b981' },
   note: { color: '#71717a', fontSize: 11, marginTop: 12 },
   modalActions: { flexDirection: 'row', gap: 10, marginTop: 14, paddingBottom: 8 },
-  cancelBtn: { flex: 1, backgroundColor: '#1a1a1a', borderRadius: 12, paddingVertical: 13, alignItems: 'center' },
+  cancelBtn: { flex: 1, backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 12, paddingVertical: 13, alignItems: 'center' },
   cancelText: { color: '#aaa', fontWeight: '800' },
   saveBtn: { flex: 1, backgroundColor: '#8b5cf6', borderRadius: 12, paddingVertical: 13, alignItems: 'center' },
   saveText: { color: '#fff', fontWeight: '900' },

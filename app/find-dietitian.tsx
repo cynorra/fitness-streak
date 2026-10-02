@@ -10,6 +10,7 @@ import { useAuth } from '../lib/auth';
 import { supabase } from '../lib/supabase';
 import { useTranslation } from '../lib/i18n/i18n';
 import { friendlyError } from '../lib/useOnline';
+import AmbientBackground from '../components/AmbientBackground';
 
 type Dietitian = { id: string; username: string; display_name: string | null; bio: string | null; specialty: string | null };
 type Status = 'pending' | 'approved' | 'rejected';
@@ -123,6 +124,7 @@ export default function FindDietitian() {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
+      <AmbientBackground />
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
           <Ionicons name="arrow-back" size={24} color="#fff" />
@@ -255,13 +257,13 @@ export default function FindDietitian() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#050607' },
   header: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 12, paddingBottom: 8 },
   backBtn: { width: 44, height: 44, justifyContent: 'center', alignItems: 'center' },
   title: { color: '#fff', fontSize: 18, fontWeight: '900', letterSpacing: 0.5 },
-  search: { marginHorizontal: 20, marginTop: 4, backgroundColor: '#111', borderWidth: 1, borderColor: '#222', borderRadius: 12, padding: 14, color: '#fff' },
+  search: { marginHorizontal: 20, marginTop: 4, backgroundColor: 'rgba(255,255,255,0.05)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)', borderRadius: 12, padding: 14, color: '#fff' },
   empty: { color: '#888', textAlign: 'center', marginTop: 40, fontSize: 14 },
-  card: { backgroundColor: '#111', borderWidth: 1, borderColor: '#222', borderRadius: 18, padding: 16, marginBottom: 14 },
+  card: { backgroundColor: 'rgba(255,255,255,0.05)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)', borderRadius: 18, padding: 16, marginBottom: 14 },
   row: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   avatar: { width: 46, height: 46, borderRadius: 23, backgroundColor: '#10b98130', alignItems: 'center', justifyContent: 'center' },
   avatarText: { color: '#10b981', fontSize: 18, fontWeight: '900' },
@@ -283,13 +285,13 @@ const styles = StyleSheet.create({
   rateBtn: { flexDirection: 'row', justifyContent: 'center', gap: 6, borderWidth: 1, borderColor: '#fbbf24', borderRadius: 12, paddingVertical: 10, alignItems: 'center', marginTop: 8 },
   rateText: { color: '#fbbf24', fontSize: 13, fontWeight: '800' },
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.75)', justifyContent: 'center', padding: 20 },
-  modalCard: { backgroundColor: '#111', borderRadius: 20, padding: 20, borderWidth: 1, borderColor: '#222' },
+  modalCard: { backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 20, padding: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)' },
   modalTitle: { color: '#fff', fontSize: 16, fontWeight: '900', textAlign: 'center' },
   modalName: { color: '#10b981', fontSize: 14, fontWeight: '700', textAlign: 'center', marginTop: 4 },
-  commentInput: { backgroundColor: '#0a0a0a', borderWidth: 1, borderColor: '#222', borderRadius: 12, padding: 12, color: '#fff', minHeight: 80, textAlignVertical: 'top' },
+  commentInput: { backgroundColor: '#0a0a0a', borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)', borderRadius: 12, padding: 12, color: '#fff', minHeight: 80, textAlignVertical: 'top' },
   trustInfo: { color: '#71717a', fontSize: 11, marginTop: 10 },
   modalActions: { flexDirection: 'row', gap: 10, marginTop: 16 },
-  cancelBtn: { flex: 1, borderRadius: 12, paddingVertical: 12, alignItems: 'center', backgroundColor: '#1a1a1a' },
+  cancelBtn: { flex: 1, borderRadius: 12, paddingVertical: 12, alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.05)' },
   cancelText: { color: '#aaa', fontWeight: '800' },
   saveBtn: { flex: 1, borderRadius: 12, paddingVertical: 12, alignItems: 'center', backgroundColor: '#10b981' },
   saveText: { color: '#fff', fontWeight: '900' },

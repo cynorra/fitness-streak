@@ -8,6 +8,8 @@ import { getDateLocale } from '../lib/i18n/dateUtils';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useTranslation } from '../lib/i18n/i18n';
+import AmbientBackground from '../components/AmbientBackground';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function Measurements() {
   const { profile } = useAuth();
@@ -74,9 +76,10 @@ export default function Measurements() {
 
   return (
     <KeyboardAvoidingView style={[styles.container, { paddingTop: insets.top }]} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <AmbientBackground />
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <Text style={styles.backText}>←</Text>
+          <Ionicons name="arrow-back" size={22} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.title}>{t('measurements.title')}</Text>
         <View style={{ width: 44 }} />
@@ -124,21 +127,21 @@ export default function Measurements() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#050607' },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingBottom: 20 },
   backBtn: { width: 44, height: 44, justifyContent: 'center', alignItems: 'flex-start' },
   backText: { color: '#fff', fontSize: 28 },
   title: { color: '#fff', fontSize: 18, fontWeight: '900', letterSpacing: 1 },
   content: { padding: 20, paddingBottom: 100 },
-  formCard: { backgroundColor: '#111', padding: 20, borderRadius: 20, borderWidth: 1, borderColor: '#222' },
+  formCard: { backgroundColor: 'rgba(255,255,255,0.05)', padding: 20, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)' },
   sectionTitle: { color: '#fff', fontSize: 16, fontWeight: '800', marginBottom: 16 },
   row: { flexDirection: 'row', gap: 12, marginBottom: 12 },
-  input: { backgroundColor: '#0a0a0a', borderWidth: 1, borderColor: '#222', borderRadius: 12, padding: 16, color: '#fff' },
+  input: { backgroundColor: '#0a0a0a', borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)', borderRadius: 12, padding: 16, color: '#fff' },
   flex1: { flex: 1 },
   saveBtn: { backgroundColor: '#10b981', padding: 16, borderRadius: 12, alignItems: 'center', marginTop: 8 },
   saveBtnText: { color: '#fff', fontSize: 14, fontWeight: '900', letterSpacing: 1 },
   emptyText: { color: '#666', textAlign: 'center', marginTop: 24 },
-  logCard: { backgroundColor: '#111', padding: 16, borderRadius: 16, marginBottom: 12, borderWidth: 1, borderColor: '#222' },
+  logCard: { backgroundColor: 'rgba(255,255,255,0.05)', padding: 16, borderRadius: 16, marginBottom: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)' },
   logHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 },
   logDate: { color: '#888', fontSize: 12, fontWeight: '800', letterSpacing: 1 },
   logWeight: { color: '#10b981', fontSize: 18, fontWeight: '900' },

@@ -24,6 +24,7 @@ import {
 } from '../lib/notifications';
 import { useTranslation } from '../lib/i18n/i18n';
 import { useAuth } from '../lib/auth';
+import AmbientBackground from '../components/AmbientBackground';
 
 const TIME_OPTIONS = [
   { label: '18:00', hour: 18, minute: 0 },
@@ -96,6 +97,7 @@ export default function NotificationSettingsScreen() {
   if (loading) {
     return (
       <View style={[styles.container, styles.loadingCenter]}>
+        <AmbientBackground />
         <ActivityIndicator size="large" color="#10b981" />
       </View>
     );
@@ -103,6 +105,7 @@ export default function NotificationSettingsScreen() {
 
   return (
     <View style={styles.container}>
+      <AmbientBackground />
       <LinearGradient
         colors={['#064e3b20', '#0a0a0a', '#0a0a0a']}
         style={StyleSheet.absoluteFillObject}
@@ -339,7 +342,7 @@ export default function NotificationSettingsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#050607' },
   loadingCenter: { justifyContent: 'center', alignItems: 'center' },
   header: {
     flexDirection: 'row',
@@ -347,14 +350,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#1a1a1a',
+    borderBottomColor: 'rgba(255,255,255,0.08)',
     gap: 16,
   },
   backBtn: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: 'rgba(255,255,255,0.05)',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -405,7 +408,7 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: '#222',
+    borderColor: 'rgba(255,255,255,0.09)',
   },
   row: {
     flexDirection: 'row',
@@ -429,9 +432,9 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 14,
     borderRadius: 12,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: 'rgba(255,255,255,0.05)',
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: 'rgba(255,255,255,0.09)',
   },
   timeChipSelected: {
     backgroundColor: '#10b981',
@@ -443,11 +446,11 @@ const styles = StyleSheet.create({
   infoBox: {
     flexDirection: 'row',
     gap: 10,
-    backgroundColor: '#111',
+    backgroundColor: 'rgba(255,255,255,0.05)',
     padding: 16,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#222',
+    borderColor: 'rgba(255,255,255,0.09)',
     marginTop: 8,
   },
   infoText: { flex: 1, color: '#666', fontSize: 12, lineHeight: 18 },

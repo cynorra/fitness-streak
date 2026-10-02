@@ -26,6 +26,7 @@ import { format, parseISO } from 'date-fns';
 import { getDateLocale } from '../lib/i18n/dateUtils';
 import { useTranslation } from '../lib/i18n/i18n';
 import { friendlyError } from '../lib/useOnline';
+import AmbientBackground from '../components/AmbientBackground';
 
 const BLOG_CATEGORIES = ['HEPSİ', 'SPOR', 'BESLENME', 'SAĞLIK', 'MOTİVASYON'];
 
@@ -150,11 +151,7 @@ export default function BlogScreen() {
 
   return (
     <View style={styles.container}>
-      <LinearGradient
-        colors={['#0F172A', '#0B0F19', '#020617']}
-        style={StyleSheet.absoluteFill}
-      />
-
+      <AmbientBackground />
       {/* Header */}
       <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
         <TouchableOpacity
@@ -347,7 +344,7 @@ export default function BlogScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#020617' },
+  container: { flex: 1, backgroundColor: '#050607' },
   header: {
     flexDirection: 'row',
     alignItems: 'center',

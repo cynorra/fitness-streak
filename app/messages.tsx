@@ -10,6 +10,8 @@ import { format } from 'date-fns';
 import { getDateLocale } from '../lib/i18n/dateUtils';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from '../lib/i18n/i18n';
+import AmbientBackground from '../components/AmbientBackground';
+import { Ionicons } from '@expo/vector-icons';
 
 type Conversation = {
   id: string;
@@ -101,9 +103,10 @@ export default function MessagesList() {
 
   return (
     <View style={styles.container}>
+      <AmbientBackground />
       <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <Text style={styles.backText}>←</Text>
+          <Ionicons name="arrow-back" size={22} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.title}>{t('messages.title')}</Text>
       </View>
@@ -148,10 +151,10 @@ export default function MessagesList() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#050607' },
+  center: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'transparent' },
   header: { padding: 24, flexDirection: 'row', alignItems: 'center', gap: 16 },
-  backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#1a1a1a', justifyContent: 'center', alignItems: 'center' },
+  backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.05)', justifyContent: 'center', alignItems: 'center' },
   backText: { color: '#fff', fontSize: 24, fontWeight: '900' },
   title: { color: '#fff', fontSize: 28, fontWeight: '900', letterSpacing: -1 },
   empty: { padding: 48, alignItems: 'center' },
@@ -160,7 +163,7 @@ const styles = StyleSheet.create({
   card: {
     flexDirection: 'row', alignItems: 'center', gap: 16,
     marginHorizontal: 16, marginBottom: 8, padding: 16,
-    backgroundColor: '#111', borderRadius: 24, borderWidth: 1, borderColor: '#222',
+    backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 24, borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)',
   },
   avatar: { width: 56, height: 56, borderRadius: 24, backgroundColor: '#222', justifyContent: 'center', alignItems: 'center' },
   avatarText: { color: '#fff', fontSize: 20, fontWeight: '900' },

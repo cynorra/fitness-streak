@@ -23,6 +23,7 @@ import { Ionicons } from '@expo/vector-icons';
 import GlassCard from '../components/GlassCard';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from '../lib/i18n/i18n';
+import AmbientBackground from '../components/AmbientBackground';
 
 const FASTING_MODES = [
   { id: '16:8', key: 'm168', fastHours: 16, eatHours: 8 },
@@ -84,11 +85,7 @@ export default function FastingTrackerScreen() {
 
   return (
     <View style={styles.container}>
-      <LinearGradient
-        colors={['#0F172A', '#0B0F19', '#020617']}
-        style={StyleSheet.absoluteFill}
-      />
-
+      <AmbientBackground />
       {/* Header */}
       <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
         <TouchableOpacity
@@ -229,7 +226,7 @@ export default function FastingTrackerScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#020617' },
+  container: { flex: 1, backgroundColor: '#050607' },
   header: {
     flexDirection: 'row',
     alignItems: 'center',

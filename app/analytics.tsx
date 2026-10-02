@@ -20,6 +20,7 @@ import { useTranslation } from '../lib/i18n/i18n';
 import { format, subDays } from 'date-fns';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../lib/auth';
+import AmbientBackground from '../components/AmbientBackground';
 
 type Bar = { label: string; val: number; highlight: boolean };
 
@@ -80,11 +81,7 @@ export default function AnalyticsScreen() {
 
   return (
     <View style={styles.container}>
-      <LinearGradient
-        colors={['#0A1128', '#050B1E', '#02040A']}
-        style={StyleSheet.absoluteFill}
-      />
-
+      <AmbientBackground />
       {/* Header */}
       <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
         <TouchableOpacity
@@ -205,7 +202,7 @@ export default function AnalyticsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#02040A' },
+  container: { flex: 1, backgroundColor: '#050607' },
   header: {
     flexDirection: 'row',
     alignItems: 'center',

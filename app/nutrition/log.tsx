@@ -8,6 +8,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useTranslation } from '../../lib/i18n/i18n';
 import { searchFoods, scaleFood, FoodItem } from '../../lib/foodSearch';
+import AmbientBackground from '../../components/AmbientBackground';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function NutritionLog() {
   const { profile } = useAuth();
@@ -166,9 +168,10 @@ export default function NutritionLog() {
 
   return (
     <KeyboardAvoidingView style={[styles.container, { paddingTop: insets.top }]} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <AmbientBackground />
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <Text style={styles.backText}>←</Text>
+          <Ionicons name="arrow-back" size={22} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.title}>{t('nutritionLog.title')}</Text>
         <View style={{ width: 44 }} />
@@ -300,7 +303,7 @@ export default function NutritionLog() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#050607' },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingBottom: 20 },
   backBtn: { width: 44, height: 44, justifyContent: 'center', alignItems: 'flex-start' },
   backText: { color: '#fff', fontSize: 28 },
@@ -309,34 +312,34 @@ const styles = StyleSheet.create({
   summaryCard: { backgroundColor: '#10b98120', padding: 24, borderRadius: 20, alignItems: 'center', marginBottom: 24, borderWidth: 1, borderColor: '#10b98150' },
   summaryTitle: { color: '#10b981', fontSize: 12, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 1 },
   summaryValue: { color: '#fff', fontSize: 36, fontWeight: '900', marginTop: 8 },
-  formCard: { backgroundColor: '#111', padding: 20, borderRadius: 20, borderWidth: 1, borderColor: '#222' },
+  formCard: { backgroundColor: 'rgba(255,255,255,0.05)', padding: 20, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)' },
   sectionTitle: { color: '#fff', fontSize: 16, fontWeight: '800', marginBottom: 16 },
   tabsRow: { flexDirection: 'row', gap: 8, marginBottom: 16 },
-  tab: { flex: 1, paddingVertical: 10, alignItems: 'center', borderRadius: 12, backgroundColor: '#1a1a1a', borderWidth: 1, borderColor: '#2a2a2a' },
+  tab: { flex: 1, paddingVertical: 10, alignItems: 'center', borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.05)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)' },
   tabActive: { backgroundColor: '#10b98120', borderColor: '#10b981' },
   tabText: { color: '#666', fontSize: 11, fontWeight: '800' },
   tabTextActive: { color: '#10b981' },
-  inputMulti: { backgroundColor: '#0a0a0a', borderWidth: 1, borderColor: '#222', borderRadius: 12, padding: 16, color: '#fff', minHeight: 80, textAlignVertical: 'top', marginBottom: 12 },
+  inputMulti: { backgroundColor: '#0a0a0a', borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)', borderRadius: 12, padding: 16, color: '#fff', minHeight: 80, textAlignVertical: 'top', marginBottom: 12 },
   row: { flexDirection: 'row', gap: 12, marginBottom: 12 },
-  input: { backgroundColor: '#0a0a0a', borderWidth: 1, borderColor: '#222', borderRadius: 12, padding: 16, color: '#fff' },
+  input: { backgroundColor: '#0a0a0a', borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)', borderRadius: 12, padding: 16, color: '#fff' },
   flex1: { flex: 1 },
   searchLabel: { color: '#94a3b8', fontSize: 11, fontWeight: '800', letterSpacing: 1, marginBottom: 8, textTransform: 'uppercase' },
   searchInfo: { color: '#888', fontSize: 12, marginBottom: 8 },
   searchError: { color: '#f87171', fontSize: 12, marginBottom: 8 },
-  resultRow: { backgroundColor: '#0a0a0a', borderWidth: 1, borderColor: '#222', borderRadius: 12, padding: 12, marginBottom: 6 },
+  resultRow: { backgroundColor: 'transparent', borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)', borderRadius: 12, padding: 12, marginBottom: 6 },
   resultName: { color: '#fff', fontSize: 13, fontWeight: '700' },
   resultMacros: { color: '#10b981', fontSize: 11, fontWeight: '700', marginTop: 4 },
   selectedBox: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: '#10b98115', borderWidth: 1, borderColor: '#10b98150', borderRadius: 12, padding: 12, marginBottom: 8 },
   selectedTitle: { color: '#10b981', fontSize: 10, fontWeight: '900', letterSpacing: 1, textTransform: 'uppercase' },
   selectedName: { color: '#fff', fontSize: 13, fontWeight: '700', marginTop: 2 },
   gramsLabel: { color: '#94a3b8', fontSize: 11, fontWeight: '700' },
-  gramsInput: { backgroundColor: '#0a0a0a', borderWidth: 1, borderColor: '#222', borderRadius: 10, paddingVertical: 8, paddingHorizontal: 10, color: '#fff', minWidth: 64, textAlign: 'center' },
+  gramsInput: { backgroundColor: '#0a0a0a', borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)', borderRadius: 10, paddingVertical: 8, paddingHorizontal: 10, color: '#fff', minWidth: 64, textAlign: 'center' },
   clearBtn: { padding: 6 },
   clearText: { color: '#94a3b8', fontSize: 16, fontWeight: '900' },
   sourceNote: { color: '#555', fontSize: 10, marginBottom: 12 },
   saveBtn: { backgroundColor: '#10b981', padding: 16, borderRadius: 12, alignItems: 'center', marginTop: 8 },
   saveBtnText: { color: '#fff', fontSize: 14, fontWeight: '900', letterSpacing: 1 },
-  logCard: { backgroundColor: '#111', padding: 16, borderRadius: 16, marginBottom: 12, borderWidth: 1, borderColor: '#222' },
+  logCard: { backgroundColor: 'rgba(255,255,255,0.05)', padding: 16, borderRadius: 16, marginBottom: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)' },
   logHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 },
   logMealType: { color: '#f59e0b', fontSize: 12, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 1 },
   logCals: { color: '#10b981', fontSize: 14, fontWeight: '900' },

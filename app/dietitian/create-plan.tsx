@@ -21,6 +21,7 @@ import { exportNutritionPlanToPDF } from '../../lib/pdfExport';
 import { useTranslation } from '../../lib/i18n/i18n';
 import { getMealTemplates } from '../../lib/nutritionCalc';
 import { friendlyError } from '../../lib/useOnline';
+import AmbientBackground from '../../components/AmbientBackground';
 
 export default function CreateNutritionPlan() {
   const { profile } = useAuth();
@@ -141,6 +142,7 @@ export default function CreateNutritionPlan() {
       style={[styles.container, { paddingTop: insets.top }]}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
+      <AmbientBackground />
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
           <Ionicons name="arrow-back" size={24} color="#fff" />
@@ -282,7 +284,7 @@ export default function CreateNutritionPlan() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#020617' },
+  container: { flex: 1, backgroundColor: '#050607' },
   header: { flexDirection: 'row', alignItems: 'center', padding: 20, gap: 12 },
   backBtn: { padding: 4 },
   headerTitle: { color: '#fff', fontSize: 16, fontWeight: '900' },

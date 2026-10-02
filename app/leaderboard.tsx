@@ -7,6 +7,8 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useTranslation } from '../lib/i18n/i18n';
 import AdMobBanner from '../components/AdMobBanner';
 import AppIcon from '../components/AppIcon';
+import AmbientBackground from '../components/AmbientBackground';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function Leaderboard() {
   const router = useRouter();
@@ -40,9 +42,10 @@ export default function Leaderboard() {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
+      <AmbientBackground />
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <Text style={styles.backText}>←</Text>
+          <Ionicons name="arrow-back" size={22} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.title}>{t('leaderboard.title')}</Text>
         <View style={{ width: 44 }} />
@@ -88,7 +91,7 @@ export default function Leaderboard() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#050607' },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingBottom: 20 },
   backBtn: { width: 44, height: 44, justifyContent: 'center', alignItems: 'flex-start' },
   backText: { color: '#fff', fontSize: 28 },
@@ -98,14 +101,14 @@ const styles = StyleSheet.create({
   infoText: { color: '#10b981', fontSize: 13, fontWeight: '800', lineHeight: 20 },
   
   card: {
-    backgroundColor: '#111',
+    backgroundColor: 'rgba(255,255,255,0.05)',
     borderRadius: 16,
     padding: 16,
     marginBottom: 12,
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#222',
+    borderColor: 'rgba(255,255,255,0.09)',
   },
   rankBadge: { width: 30, alignItems: 'center' },
   rankText: { color: '#888', fontSize: 16, fontWeight: '900' },
@@ -114,7 +117,7 @@ const styles = StyleSheet.create({
   userInfo: { flex: 1 },
   name: { color: '#fff', fontSize: 16, fontWeight: '800' },
   handle: { color: '#666', fontSize: 12, fontWeight: '600', marginTop: 2 },
-  streakBox: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#1a1a1a', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20, borderWidth: 1, borderColor: '#333' },
+  streakBox: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.05)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20, borderWidth: 1, borderColor: '#333' },
   streakIcon: { fontSize: 14, marginRight: 6 },
   streakCount: { color: '#fff', fontSize: 16, fontWeight: '900' },
 });

@@ -25,6 +25,7 @@ import { friendlyError } from '../../lib/useOnline';
 import StarRating from '../../components/StarRating';
 import { fetchClientCockpit, ClientCockpit, STATUS_COLORS } from '../../lib/clientCockpit';
 import { fetchDietitianScores, trustColor, DietitianScore } from '../../lib/dietitianScores';
+import AmbientBackground from '../../components/AmbientBackground';
 
 export default function DietitianClients() {
   const { profile } = useAuth();
@@ -176,11 +177,7 @@ export default function DietitianClients() {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      <LinearGradient
-        colors={['#0F172A', '#0B0F19', '#020617']}
-        style={StyleSheet.absoluteFill}
-      />
-
+      <AmbientBackground />
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
@@ -520,7 +517,7 @@ export default function DietitianClients() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#020617' },
+  container: { flex: 1, backgroundColor: '#050607' },
   header: {
     flexDirection: 'row',
     alignItems: 'center',

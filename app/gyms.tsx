@@ -22,6 +22,7 @@ import { supabase } from '../lib/supabase';
 import { checkTextModeration } from '../lib/profanityFilter';
 import { useTranslation } from '../lib/i18n/i18n';
 import { friendlyError } from '../lib/useOnline';
+import AmbientBackground from '../components/AmbientBackground';
 
 interface GymItem {
   id: string;
@@ -191,8 +192,7 @@ export default function GymsScreen() {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      <LinearGradient colors={['#0F172A', '#0B0F19', '#020617']} style={StyleSheet.absoluteFill} />
-
+      <AmbientBackground />
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
@@ -398,7 +398,7 @@ export default function GymsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#020617' },
+  container: { flex: 1, backgroundColor: '#050607' },
   header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, paddingVertical: 14, gap: 12 },
   backBtn: { padding: 4 },
   headerTitles: { flex: 1 },

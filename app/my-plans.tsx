@@ -9,6 +9,7 @@ import { useAuth } from '../lib/auth';
 import { supabase } from '../lib/supabase';
 import { useTranslation } from '../lib/i18n/i18n';
 import { getDateLocale } from '../lib/i18n/dateUtils';
+import AmbientBackground from '../components/AmbientBackground';
 
 type Plan = {
   id: string;
@@ -102,6 +103,7 @@ export default function MyPlans() {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
+      <AmbientBackground />
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
           <Ionicons name="arrow-back" size={24} color="#fff" />
@@ -197,18 +199,18 @@ export default function MyPlans() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#050607' },
   header: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 12, paddingBottom: 8 },
   backBtn: { width: 44, height: 44, justifyContent: 'center', alignItems: 'center' },
   title: { color: '#fff', fontSize: 18, fontWeight: '900', letterSpacing: 0.5 },
   empty: { color: '#888', textAlign: 'center', marginTop: 40, fontSize: 14 },
-  card: { backgroundColor: '#111', borderWidth: 1, borderColor: '#222', borderRadius: 18, padding: 18, marginBottom: 16 },
+  card: { backgroundColor: 'rgba(255,255,255,0.05)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)', borderRadius: 18, padding: 18, marginBottom: 16 },
   planTitle: { color: '#fff', fontSize: 17, fontWeight: '900' },
   planMeta: { color: '#10b981', fontSize: 12, fontWeight: '700', marginTop: 4, marginBottom: 12 },
   shopBtn: { borderWidth: 1, borderColor: '#10b981', borderRadius: 12, paddingVertical: 10, alignItems: 'center', marginBottom: 6 },
   shopBtnText: { color: '#10b981', fontSize: 13, fontWeight: '800' },
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.75)', justifyContent: 'flex-end' },
-  modalCard: { backgroundColor: '#111', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 20, borderWidth: 1, borderColor: '#222' },
+  modalCard: { backgroundColor: 'rgba(255,255,255,0.05)', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)' },
   modalTitle: { color: '#fff', fontSize: 17, fontWeight: '900' },
   modalSub: { color: '#10b981', fontSize: 12, fontWeight: '700', marginTop: 2 },
   catTitle: { color: '#f59e0b', fontSize: 13, fontWeight: '900', marginBottom: 6 },
@@ -217,7 +219,7 @@ const styles = StyleSheet.create({
   itemQty: { color: '#a1a1aa', fontSize: 13, fontWeight: '600' },
   note: { color: '#71717a', fontSize: 11, marginTop: 12 },
   modalActions: { flexDirection: 'row', gap: 10, marginTop: 14, paddingBottom: 8 },
-  closeBtn: { flex: 1, backgroundColor: '#1a1a1a', borderRadius: 12, paddingVertical: 13, alignItems: 'center' },
+  closeBtn: { flex: 1, backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 12, paddingVertical: 13, alignItems: 'center' },
   closeText: { color: '#aaa', fontWeight: '800' },
   shareBtn: { flex: 1, backgroundColor: '#10b981', borderRadius: 12, paddingVertical: 13, alignItems: 'center' },
   shareText: { color: '#fff', fontWeight: '900' },
@@ -225,7 +227,7 @@ const styles = StyleSheet.create({
   dayHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 },
   dayTitle: { color: '#f59e0b', fontSize: 12, fontWeight: '900', letterSpacing: 1, textTransform: 'uppercase' },
   dayKcal: { color: '#aaa', fontSize: 12, fontWeight: '700' },
-  meal: { backgroundColor: '#0a0a0a', borderRadius: 12, padding: 12, marginBottom: 6, borderWidth: 1, borderColor: '#1c1c1c' },
+  meal: { backgroundColor: 'transparent', borderRadius: 12, padding: 12, marginBottom: 6, borderWidth: 1, borderColor: '#1c1c1c' },
   mealType: { color: '#8b5cf6', fontSize: 11, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 0.5 },
   mealContent: { color: '#fff', fontSize: 13, marginTop: 4 },
 });

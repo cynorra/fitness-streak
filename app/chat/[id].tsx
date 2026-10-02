@@ -16,6 +16,8 @@ import { useTranslation } from '../../lib/i18n/i18n';
 import { friendlyError } from '../../lib/useOnline';
 import { setActiveChat } from '../../lib/notifications';
 import AppIcon from '../../components/AppIcon';
+import { Ionicons } from '@expo/vector-icons';
+import AmbientBackground from '../../components/AmbientBackground';
 
 type Message = {
   id: string;
@@ -204,9 +206,10 @@ export default function ChatScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? insets.top : 0}
     >
+      <AmbientBackground />
       <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <Text style={styles.backText}>←</Text>
+          <Ionicons name="arrow-back" size={22} color="#fff" />
         </TouchableOpacity>
         <View style={styles.headerInfo}>
           <Text style={styles.headerName}>{otherProfile?.display_name || otherProfile?.username || '...'}</Text>
@@ -258,13 +261,13 @@ export default function ChatScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#050607' },
+  center: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'transparent' },
   header: {
     padding: 24, flexDirection: 'row', alignItems: 'center', gap: 16,
     borderBottomWidth: 1, borderBottomColor: '#111',
   },
-  backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#1a1a1a', justifyContent: 'center', alignItems: 'center' },
+  backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.05)', justifyContent: 'center', alignItems: 'center' },
   backText: { color: '#fff', fontSize: 24, fontWeight: '900' },
   headerInfo: { flex: 1 },
   headerName: { color: '#fff', fontSize: 18, fontWeight: '900' },
@@ -275,7 +278,7 @@ const styles = StyleSheet.create({
   otherRow: { justifyContent: 'flex-start' },
   bubble: { maxWidth: '80%', padding: 12, borderRadius: 20 },
   myBubble: { backgroundColor: '#10b981', borderBottomRightRadius: 4 },
-  otherBubble: { backgroundColor: '#1a1a1a', borderBottomLeftRadius: 4, borderWidth: 1, borderColor: '#222' },
+  otherBubble: { backgroundColor: 'rgba(255,255,255,0.05)', borderBottomLeftRadius: 4, borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)' },
   content: { fontSize: 15, fontWeight: '600', lineHeight: 22 },
   myContent: { color: '#fff' },
   otherContent: { color: '#eee' },
@@ -286,9 +289,9 @@ const styles = StyleSheet.create({
     borderTopWidth: 1, borderTopColor: '#111',
   },
   input: {
-    flex: 1, backgroundColor: '#111', borderRadius: 24, padding: 14, 
+    flex: 1, backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 24, padding: 14, 
     color: '#fff', fontSize: 15, fontWeight: '600',
-    borderWidth: 1, borderColor: '#222', maxHeight: 100
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)', maxHeight: 100
   },
   sendBtn: { 
     width: 48, height: 48, borderRadius: 24, backgroundColor: '#10b981', 

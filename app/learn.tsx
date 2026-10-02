@@ -14,6 +14,7 @@ import { useTranslation } from '../lib/i18n/i18n';
 import { checkContentModeration } from '../lib/profanityFilter';
 import { reportUser } from '../lib/blocking';
 import { friendlyError } from '../lib/useOnline';
+import AmbientBackground from '../components/AmbientBackground';
 
 type Kind = 'tip' | 'recipe' | 'myth' | 'supplement';
 const KINDS: Kind[] = ['tip', 'recipe', 'myth', 'supplement'];
@@ -278,6 +279,7 @@ export default function Learn() {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
+      <AmbientBackground />
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
           <Ionicons name="arrow-back" size={24} color="#fff" />
@@ -460,12 +462,12 @@ export default function Learn() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#050607' },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 12, paddingBottom: 8 },
   backBtn: { width: 44, height: 44, justifyContent: 'center', alignItems: 'center' },
   title: { color: '#fff', fontSize: 18, fontWeight: '900', letterSpacing: 1 },
   tabs: { flexDirection: 'row', gap: 8, paddingHorizontal: 20, marginBottom: 8 },
-  tab: { flex: 1, paddingVertical: 10, alignItems: 'center', borderRadius: 12, backgroundColor: '#1a1a1a', borderWidth: 1, borderColor: '#2a2a2a' },
+  tab: { flex: 1, paddingVertical: 10, alignItems: 'center', borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.05)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)' },
   tabActive: { backgroundColor: '#10b98120', borderColor: '#10b981' },
   tabText: { color: '#71717a', fontSize: 12, fontWeight: '800' },
   tabTextActive: { color: '#10b981' },
@@ -488,11 +490,11 @@ const styles = StyleSheet.create({
   fab: { position: 'absolute', alignSelf: 'center', flexDirection: 'row', gap: 6, backgroundColor: '#8b5cf6', borderRadius: 999, paddingVertical: 12, paddingHorizontal: 18, alignItems: 'center' },
   fabText: { color: '#fff', fontSize: 13, fontWeight: '900' },
 
-  askBox: { backgroundColor: '#111', borderWidth: 1, borderColor: '#222', borderRadius: 16, padding: 12, marginBottom: 16 },
+  askBox: { backgroundColor: 'rgba(255,255,255,0.05)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)', borderRadius: 16, padding: 12, marginBottom: 16 },
   askInput: { color: '#fff', minHeight: 60, textAlignVertical: 'top' },
   askBtn: { alignSelf: 'flex-end', backgroundColor: '#10b981', borderRadius: 10, paddingVertical: 10, paddingHorizontal: 20, marginTop: 6 },
   askBtnText: { color: '#fff', fontWeight: '900' },
-  qCard: { backgroundColor: '#111', borderWidth: 1, borderColor: '#222', borderRadius: 16, padding: 16, marginBottom: 14 },
+  qCard: { backgroundColor: 'rgba(255,255,255,0.05)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)', borderRadius: 16, padding: 16, marginBottom: 14 },
   qHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   qAsker: { color: '#a1a1aa', fontSize: 12, fontWeight: '700' },
   qBody: { color: '#fff', fontSize: 15, fontWeight: '700', marginTop: 6, lineHeight: 22 },
@@ -505,10 +507,10 @@ const styles = StyleSheet.create({
   disclaimerSmall: { color: '#52525b', fontSize: 10, textAlign: 'center', marginTop: 8 },
 
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.75)', justifyContent: 'flex-end' },
-  modalCard: { backgroundColor: '#111', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 20, borderWidth: 1, borderColor: '#222' },
+  modalCard: { backgroundColor: 'rgba(255,255,255,0.05)', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)' },
   modalTitle: { color: '#fff', fontSize: 17, fontWeight: '900', marginBottom: 6 },
   label: { color: '#94a3b8', fontSize: 10, fontWeight: '900', letterSpacing: 1, marginTop: 10, marginBottom: 6 },
-  input: { backgroundColor: '#0a0a0a', borderWidth: 1, borderColor: '#222', borderRadius: 12, padding: 12, color: '#fff' },
+  input: { backgroundColor: '#0a0a0a', borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)', borderRadius: 12, padding: 12, color: '#fff' },
   charCount: { color: '#52525b', fontSize: 10, textAlign: 'right', marginTop: 4 },
   chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   chip: { paddingVertical: 8, paddingHorizontal: 14, borderRadius: 999, borderWidth: 1, borderColor: '#334155' },
@@ -516,7 +518,7 @@ const styles = StyleSheet.create({
   chipText: { color: '#94a3b8', fontSize: 12, fontWeight: '700' },
   chipTextActive: { color: '#10b981' },
   modalActions: { flexDirection: 'row', gap: 10, marginTop: 14, paddingBottom: 8 },
-  cancelBtn: { flex: 1, backgroundColor: '#1a1a1a', borderRadius: 12, paddingVertical: 13, alignItems: 'center' },
+  cancelBtn: { flex: 1, backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 12, paddingVertical: 13, alignItems: 'center' },
   cancelText: { color: '#aaa', fontWeight: '800' },
   saveBtn: { flex: 1, backgroundColor: '#8b5cf6', borderRadius: 12, paddingVertical: 13, alignItems: 'center' },
   saveText: { color: '#fff', fontWeight: '900' },

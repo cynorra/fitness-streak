@@ -25,6 +25,7 @@ import { Ionicons } from '@expo/vector-icons';
 import GlassCard from '../components/GlassCard';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from '../lib/i18n/i18n';
+import AmbientBackground from '../components/AmbientBackground';
 
 interface WaterLog {
   id: string;
@@ -81,6 +82,7 @@ export default function WaterTrackerScreen() {
 
   return (
     <View style={styles.container}>
+      <AmbientBackground />
       <LinearGradient
         colors={['#050B14', '#0A1224', '#030712']}
         style={StyleSheet.absoluteFill}
