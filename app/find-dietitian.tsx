@@ -111,7 +111,7 @@ export default function FindDietitian() {
     }
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     setRateTarget(null);
-    Alert.alert('⭐', t('dietitianCare.rate_saved'));
+    Alert.alert(t('common.success'), t('dietitianCare.rate_saved'));
     load();
   };
 
@@ -153,10 +153,10 @@ export default function FindDietitian() {
             return (
               <View style={styles.card}>
                 <View style={styles.row}>
-                  <View style={styles.avatar}>
+                  <TouchableOpacity activeOpacity={0.7} style={styles.avatar} onPress={() => router.push(`/user/${item.id}` as any)}>
                     <Text style={styles.avatarText}>{(item.display_name || item.username)[0].toUpperCase()}</Text>
-                  </View>
-                  <View style={{ flex: 1 }}>
+                  </TouchableOpacity>
+                  <TouchableOpacity activeOpacity={0.7} style={{ flex: 1 }} onPress={() => router.push(`/user/${item.id}` as any)}>
                     <Text style={styles.name}>{item.display_name || item.username}</Text>
                     {!!item.specialty && <Text style={styles.specialty}>{item.specialty}</Text>}
                     <View style={styles.ratingRow}>
@@ -168,9 +168,9 @@ export default function FindDietitian() {
                       </Text>
                     </View>
                     {!!score && score.referral_count > 0 && (
-                      <Text style={styles.referralBadge}>🤝 {score.referral_count} {t('referral.invited')}</Text>
+                      <Text style={styles.referralBadge}>{score.referral_count} {t('referral.invited')}</Text>
                     )}
-                  </View>
+                  </TouchableOpacity>
                   {score && (
                     <View style={[styles.trustPill, { borderColor: trustColor(score.trust_score) }]}>
                       <Text style={[styles.trustValue, { color: trustColor(score.trust_score) }]}>{score.trust_score}</Text>
@@ -196,8 +196,9 @@ export default function FindDietitian() {
 
                 {status === 'approved' && (
                   <TouchableOpacity style={styles.rateBtn} onPress={() => openRate(item)}>
+                    <Ionicons name="star" size={14} color="#fbbf24" />
                     <Text style={styles.rateText}>
-                      ⭐ {myReviews[item.id] ? t('dietitianCare.rate_edit') : t('dietitianCare.rate')}
+                      {myReviews[item.id] ? t('dietitianCare.rate_edit') : t('dietitianCare.rate')}
                     </Text>
                   </TouchableOpacity>
                 )}
@@ -206,7 +207,8 @@ export default function FindDietitian() {
                     style={[styles.rateBtn, { borderColor: '#ec4899' }]}
                     onPress={() => router.push({ pathname: '/share-card' as any, params: { variant: 'together', partnerId: item.id } })}
                   >
-                    <Text style={[styles.rateText, { color: '#ec4899' }]}>🤝 {t('share.v_together')}</Text>
+                    <Ionicons name="people" size={14} color="#ec4899" />
+                    <Text style={[styles.rateText, { color: '#ec4899' }]}>{t('share.v_together')}</Text>
                   </TouchableOpacity>
                 )}
               </View>
@@ -278,7 +280,7 @@ const styles = StyleSheet.create({
   trustPill: { borderWidth: 1, borderRadius: 12, paddingVertical: 6, paddingHorizontal: 10, alignItems: 'center', minWidth: 58 },
   trustValue: { fontSize: 18, fontWeight: '900' },
   trustLabel: { color: '#71717a', fontSize: 9, fontWeight: '800', textTransform: 'uppercase' },
-  rateBtn: { borderWidth: 1, borderColor: '#fbbf24', borderRadius: 12, paddingVertical: 10, alignItems: 'center', marginTop: 8 },
+  rateBtn: { flexDirection: 'row', justifyContent: 'center', gap: 6, borderWidth: 1, borderColor: '#fbbf24', borderRadius: 12, paddingVertical: 10, alignItems: 'center', marginTop: 8 },
   rateText: { color: '#fbbf24', fontSize: 13, fontWeight: '800' },
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.75)', justifyContent: 'center', padding: 20 },
   modalCard: { backgroundColor: '#111', borderRadius: 20, padding: 20, borderWidth: 1, borderColor: '#222' },

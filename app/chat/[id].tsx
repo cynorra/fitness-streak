@@ -14,6 +14,7 @@ import { checkContentModeration } from '../../lib/profanityFilter';
 import { blockUser, reportUser } from '../../lib/blocking';
 import { useTranslation } from '../../lib/i18n/i18n';
 import { friendlyError } from '../../lib/useOnline';
+import { setActiveChat } from '../../lib/notifications';
 import AppIcon from '../../components/AppIcon';
 
 type Message = {
@@ -34,6 +35,12 @@ export default function ChatScreen() {
   const [loading, setLoading] = useState(true);
   const [otherProfile, setOtherProfile] = useState<any>(null);
   const flatListRef = useRef<FlatList>(null);
+
+  useEffect(() => {
+    if (!id) return;
+    setActiveChat(String(id));
+    return () => setActiveChat(null);
+  }, [id]);
 
   useEffect(() => {
     if (!profile || !id) return;

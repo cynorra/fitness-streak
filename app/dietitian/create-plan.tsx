@@ -181,7 +181,7 @@ export default function CreateNutritionPlan() {
                 onPress={() => setSelectedClient(c)}
               >
                 <Text style={styles.clientChipText}>
-                  👤 {c.client?.display_name || c.client?.username}
+                  {c.client?.display_name || c.client?.username}
                 </Text>
               </TouchableOpacity>
             ))}

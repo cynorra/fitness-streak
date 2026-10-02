@@ -67,7 +67,7 @@ export default function LogWorkout() {
     // AdMob Interstitial Reklam Göster
     showInterstitialAd();
 
-    Alert.alert('🌱', t('log.saved'), [
+    Alert.alert(t('common.success'), t('log.saved'), [
       { text: t('log.ok'), onPress: () => router.push('/') },
     ]);
   };

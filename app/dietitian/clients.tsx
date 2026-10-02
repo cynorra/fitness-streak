@@ -18,6 +18,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '../../lib/auth';
 import { supabase } from '../../lib/supabase';
 import GlassCard from '../../components/GlassCard';
+import AppIcon from '../../components/AppIcon';
 import { calculateNutritionTargets, BMRParams } from '../../lib/nutritionCalc';
 import { useTranslation } from '../../lib/i18n/i18n';
 import { friendlyError } from '../../lib/useOnline';
@@ -165,6 +166,7 @@ export default function DietitianClients() {
     item.status === 'pending' ? 0 : ({ red: 1, amber: 2, green: 3 } as const)[cockpit.get(item.client?.id)?.status ?? 'green'];
   const filteredClients = clients
     .filter((item) => {
+      if (item.status === 'rejected') return false;
       const name = item.client?.display_name || item.client?.username || '';
       return name.toLowerCase().includes(search.toLowerCase());
     })
@@ -270,7 +272,7 @@ export default function DietitianClients() {
           <ActivityIndicator size="large" color="#10b981" style={{ marginTop: 40 }} />
         ) : filteredClients.length === 0 ? (
           <GlassCard style={styles.emptyCard}>
-            <Text style={{ fontSize: 40, marginBottom: 12 }}>🩺</Text>
+            <AppIcon name="medkit" color="#10b981" size={64} style={{ marginBottom: 12 }} />
             <Text style={styles.emptyTitle}>{t('clients.empty_title')}</Text>
             <Text style={styles.emptyDesc}>
               {t('clients.empty_desc')}
@@ -280,20 +282,20 @@ export default function DietitianClients() {
           filteredClients.map((item) => (
             <GlassCard key={item.id} style={styles.clientCard}>
               <View style={styles.clientHeader}>
-                <View style={styles.avatarCircle}>
+                <TouchableOpacity activeOpacity={0.7} style={styles.avatarCircle} onPress={() => item.client?.id && router.push(`/user/${item.client.id}` as any)}>
                   <Text style={styles.avatarText}>
                     {(item.client?.display_name || item.client?.username || 'U')[0].toUpperCase()}
                   </Text>
-                </View>
+                </TouchableOpacity>
 
-                <View style={styles.clientInfo}>
+                <TouchableOpacity activeOpacity={0.7} style={styles.clientInfo} onPress={() => item.client?.id && router.push(`/user/${item.client.id}` as any)}>
                   <Text style={styles.clientName}>
                     {item.client?.display_name || item.client?.username}
                   </Text>
                   <Text style={styles.clientStreak}>
                     {t('clients.streak_line', { n: item.client?.current_streak || 0 })}
                   </Text>
-                </View>
+                </TouchableOpacity>
 
                 <View style={styles.complianceBadge}>
                   <Text style={styles.complianceText}>{t(`clients.st_${item.status}`)}</Text>

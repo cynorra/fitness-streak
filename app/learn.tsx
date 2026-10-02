@@ -182,7 +182,7 @@ export default function Learn() {
     setComposeOpen(false);
     setTitle('');
     setBody('');
-    Alert.alert('💡', t(data?.moderation_status === 'flagged' ? 'learn.flagged' : 'learn.posted'));
+    Alert.alert(t('common.success'), t(data?.moderation_status === 'flagged' ? 'learn.flagged' : 'learn.posted'));
     loadAll();
   };
 
@@ -206,7 +206,7 @@ export default function Learn() {
     }
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     setAskText('');
-    Alert.alert('💬', t('learn.asked'));
+    Alert.alert(t('common.success'), t('learn.asked'));
     loadAll();
   };
 

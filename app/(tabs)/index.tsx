@@ -77,9 +77,31 @@ export default function StreakHome() {
 
   useEffect(() => { loadWeek(); }, [loadWeek]);
 
+  // Dietitian overview: pending requests, approved clients, upcoming appointments.
+  const [dtStats, setDtStats] = useState<{ pending: number; clients: number; appts: number } | null>(null);
+  const loadDietitianStats = useCallback(async () => {
+    if (!profile || profile.role !== 'dietitian') return;
+    const [reqs, appts] = await Promise.all([
+      supabase.from('dietitian_clients').select('status').eq('dietitian_id', profile.id),
+      supabase
+        .from('appointments')
+        .select('id', { count: 'exact', head: true })
+        .eq('dietitian_id', profile.id)
+        .in('status', ['pending', 'confirmed'])
+        .gte('appointment_time', new Date().toISOString()),
+    ]);
+    const rows = (reqs.data || []) as { status: string }[];
+    setDtStats({
+      pending: rows.filter((x) => x.status === 'pending').length,
+      clients: rows.filter((x) => x.status === 'approved').length,
+      appts: appts.count || 0,
+    });
+  }, [profile?.id, profile?.role]);
+  useEffect(() => { loadDietitianStats(); }, [loadDietitianStats]);
+
   const onRefresh = async () => {
     setRefreshing(true);
-    await Promise.all([refreshProfile(), loadWeek()]);
+    await Promise.all([refreshProfile(), loadWeek(), loadDietitianStats()]);
     setRefreshing(false);
   };
 
@@ -148,6 +170,40 @@ export default function StreakHome() {
             </Animated.View>
           </GradientCard>
         </Animated.View>
+
+        {/* Dietitian overview */}
+        {profile?.role === 'dietitian' && dtStats && (
+          <Animated.View entering={FadeInUp.delay(150).duration(450).springify()} style={{ paddingHorizontal: 16, marginBottom: 20 }}>
+            <PressableScale onPress={() => router.push('/dietitian/clients' as any)}>
+              <GradientCard accent="#10b981" padding={18}>
+                <View style={styles.dtHeader}>
+                  <AppIcon name="medkit" color="#10b981" size={40} />
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.dtTitle}>{t('home.dt_title')}</Text>
+                    <Text style={styles.dtSub}>
+                      {dtStats.pending > 0 ? t('home.dt_pending', { n: dtStats.pending }) : t('home.dt_none')}
+                    </Text>
+                  </View>
+                  <Ionicons name="chevron-forward" size={20} color="#10b981" />
+                </View>
+                <View style={styles.dtRow}>
+                  <View style={styles.dtCell}>
+                    <Text style={[styles.dtValue, dtStats.pending > 0 && { color: '#f59e0b' }]}>{dtStats.pending}</Text>
+                    <Text style={styles.dtLabel}>{t('home.dt_requests')}</Text>
+                  </View>
+                  <View style={styles.dtCell}>
+                    <Text style={styles.dtValue}>{dtStats.clients}</Text>
+                    <Text style={styles.dtLabel}>{t('home.dt_clients')}</Text>
+                  </View>
+                  <TouchableOpacity style={styles.dtCell} onPress={() => router.push('/appointments' as any)}>
+                    <Text style={styles.dtValue}>{dtStats.appts}</Text>
+                    <Text style={styles.dtLabel}>{t('home.dt_appts')}</Text>
+                  </TouchableOpacity>
+                </View>
+              </GradientCard>
+            </PressableScale>
+          </Animated.View>
+        )}
 
         {/* Haftalık Şerit */}
         <Animated.View
@@ -373,6 +429,13 @@ const styles = StyleSheet.create({
   logoText: { color: '#fff', fontSize: 24, fontWeight: '900', letterSpacing: -1.5 },
   hello: { color: '#666', fontSize: 11, fontWeight: '900', letterSpacing: 2 },
   streakCard: { margin: 16 },
+  dtHeader: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  dtTitle: { color: '#fff', fontSize: 15, fontWeight: '900' },
+  dtSub: { color: '#8b93a1', fontSize: 12, fontWeight: '600', marginTop: 2 },
+  dtRow: { flexDirection: 'row', marginTop: 16, gap: 8 },
+  dtCell: { flex: 1, alignItems: 'center', paddingVertical: 10, borderRadius: 14, backgroundColor: 'rgba(255,255,255,0.05)' },
+  dtValue: { color: '#fff', fontSize: 24, fontWeight: '900' },
+  dtLabel: { color: '#6b7280', fontSize: 9, fontWeight: '800', letterSpacing: 1, textTransform: 'uppercase', marginTop: 2 },
   greetingBox: {
     marginTop: 24, paddingVertical: 8, paddingHorizontal: 16,
     backgroundColor: '#1a1a1a', borderRadius: 12, borderWidth: 1, borderColor: '#2a2a2a',

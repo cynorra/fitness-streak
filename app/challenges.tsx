@@ -123,7 +123,7 @@ export default function Challenges() {
     setCreateOpen(false);
     setNewTitle('');
     setNewDesc('');
-    Alert.alert('🎯', t('challenges.created'));
+    Alert.alert(t('common.success'), t('challenges.created'));
     loadChallenges();
   };
 

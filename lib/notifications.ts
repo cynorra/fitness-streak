@@ -36,14 +36,24 @@ const LAST_LOG_KEY = '@vitatribe_last_workout_log_date';
 const PROFILE_CACHE_KEY = '@vitatribe_profile_cache';
 const LANGUAGE_KEY = '@app_language';
 
+// Conversation currently open on screen: its own incoming-message pushes are not shown on top of it.
+let activeChatId: string | null = null;
+export function setActiveChat(id: string | null) {
+  activeChatId = id;
+}
+
 Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: true,
-    shouldShowBanner: true,
-    shouldShowList: true,
-  }),
+  handleNotification: async (notification) => {
+    const screen = notification.request.content.data?.screen;
+    const inOpenChat = !!activeChatId && screen === `chat/${activeChatId}`;
+    return {
+      shouldShowAlert: !inOpenChat,
+      shouldPlaySound: !inOpenChat,
+      shouldSetBadge: !inOpenChat,
+      shouldShowBanner: !inOpenChat,
+      shouldShowList: !inOpenChat,
+    };
+  },
 });
 
 async function resolveLocale(): Promise<'tr' | 'en'> {
