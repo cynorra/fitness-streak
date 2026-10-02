@@ -342,7 +342,7 @@ export default function Profile() {
         <Text style={styles.deleteText}>{t('profile.delete_account')}</Text>
       </TouchableOpacity>
 
-      <Text style={styles.version}>STREAKFIT v1.0.5</Text>
+      <Text style={styles.version}>STREAKFIT v1.0.6</Text>
     </ScrollView>
   );
 }
