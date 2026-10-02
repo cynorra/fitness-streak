@@ -12,6 +12,7 @@ import { format } from 'date-fns';
 import { useTranslation } from '../../lib/i18n/i18n';
 import { getDateLocale } from '../../lib/i18n/dateUtils';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import AmbientBackground from '../../components/AmbientBackground';
 
 type Notification = {
   id: string;
@@ -123,6 +124,7 @@ export default function Notifications() {
 
   return (
     <View style={styles.container}>
+      <AmbientBackground />
       <View style={[styles.header, { paddingTop: insets.top + 24 }]}>
         <View style={styles.logoRow}>
           <View style={{flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1}}>
@@ -169,11 +171,11 @@ export default function Notifications() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#050607' },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#0a0a0a' },
   header: { padding: 24, gap: 12 },
   logoRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
-  msgBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: '#111', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: '#222' },
+  msgBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(255,255,255,0.045)', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)' },
   msgIcon: { fontSize: 20 },
   logoBox: { width: 32, height: 32, backgroundColor: '#10b981', borderRadius: 8, justifyContent: 'center', alignItems: 'center' },
   logoLetter: { color: '#fff', fontWeight: '900', fontSize: 18 },
@@ -185,9 +187,9 @@ const styles = StyleSheet.create({
   card: {
     flexDirection: 'row', alignItems: 'center', gap: 16,
     marginHorizontal: 16, marginBottom: 8, padding: 16,
-    backgroundColor: '#111', borderRadius: 24, borderWidth: 1, borderColor: '#222',
+    backgroundColor: 'rgba(255,255,255,0.045)', borderRadius: 24, borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)',
   },
-  cardUnread: { borderColor: '#10b98133', backgroundColor: '#1a1a1a' },
+  cardUnread: { borderColor: '#10b98133', backgroundColor: 'rgba(255,255,255,0.06)' },
   iconBox: { width: 48, height: 48, borderRadius: 16, justifyContent: 'center', alignItems: 'center' },
   icon: { fontSize: 20 },
   message: { color: '#fff', fontSize: 14, fontWeight: '700', lineHeight: 20 },

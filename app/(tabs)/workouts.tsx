@@ -5,6 +5,10 @@ import { StatusBar } from 'expo-status-bar';
 import * as Haptics from 'expo-haptics';
 import { useTranslation } from '../../lib/i18n/i18n';
 import AdMobBanner from '../../components/AdMobBanner';
+import PressableScale from '../../components/PressableScale';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
+import AmbientBackground from '../../components/AmbientBackground';
 
 // Dummy Video Data - Mümkün olan en popüler ve ücretsiz Youtube videoları
 const WORKOUT_CATEGORIES = [
@@ -49,6 +53,7 @@ export default function WorkoutsScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <AmbientBackground />
       <StatusBar style="light" />
       <View style={styles.header}>
         <Text style={styles.headerTitle}>{t('workouts.title')}</Text>
@@ -65,17 +70,21 @@ export default function WorkoutsScreen() {
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={styles.horizontalScroll}
             >
-              {category.videos.map((video) => (
-                <TouchableOpacity
+              {category.videos.map((video, vIdx) => (
+                <PressableScale
                   key={video.id}
+                  index={vIdx + idx * 2}
                   style={[styles.videoCard, { width: width * 0.7 }]}
                   onPress={() => handleVideoPress(video.id, video.title)}
-                  activeOpacity={0.8}
                 >
                   <Image 
                     source={{ uri: video.thumbnail }} 
                     style={styles.thumbnail} 
                   />
+                  <LinearGradient colors={['transparent', 'rgba(0,0,0,0.65)']} style={styles.thumbShade} />
+                  <View style={styles.playBtn}>
+                    <Ionicons name="play" size={22} color="#fff" style={{ marginLeft: 2 }} />
+                  </View>
                   <View style={styles.durationBadge}>
                     <Text style={styles.durationText}>{video.duration.replace('dk', t('common.minutes_abbr'))}</Text>
                   </View>
@@ -84,7 +93,7 @@ export default function WorkoutsScreen() {
                       {video.title}
                     </Text>
                   </View>
-                </TouchableOpacity>
+                </PressableScale>
               ))}
             </ScrollView>
             {idx === 0 && <AdMobBanner style={{ marginTop: 16, width: 'auto', marginHorizontal: 20 }} />}
@@ -100,7 +109,7 @@ export default function WorkoutsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0a0a0a',
+    backgroundColor: '#050607',
   },
   header: {
     paddingHorizontal: 20,
@@ -136,7 +145,9 @@ const styles = StyleSheet.create({
   },
   videoCard: {
     marginRight: 16,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.09)',
     borderRadius: 16,
     overflow: 'hidden',
     shadowColor: '#000',
@@ -149,6 +160,13 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 160,
     backgroundColor: '#2a2a2a',
+  },
+  thumbShade: { position: 'absolute', top: 70, left: 0, right: 0, height: 90 },
+  playBtn: {
+    position: 'absolute', top: 58, alignSelf: 'center', left: '50%', marginLeft: -26,
+    width: 52, height: 52, borderRadius: 26,
+    backgroundColor: 'rgba(16,185,129,0.85)', alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.4)',
   },
   durationBadge: {
     position: 'absolute',

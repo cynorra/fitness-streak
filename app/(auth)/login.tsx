@@ -12,7 +12,6 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
-import * as Linking from 'expo-linking';
 import * as WebBrowser from 'expo-web-browser';
 import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '../../lib/supabase';
@@ -21,6 +20,8 @@ import { useTranslation, supportedLanguages } from '../../lib/i18n/i18n';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { friendlyError } from '../../lib/useOnline';
 import AppIcon from '../../components/AppIcon';
+import AmbientBackground from '../../components/AmbientBackground';
+import StreakFlame from '../../components/StreakFlame';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -39,7 +40,8 @@ export default function Login() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     try {
-      const redirectUrl = Linking.createURL('auth-callback');
+      // Fixed custom scheme (matches app.json + AndroidManifest); createURL throws in standalone builds without one.
+      const redirectUrl = 'vitatribe://auth-callback';
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
@@ -149,10 +151,7 @@ export default function Login() {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      <LinearGradient
-        colors={['#0F172A', '#0B0F19', '#020617']}
-        style={StyleSheet.absoluteFill}
-      />
+      <AmbientBackground />
 
       {/* Top Language Switcher Bar */}
       <View style={[styles.langBar, { paddingTop: insets.top + 10 }]}>
@@ -185,7 +184,7 @@ export default function Login() {
 
       <ScrollView contentContainerStyle={styles.scroll}>
         <View style={styles.brand}>
-          <Text style={styles.flame}>🔥</Text>
+          <StreakFlame size={72} />
           <Text style={styles.title}>
             STREAK<Text style={{ color: '#10b981' }}>FIT</Text>
           </Text>

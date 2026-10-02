@@ -17,6 +17,7 @@ import { reportUser } from '../../lib/blocking';
 import AdMobBanner from '../../components/AdMobBanner';
 import { isNetworkError } from '../../lib/useOnline';
 import { Ionicons } from '@expo/vector-icons';
+import AmbientBackground from '../../components/AmbientBackground';
 
 type PostItem = {
   id: string;
@@ -234,6 +235,7 @@ export default function Feed() {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
+      <AmbientBackground />
       <FlatList
         data={items}
         keyExtractor={i => i.id}
@@ -390,11 +392,11 @@ export default function Feed() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#050607' },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#0a0a0a' },
   header: { padding: 24, gap: 12, paddingBottom: 16 },
   logoRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
-  msgBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: '#111', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: '#222' },
+  msgBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(255,255,255,0.045)', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)' },
   msgIcon: { fontSize: 20 },
   logoBox: { width: 32, height: 32, backgroundColor: '#10b981', borderRadius: 8, justifyContent: 'center', alignItems: 'center' },
   logoLetter: { color: '#fff', fontWeight: '900', fontSize: 18 },
@@ -402,12 +404,12 @@ const styles = StyleSheet.create({
   title: { color: '#666', fontSize: 11, fontWeight: '900', letterSpacing: 2, textTransform: 'uppercase' },
   
   createPostContainer: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: 'rgba(255,255,255,0.06)',
     borderRadius: 20,
     padding: 16,
     marginTop: 16,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: 'rgba(255,255,255,0.1)',
   },
   postInput: {
     color: '#fff',
@@ -449,8 +451,8 @@ const styles = StyleSheet.create({
   emptyText: { color: '#888', fontSize: 14, textAlign: 'center', lineHeight: 22 },
   
   card: {
-    backgroundColor: '#111', marginHorizontal: 16, marginBottom: 16,
-    padding: 20, borderRadius: 24, borderWidth: 1, borderColor: '#222',
+    backgroundColor: 'rgba(255,255,255,0.045)', marginHorizontal: 16, marginBottom: 16,
+    padding: 20, borderRadius: 24, borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)',
   },
   cardHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 16 },
   avatar: {
@@ -503,7 +505,7 @@ const styles = StyleSheet.create({
   actionBtn: {
     flexDirection: 'row', alignItems: 'center', gap: 6,
     paddingVertical: 6, paddingHorizontal: 12,
-    backgroundColor: '#1a1a1a', borderRadius: 12,
+    backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 12,
   },
   actionEmoji: { fontSize: 14 },
   actionCount: { color: '#888', fontSize: 13, fontWeight: '700' },

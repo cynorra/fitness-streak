@@ -10,6 +10,7 @@ import { useAuth } from '../../lib/auth';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from '../../lib/i18n/i18n';
 import { friendlyError } from '../../lib/useOnline';
+import AmbientBackground from '../../components/AmbientBackground';
 
 type FriendRow = {
   id: string;
@@ -129,6 +130,7 @@ export default function Friends() {
 
   return (
     <View style={styles.container}>
+      <AmbientBackground />
       <View style={[styles.header, { paddingTop: insets.top + 24 }]}>
         <View style={styles.logoRow}>
           <View style={{flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1}}>
@@ -233,20 +235,20 @@ export default function Friends() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#050607' },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#0a0a0a' },
   header: { padding: 24, gap: 12 },
   logoRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
-  msgBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: '#111', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: '#222' },
+  msgBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(255,255,255,0.045)', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)' },
   msgIcon: { fontSize: 20 },
   logoBox: { width: 32, height: 32, backgroundColor: '#10b981', borderRadius: 8, justifyContent: 'center', alignItems: 'center' },
   logoLetter: { color: '#fff', fontWeight: '900', fontSize: 18 },
   logoText: { color: '#fff', fontSize: 24, fontWeight: '900', letterSpacing: -1.5 },
   title: { color: '#666', fontSize: 11, fontWeight: '900', letterSpacing: 2, textTransform: 'uppercase' },
   searchInput: {
-    backgroundColor: '#1a1a1a', marginHorizontal: 16, marginBottom: 16,
+    backgroundColor: 'rgba(255,255,255,0.06)', marginHorizontal: 16, marginBottom: 16,
     padding: 14, borderRadius: 12, color: '#fff', fontSize: 15,
-    borderWidth: 1, borderColor: '#2a2a2a',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)',
   },
   section: {
     color: '#666', fontSize: 11, fontWeight: '700',
@@ -255,7 +257,7 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row', alignItems: 'center',
     marginHorizontal: 16, marginBottom: 8, padding: 12,
-    backgroundColor: '#1a1a1a', borderRadius: 12, gap: 12,
+    backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 12, gap: 12,
   },
   avatar: {
     width: 40, height: 40, borderRadius: 20, backgroundColor: '#10b981',

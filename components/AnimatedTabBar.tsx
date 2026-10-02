@@ -1,23 +1,16 @@
-import React, { useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  Platform,
-} from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { View, Text, StyleSheet, Pressable, LayoutChangeEvent } from 'react-native';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
   withTiming,
-  interpolate,
-  Extrapolation,
 } from 'react-native-reanimated';
+import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from '../lib/i18n/i18n';
 
 type IconName = React.ComponentProps<typeof Ionicons>['name'];
@@ -31,44 +24,29 @@ const TABS: { name: string; icon: IconName; iconActive: IconName }[] = [
   { name: 'profile',       icon: 'person-outline',        iconActive: 'person' },
 ];
 
-function TabButton({
-  tab,
-  isActive,
-  onPress,
-}: {
-  tab: typeof TABS[0];
-  isActive: boolean;
-  onPress: () => void;
-}) {
-  const scale = useSharedValue(1);
-  const { t, locale } = useTranslation();
-  const labelOpacity = useSharedValue(isActive ? 1 : 0.5);
-  const dotScale = useSharedValue(isActive ? 1 : 0);
+const BAR_PADDING = 6;
 
-  React.useEffect(() => {
-    labelOpacity.value = withTiming(isActive ? 1 : 0.5, { duration: 200 });
-    dotScale.value = withSpring(isActive ? 1 : 0, { damping: 15, stiffness: 200 });
+function TabButton({ tab, isActive, onPress }: { tab: typeof TABS[0]; isActive: boolean; onPress: () => void }) {
+  const { t } = useTranslation();
+  const lift = useSharedValue(isActive ? 1 : 0);
+  const press = useSharedValue(1);
+
+  useEffect(() => {
+    lift.value = withSpring(isActive ? 1 : 0, { damping: 14, stiffness: 180 });
   }, [isActive]);
 
   const iconStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
+    transform: [{ translateY: -3 * lift.value }, { scale: press.value * (1 + 0.12 * lift.value) }],
   }));
-
   const labelStyle = useAnimatedStyle(() => ({
-    opacity: labelOpacity.value,
-  }));
-
-  const dotStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: dotScale.value }],
-    opacity: dotScale.value,
+    opacity: 0.45 + 0.55 * lift.value,
+    transform: [{ translateY: -2 * lift.value }],
   }));
 
   const handlePress = useCallback(() => {
-    // Bounce animasyonu
-    scale.value = withSpring(0.8, { damping: 6, stiffness: 300 }, () => {
-      scale.value = withSpring(1, { damping: 10, stiffness: 300 });
+    press.value = withSpring(0.8, { damping: 6, stiffness: 320 }, () => {
+      press.value = withSpring(1, { damping: 10, stiffness: 300 });
     });
-    // Haptic feedback
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     onPress();
   }, [onPress]);
@@ -78,96 +56,105 @@ function TabButton({
       <Animated.View style={iconStyle}>
         <Ionicons
           name={isActive ? tab.iconActive : tab.icon}
-          size={24}
-          color={isActive ? '#10b981' : '#6b7280'}
+          size={23}
+          color={isActive ? '#34d399' : '#7b8494'}
         />
       </Animated.View>
-      <Animated.Text style={[styles.label, labelStyle, isActive && styles.labelActive]}>
+      <Animated.Text numberOfLines={1} style={[styles.label, labelStyle, isActive && styles.labelActive]}>
         {t(`tabs.${tab.name}`)}
       </Animated.Text>
-      {/* Active dot indicator */}
-      <Animated.View style={[styles.activeDot, dotStyle]} />
     </Pressable>
   );
 }
 
 export default function AnimatedTabBar({ state, navigation }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
-  const bottomPadding = insets.bottom > 0 ? insets.bottom : 8;
+  const [barWidth, setBarWidth] = useState(0);
+  const x = useSharedValue(0);
+
+  const visible = state.routes.filter((r) => TABS.some((t) => t.name === r.name));
+  const tabWidth = barWidth > 0 ? (barWidth - BAR_PADDING * 2) / visible.length : 0;
+  const activeIndex = Math.max(
+    0,
+    visible.findIndex((r) => r.key === state.routes[state.index]?.key)
+  );
+
+  useEffect(() => {
+    if (tabWidth > 0) x.value = withSpring(BAR_PADDING + activeIndex * tabWidth, { damping: 17, stiffness: 190, mass: 0.9 });
+  }, [activeIndex, tabWidth]);
+
+  const pillStyle = useAnimatedStyle(() => ({ transform: [{ translateX: x.value }] }));
+
+  const onLayout = (e: LayoutChangeEvent) => setBarWidth(e.nativeEvent.layout.width);
 
   return (
-    <View style={[styles.container, { paddingBottom: bottomPadding }]}>
-      <View style={styles.tabRow}>
-        {state.routes.map((route, index) => {
-          const tab = TABS.find(t => t.name === route.name);
-          if (!tab) return null;
-          const isActive = state.index === index;
-
-          return (
-            <TabButton
-              key={route.key}
-              tab={tab}
-              isActive={isActive}
-              onPress={() => {
-                const event = navigation.emit({
-                  type: 'tabPress',
-                  target: route.key,
-                  canPreventDefault: true,
-                });
-                if (!isActive && !event.defaultPrevented) {
-                  navigation.navigate(route.name);
-                }
-              }}
+    <View style={[styles.outer, { paddingBottom: Math.max(insets.bottom, 10) }]} pointerEvents="box-none">
+      <View style={styles.bar} onLayout={onLayout}>
+        <LinearGradient
+          colors={['#161b24', '#0c0f14']}
+          style={[StyleSheet.absoluteFill, { borderRadius: 30 }]}
+        />
+        {tabWidth > 0 && (
+          <Animated.View style={[styles.pill, { width: tabWidth }, pillStyle]}>
+            <LinearGradient
+              colors={['rgba(16,185,129,0.30)', 'rgba(16,185,129,0.08)']}
+              style={styles.pillFill}
             />
-          );
-        })}
+          </Animated.View>
+        )}
+        <View style={styles.row}>
+          {visible.map((route) => {
+            const tab = TABS.find((t) => t.name === route.name)!;
+            const isActive = state.routes[state.index]?.key === route.key;
+            return (
+              <TabButton
+                key={route.key}
+                tab={tab}
+                isActive={isActive}
+                onPress={() => {
+                  const event = navigation.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
+                  if (!isActive && !event.defaultPrevented) navigation.navigate(route.name);
+                }}
+              />
+            );
+          })}
+        </View>
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#0a0a0a',
-    borderTopWidth: 1,
-    borderTopColor: '#1a1a1a',
+  outer: {
+    paddingHorizontal: 14,
     paddingTop: 8,
+    backgroundColor: '#050607',
   },
-  tabRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
+  bar: {
+    borderRadius: 30,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.09)',
+    padding: BAR_PADDING,
+    shadowColor: '#10b981',
+    shadowOpacity: 0.25,
+    shadowRadius: 20,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 12,
   },
-  tabItem: {
-    flex: 1,
-    alignItems: 'center',
-    gap: 3,
-    paddingVertical: 4,
-    position: 'relative',
-  },
-  icon: {
-    fontSize: 22,
-    opacity: 0.5,
-  },
-  iconActive: {
-    opacity: 1,
-  },
-  label: {
-    fontSize: 10,
-    fontWeight: '900',
-    color: '#666',
-    letterSpacing: 0.5,
-    textTransform: 'uppercase',
-  },
-  labelActive: {
-    color: '#10b981',
-  },
-  activeDot: {
+  row: { flexDirection: 'row', alignItems: 'center' },
+  pill: {
     position: 'absolute',
-    bottom: -4,
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: '#10b981',
+    top: BAR_PADDING,
+    bottom: BAR_PADDING,
+    left: 0,
   },
+  pillFill: {
+    flex: 1,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: 'rgba(52,211,153,0.35)',
+  },
+  tabItem: { flex: 1, alignItems: 'center', gap: 3, paddingVertical: 9 },
+  label: { fontSize: 9.5, fontWeight: '800', color: '#7b8494', letterSpacing: 0.3 },
+  labelActive: { color: '#34d399' },
 });

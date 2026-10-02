@@ -10,6 +10,7 @@ import InviteCard from '../../components/InviteCard';
 import { friendlyError } from '../../lib/useOnline';
 import AppIcon from '../../components/AppIcon';
 import PressableScale from '../../components/PressableScale';
+import AmbientBackground from '../../components/AmbientBackground';
 
 export default function Profile() {
   const { profile, session, refreshProfile } = useAuth();
@@ -71,6 +72,8 @@ export default function Profile() {
   };
 
   return (
+    <View style={{ flex: 1, backgroundColor: '#050607' }}>
+    <AmbientBackground />
     <ScrollView style={styles.container} contentContainerStyle={[styles.content, { paddingTop: insets.top + 20, paddingBottom: insets.bottom + 40 }]}>
       <View style={styles.profileCard}>
         <View style={styles.avatar}>
@@ -346,11 +349,12 @@ export default function Profile() {
 
       <Text style={styles.version}>STREAKFIT v1.0.6</Text>
     </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: 'transparent' },
   content: { padding: 24 },
   profileCard: { alignItems: 'center', marginBottom: 32 },
   avatar: {
@@ -366,19 +370,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: 'rgba(255,255,255,0.06)',
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: 'rgba(255,255,255,0.1)',
   },
   socialIcon: { fontSize: 14 },
   socialText: { color: '#10b981', fontSize: 12, fontWeight: '700' },
   stats: { flexDirection: 'row', gap: 12, marginBottom: 24 },
   statBox: {
-    flex: 1, backgroundColor: '#1a1a1a', padding: 20,
-    borderRadius: 16, borderWidth: 1, borderColor: '#2a2a2a',
+    flex: 1, backgroundColor: 'rgba(255,255,255,0.06)', padding: 20,
+    borderRadius: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)',
     alignItems: 'center',
   },
   statValue: { color: '#10b981', fontSize: 40, fontWeight: '900' },
@@ -387,11 +391,11 @@ const styles = StyleSheet.create({
   menuBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#111',
+    backgroundColor: 'rgba(255,255,255,0.045)',
     padding: 16,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#222',
+    borderColor: 'rgba(255,255,255,0.09)',
     marginBottom: 24,
     gap: 16,
   },
@@ -401,11 +405,11 @@ const styles = StyleSheet.create({
   // Language Selector Styles
   languageContainer: {
     marginBottom: 24,
-    backgroundColor: '#111',
+    backgroundColor: 'rgba(255,255,255,0.045)',
     padding: 20,
     borderRadius: 24,
     borderWidth: 1,
-    borderColor: '#222',
+    borderColor: 'rgba(255,255,255,0.09)',
   },
   languageHeader: {
     color: '#888',
@@ -425,10 +429,10 @@ const styles = StyleSheet.create({
   langCard: {
     paddingVertical: 10,
     paddingHorizontal: 16,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: 'rgba(255,255,255,0.06)',
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: 'rgba(255,255,255,0.1)',
   },
   langCardActive: {
     backgroundColor: '#10b981',
@@ -449,8 +453,8 @@ const styles = StyleSheet.create({
   },
 
   signOutBtn: {
-    backgroundColor: '#1a1a1a', padding: 16, borderRadius: 12,
-    alignItems: 'center', borderWidth: 1, borderColor: '#2a2a2a',
+    backgroundColor: 'rgba(255,255,255,0.06)', padding: 16, borderRadius: 12,
+    alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)',
   },
   signOutText: { color: '#fff', fontSize: 15, fontWeight: '700' },
   legalLinks: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 8, marginTop: 48 },
@@ -459,14 +463,14 @@ const styles = StyleSheet.create({
   deleteBtn: { marginTop: 24, alignSelf: 'center' },
   deleteText: { color: '#b91c1c', fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1 },
   version: { color: '#222', fontSize: 10, fontWeight: '900', textAlign: 'center', marginTop: 48, letterSpacing: 2 },
-  editBtn: { marginTop: 16, backgroundColor: '#111', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, borderWidth: 1, borderColor: '#222' },
+  editBtn: { marginTop: 16, backgroundColor: 'rgba(255,255,255,0.045)', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)' },
   editBtnText: { color: '#666', fontSize: 9, fontWeight: '900', letterSpacing: 1 },
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.8)', justifyContent: 'flex-end' },
-  modalContent: { backgroundColor: '#111', padding: 32, borderTopLeftRadius: 40, borderTopRightRadius: 40, borderTopWidth: 1, borderTopColor: '#222' },
+  modalContent: { backgroundColor: '#12161d', padding: 32, borderTopLeftRadius: 40, borderTopRightRadius: 40, borderTopWidth: 1, borderTopColor: '#222' },
   modalTitle: { color: '#fff', fontSize: 18, fontWeight: '900', marginBottom: 24, letterSpacing: 2 },
   inputGroup: { marginBottom: 24 },
   inputLabel: { color: '#444', fontSize: 10, fontWeight: '900', marginBottom: 8, letterSpacing: 1 },
-  input: { backgroundColor: '#0a0a0a', padding: 16, borderRadius: 12, color: '#fff', fontSize: 16, fontWeight: '700', borderWidth: 1, borderColor: '#222' },
+  input: { backgroundColor: '#0a0a0a', padding: 16, borderRadius: 12, color: '#fff', fontSize: 16, fontWeight: '700', borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)' },
   modalActions: { flexDirection: 'row', gap: 12 },
   cancelBtn: { flex: 1, padding: 16, alignItems: 'center' },
   cancelBtnText: { color: '#666', fontSize: 13, fontWeight: '800' },

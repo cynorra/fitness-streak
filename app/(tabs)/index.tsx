@@ -24,6 +24,9 @@ import AdMobBanner from '../../components/AdMobBanner';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AppIcon from '../../components/AppIcon';
+import AmbientBackground from '../../components/AmbientBackground';
+import GradientCard from '../../components/GradientCard';
+import { LinearGradient } from 'expo-linear-gradient';
 import PressableScale from '../../components/PressableScale';
 
 const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
@@ -98,6 +101,7 @@ export default function StreakHome() {
 
   return (
     <View style={styles.root}>
+      <AmbientBackground />
       <ScrollView
         style={styles.container}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#10b981" />}
@@ -134,13 +138,15 @@ export default function StreakHome() {
           entering={FadeInUp.delay(100).duration(500).springify()}
           style={styles.streakCard}
         >
-          <AnimatedStreakNumber streak={streak} />
-          <Animated.View
-            entering={FadeInDown.delay(300).duration(400)}
-            style={styles.greetingBox}
-          >
-            <Text style={styles.greeting}>{greeting.toUpperCase()}</Text>
-          </Animated.View>
+          <GradientCard radius={36} padding={36} accent="#10b981" contentStyle={{ alignItems: 'center' }}>
+            <AnimatedStreakNumber streak={streak} />
+            <Animated.View
+              entering={FadeInDown.delay(300).duration(400)}
+              style={styles.greetingBox}
+            >
+              <Text style={styles.greeting}>{greeting.toUpperCase()}</Text>
+            </Animated.View>
+          </GradientCard>
         </Animated.View>
 
         {/* Haftalık Şerit */}
@@ -170,14 +176,16 @@ export default function StreakHome() {
           entering={FadeInUp.delay(300).duration(450).springify()}
           style={styles.statsRow}
         >
-          <View style={styles.statCard}>
+          <GradientCard style={{ flex: 1 }} accent="#f97316" padding={20}>
+            <Ionicons name="trophy" size={18} color="#f97316" />
             <Text style={styles.statValue}>{profile?.longest_streak ?? 0}</Text>
             <Text style={styles.statLabel}>{t('dashboard.longest_streak')}</Text>
-          </View>
-          <View style={styles.statCard}>
+          </GradientCard>
+          <GradientCard style={{ flex: 1 }} accent="#6366f1" padding={20}>
+            <Ionicons name="barbell" size={18} color="#818cf8" />
             <Text style={styles.statValue}>{weekWorkouts.length}</Text>
             <Text style={styles.statLabel}>{t('dashboard.weekly_workouts')}</Text>
-          </View>
+          </GradientCard>
         </Animated.View>
 
         {/* AdMob Banner */}
@@ -345,30 +353,26 @@ export default function StreakHome() {
 
       {/* Floating Action Button — animasyonlu */}
       <AnimatedTouchable style={[styles.fab, fabStyle]} onPress={handleFabPress}>
-        <Text style={styles.fabIcon}>+</Text>
+        <LinearGradient colors={['#34d399', '#059669']} style={styles.fabFill}>
+          <Ionicons name="add" size={34} color="#fff" />
+        </LinearGradient>
       </AnimatedTouchable>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#0a0a0a' },
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  root: { flex: 1, backgroundColor: '#050607' },
+  container: { flex: 1, backgroundColor: 'transparent' },
   header: { padding: 24, gap: 12 },
   logoRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
-  msgBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: '#111', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: '#222' },
+  msgBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(16,185,129,0.1)', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: 'rgba(16,185,129,0.3)' },
   msgIcon: { fontSize: 20 },
   logoBox: { width: 32, height: 32, backgroundColor: '#10b981', borderRadius: 8, justifyContent: 'center', alignItems: 'center' },
   logoLetter: { color: '#fff', fontWeight: '900', fontSize: 18 },
   logoText: { color: '#fff', fontSize: 24, fontWeight: '900', letterSpacing: -1.5 },
   hello: { color: '#666', fontSize: 11, fontWeight: '900', letterSpacing: 2 },
-  streakCard: {
-    backgroundColor: '#111', margin: 16, padding: 40,
-    borderRadius: 40, alignItems: 'center',
-    borderWidth: 1, borderColor: '#222',
-    shadowColor: '#10b981', shadowOffset: { width: 0, height: 20 },
-    shadowOpacity: 0.15, shadowRadius: 40,
-  },
+  streakCard: { margin: 16 },
   greetingBox: {
     marginTop: 24, paddingVertical: 8, paddingHorizontal: 16,
     backgroundColor: '#1a1a1a', borderRadius: 12, borderWidth: 1, borderColor: '#2a2a2a',
@@ -379,7 +383,7 @@ const styles = StyleSheet.create({
   dayLabel: { color: '#444', fontSize: 10, fontWeight: '900', marginBottom: 8, textTransform: 'uppercase', letterSpacing: 1 },
   dayDot: {
     width: 40, height: 40, borderRadius: 12,
-    backgroundColor: '#111', borderWidth: 1, borderColor: '#222',
+    backgroundColor: 'rgba(255,255,255,0.05)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)',
     justifyContent: 'center', alignItems: 'center',
   },
   dayDotActive: {
@@ -389,17 +393,13 @@ const styles = StyleSheet.create({
   checkmark: { color: '#fff', fontWeight: '900', fontSize: 18 },
   dayNum: { color: '#666', fontSize: 10, fontWeight: '900', marginTop: 6 },
   statsRow: { flexDirection: 'row', paddingHorizontal: 16, gap: 12, marginBottom: 32 },
-  statCard: {
-    flex: 1, backgroundColor: '#111', padding: 24,
-    borderRadius: 24, borderWidth: 1, borderColor: '#222',
-  },
-  statValue: { color: '#fff', fontSize: 36, fontWeight: '900', letterSpacing: -2 },
-  statLabel: { color: '#444', fontSize: 9, fontWeight: '900', marginTop: 4, textTransform: 'uppercase', letterSpacing: 1.5 },
+  statValue: { color: '#fff', fontSize: 36, fontWeight: '900', letterSpacing: -2, marginTop: 6 },
+  statLabel: { color: '#6b7280', fontSize: 9, fontWeight: '900', marginTop: 4, textTransform: 'uppercase', letterSpacing: 1.5 },
   
   gamificationRow: { flexDirection: 'row', paddingHorizontal: 16, gap: 12, marginBottom: 32 },
   gamificationCard: {
-    flex: 1, backgroundColor: '#10b98120', padding: 20,
-    borderRadius: 20, borderWidth: 1, borderColor: '#10b98150',
+    flex: 1, backgroundColor: 'rgba(255,255,255,0.045)', padding: 20,
+    borderRadius: 22, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)',
     alignItems: 'center', justifyContent: 'center',
   },
   gamificationIcon: { fontSize: 28, marginBottom: 8 },
@@ -409,10 +409,10 @@ const styles = StyleSheet.create({
   quickModulesSection: { paddingHorizontal: 16, marginBottom: 32 },
   modulesScroll: { gap: 12, paddingRight: 16 },
   moduleCard: {
-    width: 120,
-    height: 120,
-    backgroundColor: '#111',
-    borderRadius: 24,
+    width: 124,
+    height: 124,
+    backgroundColor: 'rgba(255,255,255,0.045)',
+    borderRadius: 26,
     borderWidth: 1,
     padding: 14,
     justifyContent: 'center',
@@ -425,10 +425,10 @@ const styles = StyleSheet.create({
   sectionTitle: { color: '#666', fontSize: 10, fontWeight: '900', letterSpacing: 3, textTransform: 'uppercase' },
   seeAllText: { color: '#10b981', fontSize: 10, fontWeight: '900', letterSpacing: 1 },
   workoutRow: {
-    backgroundColor: '#111', padding: 20, borderRadius: 20,
+    backgroundColor: 'rgba(255,255,255,0.045)', padding: 20, borderRadius: 22,
     marginBottom: 12, flexDirection: 'row',
     justifyContent: 'space-between', alignItems: 'center',
-    borderWidth: 1, borderColor: '#222',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)',
   },
   workoutType: { color: '#fff', fontSize: 15, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 0.5 },
   workoutDate: { color: '#444', fontSize: 11, fontWeight: '700', marginTop: 2 },
@@ -436,9 +436,9 @@ const styles = StyleSheet.create({
   fab: {
     position: 'absolute', bottom: 32, right: 24,
     width: 64, height: 64, borderRadius: 32,
-    backgroundColor: '#10b981', justifyContent: 'center', alignItems: 'center',
     shadowColor: '#10b981', shadowOpacity: 0.6, shadowRadius: 24,
     shadowOffset: { width: 0, height: 8 }, elevation: 10,
   },
+  fabFill: { width: 64, height: 64, borderRadius: 32, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.25)' },
   fabIcon: { color: '#fff', fontSize: 32, fontWeight: '900', marginTop: -2 },
 });
