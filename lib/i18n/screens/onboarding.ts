@@ -1,7 +1,7 @@
 export const onboarding = {
   tr: {
     s1_title: 'Hoş Geldin! 🌱',
-    s1_desc: 'VitaTribe ile her gün yeni bir başlangıç. Kendi serini oluştur ve motivasyonunu yüksek tut.',
+    s1_desc: 'StreakFit ile her gün yeni bir başlangıç. Kendi serini oluştur ve motivasyonunu yüksek tut.',
     s2_title: 'Arkadaşlarınla Büyü 🤝',
     s2_desc: 'Arkadaşlarını ekle, onların antrenmanlarını gör ve birbirinize alkış (Kudos) göndererek destek olun.',
     s3_title: 'Beslenme & Hedefler 🍎',
@@ -20,7 +20,7 @@ export const onboarding = {
   },
   en: {
     s1_title: 'Welcome! 🌱',
-    s1_desc: 'A fresh start every day with VitaTribe. Build your own streak and keep your motivation high.',
+    s1_desc: 'A fresh start every day with StreakFit. Build your own streak and keep your motivation high.',
     s2_title: 'Grow with Friends 🤝',
     s2_desc: "Add friends, see their workouts and support each other by sending kudos.",
     s3_title: 'Nutrition & Goals 🍎',

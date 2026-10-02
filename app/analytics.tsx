@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   Text,
   View,
   TouchableOpacity,
   ScrollView,
+  ActivityIndicator,
   useWindowDimensions,
 } from 'react-native';
 import { useRouter } from 'expo-router';
@@ -16,26 +17,66 @@ import GlassCard from '../components/GlassCard';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Rect, Line, Circle, Path, Text as SvgText } from 'react-native-svg';
 import { useTranslation } from '../lib/i18n/i18n';
+import { format, subDays } from 'date-fns';
+import { supabase } from '../lib/supabase';
+import { useAuth } from '../lib/auth';
 
-const WEEKLY_CALORIES = [
-  { dayKey: 'd1', val: 420 },
-  { dayKey: 'd2', val: 650 },
-  { dayKey: 'd3', val: 380 },
-  { dayKey: 'd4', val: 720 },
-  { dayKey: 'd5', val: 510 },
-  { dayKey: 'd6', val: 890 },
-  { dayKey: 'd7', val: 600 },
-];
+type Bar = { label: string; val: number; highlight: boolean };
+
+const toKey = (d: Date) => format(d, 'yyyy-MM-dd');
 
 export default function AnalyticsScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { t, locale } = useTranslation();
+  const { profile } = useAuth();
+  const { t } = useTranslation();
   const [timeframe, setTimeframe] = useState<'week' | 'month'>('week');
+  const [rows, setRows] = useState<{ logical_date: string; duration_minutes: number }[]>([]);
+  const [loading, setLoading] = useState(true);
   const { width } = useWindowDimensions();
   const CHART_WIDTH = width - 72;
 
-  const maxCal = Math.max(...WEEKLY_CALORIES.map((d) => d.val));
+  useEffect(() => {
+    if (!profile) return;
+    const since = toKey(subDays(new Date(), 29));
+    supabase
+      .from('workouts')
+      .select('logical_date, duration_minutes')
+      .eq('user_id', profile.id)
+      .gte('logical_date', since)
+      .then(({ data }) => {
+        setRows((data as any[]) || []);
+        setLoading(false);
+      });
+  }, [profile?.id]);
+
+  const minutesByDay = new Map<string, number>();
+  rows.forEach((r) => minutesByDay.set(r.logical_date, (minutesByDay.get(r.logical_date) || 0) + r.duration_minutes));
+
+  const today = new Date();
+  const days = Array.from({ length: 30 }, (_, i) => subDays(today, 29 - i));
+  const periodDays = timeframe === 'week' ? 7 : 28;
+  const periodKeys = new Set(days.slice(30 - periodDays).map(toKey));
+  const periodRows = rows.filter((r) => periodKeys.has(r.logical_date));
+  const totalMinutes = periodRows.reduce((a, r) => a + r.duration_minutes, 0);
+
+  const bars: Bar[] =
+    timeframe === 'week'
+      ? days.slice(23).map((d, i, arr) => ({
+          label: t(`analytics.d${((d.getDay() + 6) % 7) + 1}`),
+          val: minutesByDay.get(toKey(d)) || 0,
+          highlight: i === arr.length - 1,
+        }))
+      : [0, 1, 2, 3].map((w) => {
+          const chunk = days.slice(2 + w * 7, 2 + (w + 1) * 7);
+          return {
+            label: `${t('analytics.wk')}${w + 1}`,
+            val: chunk.reduce((a, d) => a + (minutesByDay.get(toKey(d)) || 0), 0),
+            highlight: w === 3,
+          };
+        });
+  const maxVal = Math.max(1, ...bars.map((b) => b.val));
+  const barWidth = timeframe === 'week' ? 24 : 40;
 
   return (
     <View style={styles.container}>
@@ -63,24 +104,33 @@ export default function AnalyticsScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
+        {loading ? (
+          <ActivityIndicator color="#10b981" style={{ marginTop: 40 }} />
+        ) : rows.length === 0 ? (
+          <View style={styles.emptyBox}>
+            <Ionicons name="bar-chart-outline" size={40} color="#64748b" />
+            <Text style={styles.emptyText}>{t('analytics.empty')}</Text>
+          </View>
+        ) : (
+        <>
         {/* Metric Summary Grid */}
         <Animated.View
           entering={FadeInDown.duration(400).springify()}
           style={styles.statsGrid}
         >
           <GlassCard style={styles.statCard}>
-            <Ionicons name="flame" size={24} color="#f97316" />
-            <Text style={styles.statVal}>4,170</Text>
-            <Text style={styles.statLbl}>{t('analytics.cal')}</Text>
+            <Ionicons name="barbell" size={24} color="#f97316" />
+            <Text style={styles.statVal}>{periodRows.length}</Text>
+            <Text style={styles.statLbl}>{t('analytics.count')}</Text>
           </GlassCard>
           <GlassCard style={styles.statCard}>
             <Ionicons name="time" size={24} color="#10b981" />
-            <Text style={styles.statVal}>340</Text>
+            <Text style={styles.statVal}>{totalMinutes}</Text>
             <Text style={styles.statLbl}>{t('analytics.min')}</Text>
           </GlassCard>
         </Animated.View>
 
-        {/* Weekly Calorie Burn Bar Chart */}
+        {/* Workout minutes bar chart */}
         <Animated.View
           entering={FadeInUp.delay(150).duration(500).springify()}
           style={styles.section}
@@ -89,34 +139,18 @@ export default function AnalyticsScreen() {
             <Text style={styles.sectionTitle}>{t('analytics.chart')}</Text>
             <View style={styles.toggleRow}>
               <TouchableOpacity
-                style={[
-                  styles.toggleBtn,
-                  timeframe === 'week' && styles.toggleBtnActive,
-                ]}
+                style={[styles.toggleBtn, timeframe === 'week' && styles.toggleBtnActive]}
                 onPress={() => setTimeframe('week')}
               >
-                <Text
-                  style={[
-                    styles.toggleText,
-                    timeframe === 'week' && styles.toggleTextActive,
-                  ]}
-                >
+                <Text style={[styles.toggleText, timeframe === 'week' && styles.toggleTextActive]}>
                   {t('analytics.week')}
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[
-                  styles.toggleBtn,
-                  timeframe === 'month' && styles.toggleBtnActive,
-                ]}
+                style={[styles.toggleBtn, timeframe === 'month' && styles.toggleBtnActive]}
                 onPress={() => setTimeframe('month')}
               >
-                <Text
-                  style={[
-                    styles.toggleText,
-                    timeframe === 'month' && styles.toggleTextActive,
-                  ]}
-                >
+                <Text style={[styles.toggleText, timeframe === 'month' && styles.toggleTextActive]}>
                   {t('analytics.month')}
                 </Text>
               </TouchableOpacity>
@@ -125,59 +159,19 @@ export default function AnalyticsScreen() {
 
           <GlassCard borderColor="rgba(59, 130, 246, 0.3)" style={{ padding: 16 }}>
             <Svg width={CHART_WIDTH} height={180}>
-              {/* Grid Lines */}
-              <Line
-                x1="0"
-                y1="40"
-                x2={CHART_WIDTH}
-                y2="40"
-                stroke="rgba(255,255,255,0.06)"
-                strokeDasharray="4 4"
-              />
-              <Line
-                x1="0"
-                y1="90"
-                x2={CHART_WIDTH}
-                y2="90"
-                stroke="rgba(255,255,255,0.06)"
-                strokeDasharray="4 4"
-              />
-              <Line
-                x1="0"
-                y1="140"
-                x2={CHART_WIDTH}
-                y2="140"
-                stroke="rgba(255,255,255,0.06)"
-                strokeDasharray="4 4"
-              />
-
-              {/* Bars */}
-              {WEEKLY_CALORIES.map((item, idx) => {
-                const barHeight = (item.val / maxCal) * 110;
-                const barWidth = 24;
-                const gap = (CHART_WIDTH - barWidth * 7) / 6;
+              {[40, 90, 140].map((y) => (
+                <Line key={y} x1="0" y1={y} x2={CHART_WIDTH} y2={y} stroke="rgba(255,255,255,0.06)" strokeDasharray="4 4" />
+              ))}
+              {bars.map((item, idx) => {
+                const barHeight = (item.val / maxVal) * 110;
+                const gap = bars.length > 1 ? (CHART_WIDTH - barWidth * bars.length) / (bars.length - 1) : 0;
                 const x = idx * (barWidth + gap);
                 const y = 140 - barHeight;
-
                 return (
                   <React.Fragment key={idx}>
-                    <Rect
-                      x={x}
-                      y={y}
-                      width={barWidth}
-                      height={barHeight}
-                      rx={6}
-                      fill={idx === 5 ? '#f97316' : '#3b82f6'}
-                    />
-                    <SvgText
-                      x={x + barWidth / 2}
-                      y={165}
-                      fill="#64748b"
-                      fontSize="10"
-                      fontWeight="bold"
-                      textAnchor="middle"
-                    >
-                      {t(`analytics.${item.dayKey}`)}
+                    <Rect x={x} y={y} width={barWidth} height={Math.max(barHeight, item.val > 0 ? 3 : 0)} rx={6} fill={item.highlight ? '#f97316' : '#3b82f6'} />
+                    <SvgText x={x + barWidth / 2} y={165} fill="#64748b" fontSize="10" fontWeight="bold" textAnchor="middle">
+                      {item.label}
                     </SvgText>
                   </React.Fragment>
                 );
@@ -194,21 +188,17 @@ export default function AnalyticsScreen() {
           <Text style={styles.sectionTitle}>{t('analytics.matrix')}</Text>
           <GlassCard style={{ padding: 16 }}>
             <View style={styles.matrixGrid}>
-              {Array.from({ length: 28 }).map((_, i) => {
-                const isCompleted = i % 3 !== 0;
-                return (
-                  <View
-                    key={i}
-                    style={[
-                      styles.matrixSquare,
-                      isCompleted && styles.matrixSquareActive,
-                    ]}
-                  />
-                );
-              })}
+              {days.map((d) => (
+                <View
+                  key={toKey(d)}
+                  style={[styles.matrixSquare, minutesByDay.has(toKey(d)) && styles.matrixSquareActive]}
+                />
+              ))}
             </View>
           </GlassCard>
         </Animated.View>
+        </>
+        )}
       </ScrollView>
     </View>
   );
@@ -278,4 +268,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#10b981',
     borderColor: '#10b981',
   },
+  emptyBox: { alignItems: 'center', gap: 12, paddingVertical: 60 },
+  emptyText: { color: '#64748b', fontSize: 14, textAlign: 'center', lineHeight: 20 },
 });

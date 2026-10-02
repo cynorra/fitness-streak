@@ -5,6 +5,7 @@ import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useTranslation } from '../lib/i18n/i18n';
+import AdMobBanner from '../components/AdMobBanner';
 
 export default function Leaderboard() {
   const router = useRouter();
@@ -51,6 +52,7 @@ export default function Leaderboard() {
         keyExtractor={(u) => u.id}
         contentContainerStyle={styles.content}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#10b981" />}
+        ListFooterComponent={<AdMobBanner />}
         ListHeaderComponent={
           <View style={styles.infoBox}>
             <Text style={styles.infoText}>{t('leaderboard.info')}</Text>

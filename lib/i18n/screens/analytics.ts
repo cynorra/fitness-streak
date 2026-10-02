@@ -1,9 +1,11 @@
 export const analytics = {
   tr: {
     title: 'PERFORMANS VE ANALİZ',
-    cal: 'TOPLAM KALORİ (KCAL)',
+    count: 'ANTRENMAN SAYISI',
+    empty: 'Henüz antrenman kaydın yok. İlk antrenmanını kaydettiğinde grafiklerin burada görünecek.',
+    wk: 'H',
     min: 'TOPLAM DAKİKA',
-    chart: 'KALORİ HARCAMA GRAFİĞİ',
+    chart: 'ANTRENMAN SÜRESİ (DK)',
     week: 'HAFTA',
     month: 'AY',
     matrix: '30 GÜNLÜK SERİ TUTARLILIĞI',
@@ -17,9 +19,11 @@ export const analytics = {
   },
   en: {
     title: 'PERFORMANCE & ANALYTICS',
-    cal: 'TOTAL CALORIES (KCAL)',
+    count: 'WORKOUTS',
+    empty: 'No workouts logged yet. Your charts will appear here once you log your first one.',
+    wk: 'W',
     min: 'TOTAL MINUTES',
-    chart: 'CALORIE BURN CHART',
+    chart: 'WORKOUT MINUTES',
     week: 'WEEK',
     month: 'MONTH',
     matrix: '30-DAY STREAK CONSISTENCY',

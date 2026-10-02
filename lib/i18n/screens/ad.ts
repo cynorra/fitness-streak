@@ -1,10 +1,10 @@
 export const ad = {
   tr: {
     sponsored: 'SPONSORLU',
-    text: '🎯 VitaTribe Premium & Fitness İpuçları',
+    text: '🎯 StreakFit Premium & Fitness İpuçları',
   },
   en: {
     sponsored: 'SPONSORED',
-    text: '🎯 VitaTribe Premium & Fitness Tips',
+    text: '🎯 StreakFit Premium & Fitness Tips',
   },
 };

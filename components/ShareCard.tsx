@@ -30,10 +30,10 @@ const ShareCard = forwardRef<View, ShareCardProps>(function ShareCard(props, ref
       <LinearGradient colors={colors as any} style={[styles.fill, { padding: 28 * s }]}>
         <View style={styles.logoRow}>
           <View style={[styles.logoBox, { width: 34 * s, height: 34 * s, borderRadius: 10 * s }]}>
-            <Text style={{ color: '#fff', fontWeight: '900', fontSize: 18 * s }}>V</Text>
+            <Text style={{ color: '#fff', fontWeight: '900', fontSize: 18 * s }}>S</Text>
           </View>
           <Text style={{ color: '#fff', fontWeight: '900', fontSize: 18 * s, letterSpacing: 1.5 }}>
-            VITA<Text style={{ color: '#10b981' }}>TRIBE</Text>
+            STREAK<Text style={{ color: '#10b981' }}>FIT</Text>
           </Text>
         </View>
 

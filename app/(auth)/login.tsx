@@ -186,7 +186,7 @@ export default function Login() {
         <View style={styles.brand}>
           <Text style={styles.flame}>🔥</Text>
           <Text style={styles.title}>
-            VITA<Text style={{ color: '#10b981' }}>TRIBE</Text>
+            STREAK<Text style={{ color: '#10b981' }}>FIT</Text>
           </Text>
           <Text style={styles.tagline}>{t('login.tagline')}</Text>
         </View>

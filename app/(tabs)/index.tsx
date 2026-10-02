@@ -13,6 +13,7 @@ import Animated, {
 import { useAuth } from '../../lib/auth';
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { supabase, Workout } from '../../lib/supabase';
 import { format, parseISO, subDays } from 'date-fns';
 import { useTranslation } from '../../lib/i18n/i18n';
@@ -108,7 +109,7 @@ export default function StreakHome() {
                 <Text style={styles.logoLetter}>S</Text>
               </View>
               <Text style={styles.logoText}>
-                VITA<Text style={{ color: '#10b981' }}>TRIBE</Text>
+                STREAK<Text style={{ color: '#10b981' }}>FIT</Text>
               </Text>
             </View>
             <TouchableOpacity
@@ -118,7 +119,7 @@ export default function StreakHome() {
               }}
               style={styles.msgBtn}
             >
-              <Text style={styles.msgIcon}>💬</Text>
+              <Ionicons name="paper-plane-outline" size={20} color="#10b981" />
             </TouchableOpacity>
           </View>
           <Text style={styles.hello}>
@@ -265,18 +266,6 @@ export default function StreakHome() {
               <Text style={styles.moduleIcon}>📊</Text>
               <Text style={styles.moduleTitle}>{t('home.analytics')}</Text>
               <Text style={styles.moduleSub}>{t('home.analytics_sub')}</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.moduleCard, { borderColor: '#a855f740' }]}
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                router.push('/store' as any);
-              }}
-            >
-              <Text style={styles.moduleIcon}>🛡️</Text>
-              <Text style={styles.moduleTitle}>{t('home.store')}</Text>
-              <Text style={styles.moduleSub}>{t('home.store_sub')}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity

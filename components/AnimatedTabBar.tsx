@@ -17,15 +17,18 @@ import Animated, {
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from '../lib/i18n/i18n';
 
-const TABS = [
-  { name: 'index',         icon: '🌱', label: 'Streak' },
-  { name: 'workouts',      icon: '🔥', label: 'Keşfet' },
-  { name: 'feed',          icon: '👥', label: 'Akış' },
-  { name: 'notifications', icon: '🔔', label: 'Bildirimler' },
-  { name: 'friends',       icon: '🤝', label: 'Arkadaşlar' },
-  { name: 'profile',       icon: '👤', label: 'Profil' },
+type IconName = React.ComponentProps<typeof Ionicons>['name'];
+
+const TABS: { name: string; icon: IconName; iconActive: IconName }[] = [
+  { name: 'index',         icon: 'flame-outline',         iconActive: 'flame' },
+  { name: 'workouts',      icon: 'compass-outline',       iconActive: 'compass' },
+  { name: 'feed',          icon: 'newspaper-outline',     iconActive: 'newspaper' },
+  { name: 'notifications', icon: 'notifications-outline', iconActive: 'notifications' },
+  { name: 'friends',       icon: 'people-outline',        iconActive: 'people' },
+  { name: 'profile',       icon: 'person-outline',        iconActive: 'person' },
 ];
 
 function TabButton({
@@ -72,9 +75,13 @@ function TabButton({
 
   return (
     <Pressable style={styles.tabItem} onPress={handlePress}>
-      <Animated.Text style={[styles.icon, iconStyle, isActive && styles.iconActive]}>
-        {tab.icon}
-      </Animated.Text>
+      <Animated.View style={iconStyle}>
+        <Ionicons
+          name={isActive ? tab.iconActive : tab.icon}
+          size={24}
+          color={isActive ? '#10b981' : '#6b7280'}
+        />
+      </Animated.View>
       <Animated.Text style={[styles.label, labelStyle, isActive && styles.labelActive]}>
         {t(`tabs.${tab.name}`)}
       </Animated.Text>
@@ -146,7 +153,7 @@ const styles = StyleSheet.create({
     opacity: 1,
   },
   label: {
-    fontSize: 8,
+    fontSize: 10,
     fontWeight: '900',
     color: '#666',
     letterSpacing: 0.5,

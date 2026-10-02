@@ -1,5 +1,7 @@
 ﻿import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import AdMobBanner from '../../components/AdMobBanner';
 import {
   View, Text, StyleSheet, FlatList, TouchableOpacity,
   RefreshControl, ActivityIndicator,
@@ -127,10 +129,10 @@ export default function Notifications() {
             <View style={styles.logoBox}>
               <Text style={styles.logoLetter}>S</Text>
             </View>
-            <Text style={styles.logoText}>VITA<Text style={{color: '#10b981'}}>TRIBE</Text></Text>
+            <Text style={styles.logoText}>STREAK<Text style={{color: '#10b981'}}>FIT</Text></Text>
           </View>
           <TouchableOpacity onPress={() => router.push('/messages' as any)} style={styles.msgBtn}>
-            <Text style={styles.msgIcon}>💬</Text>
+            <Ionicons name="paper-plane-outline" size={20} color="#10b981" />
           </TouchableOpacity>
         </View>
         <Text style={styles.title}>{t('notifications.title')}</Text>
@@ -147,6 +149,7 @@ export default function Notifications() {
             <Text style={styles.emptyText}>{t('notifications.no_notifications')}</Text>
           </View>
         }
+        ListFooterComponent={<AdMobBanner style={{ marginHorizontal: 20 }} />}
         renderItem={({ item }) => (
           <View style={[styles.card, !item.is_read && styles.cardUnread]}>
             <View style={[styles.iconBox, { backgroundColor: item.type === 'like' ? '#fff1f2' : '#fff7ed' }]}>

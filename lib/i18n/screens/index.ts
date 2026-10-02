@@ -19,7 +19,6 @@ import { chat } from './chat';
 import { workoutPlayer } from './workoutPlayer';
 import { nutritionLog } from './nutritionLog';
 import { notifSettings } from './notifSettings';
-import { store } from './store';
 import { tracker } from './tracker';
 import { tabs } from './tabs';
 import { ad } from './ad';
@@ -36,8 +35,9 @@ import { dietitianCare } from './dietitianCare';
 import { share } from './share';
 import { referral } from './referral';
 import { learn } from './learn';
+import { userProfile } from './userProfile';
 
-const modules: Record<string, { tr: Record<string, string>; en: Record<string, string> }> = { learn, referral, share, dietitianCare, net, streakNumber, plan, packages, clients, gyms, blog, fasting, water, ad, tabs, tracker, store, notifSettings, nutritionLog, workoutPlayer, chat, messages, sessionNotes, appointments, analytics, measurements, leaderboard, challenges, history, log, workoutTypes, profile2, home, feed2, workouts, friends, login, onboarding };
+const modules: Record<string, { tr: Record<string, string>; en: Record<string, string> }> = { userProfile, learn, referral, share, dietitianCare, net, streakNumber, plan, packages, clients, gyms, blog, fasting, water, ad, tabs, tracker, notifSettings, nutritionLog, workoutPlayer, chat, messages, sessionNotes, appointments, analytics, measurements, leaderboard, challenges, history, log, workoutTypes, profile2, home, feed2, workouts, friends, login, onboarding };
 
 type Locale = 'tr' | 'en';
 const build = (l: Locale) =>

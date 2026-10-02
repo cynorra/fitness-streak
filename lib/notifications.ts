@@ -111,16 +111,16 @@ export async function getLocalizedNotificationStrings(langOverride?: string) {
 
   if (locale === 'en') {
     return {
-      streakTitle: "🔥 VitaTribe: Don't Break Your Streak!",
+      streakTitle: "🔥 StreakFit: Don't Break Your Streak!",
       streakBody: "Don't forget to complete your workout and log your activity today. Keep your streak alive! 💪",
-      waterTitle: '💧 VitaTribe Water Time!',
+      waterTitle: '💧 StreakFit Water Time!',
       waterTimes: [
         { hour: 10, minute: 30, body: 'Start your morning with a fresh glass of water to boost your energy! 💧' },
         { hour: 15, minute: 30, body: 'Drink 1 more glass of water to keep your hydration optimal! 💧' },
         { hour: 18, minute: 30, body: 'Have you reached your water goal before your evening workout? 💧' },
         { hour: 21, minute: 0, body: 'Final water reminder of the day! Complete your daily goal. 💧' },
       ],
-      motivationTitle: '⚡ VitaTribe Daily Motivation',
+      motivationTitle: '⚡ StreakFit Daily Motivation',
       // Each slot rotates through its variants by weekday so the text never feels repetitive.
       motivations: [
         { hour: 8, minute: 30, bodies: [
@@ -142,25 +142,25 @@ export async function getLocalizedNotificationStrings(langOverride?: string) {
           'Tired? That is exactly when a workout gives you the most back. ⚡',
         ] },
       ],
-      mealTitle: '🍽️ VitaTribe Nutrition',
+      mealTitle: '🍽️ StreakFit Nutrition',
       mealReminder: { hour: 14, minute: 0, bodies: [
         'Had lunch? Log your meal in 10 seconds and stay on track! 🥗',
         'A quick meal log keeps your nutrition goals honest. Add today’s lunch! 📝',
         'What’s on your plate today? Log it and see how your macros are doing. 🍎',
       ] },
-      testTitle: '🚀 VitaTribe Test Notification',
-      testBody: 'Success! VitaTribe background notifications are working perfectly on your device! 🔥',
+      testTitle: '🚀 StreakFit Test Notification',
+      testBody: 'Success! StreakFit background notifications are working perfectly on your device! 🔥',
       workoutPreTitle: '⏱️ Pre-workout fuel',
       workoutPre: '2 hours to your workout: time for ~40 g of complex carbs (oats, rice, banana) for steady energy. 🍌',
       workoutPostTitle: '🔋 Recovery window',
       workoutPost: 'Recovery window is open: aim for ~25 g of protein plus some carbs within the next hour. 🥛',
-      comebackTitle: '👋 VitaTribe misses you!',
+      comebackTitle: '👋 StreakFit misses you!',
       comebacks: [
         { days: 3, body: "It's been 3 days. One short workout is enough to get your streak rolling again! 🌱" },
         { days: 7, body: 'A week already! Your tribe is still training — come back and log today. 💪' },
         { days: 14, body: 'Your goals are still waiting for you. Start again with a 10-minute session! 🔥' },
       ],
-      dietitianTitle: '🥗 VitaTribe for Dietitians',
+      dietitianTitle: '🥗 StreakFit for Dietitians',
       dietitianDaily: 'Good morning! Check your clients’ latest logs and answer their messages. 📋',
       dietitianPending: 'Review pending client requests and appointments before the day ends. ✅',
       dietitianWeekly: 'Plan next week: update your clients’ meal plans and goals. 🗓️',
@@ -169,16 +169,16 @@ export async function getLocalizedNotificationStrings(langOverride?: string) {
 
   // Turkish default & fallbacks
   return {
-    streakTitle: "🔥 VitaTribe: Streak'ini Kaybetme!",
+    streakTitle: "🔥 StreakFit: Streak'ini Kaybetme!",
     streakBody: 'Bugünkü antrenmanını ve aktiviteni tamamlamayı unutma. Serini sürdür! 💪',
-    waterTitle: '💧 VitaTribe Su Vakti!',
+    waterTitle: '💧 StreakFit Su Vakti!',
     waterTimes: [
       { hour: 10, minute: 30, body: 'Güne taze bir bardak su ile başlayıp enerjini yükselt! 💧' },
       { hour: 15, minute: 30, body: 'Hidrasyon seviyeni korumak için 1 bardak daha su iç. 💧' },
       { hour: 18, minute: 30, body: 'Antrenman öncesi su hedefine ulaştın mı? Kaydet! 💧' },
       { hour: 21, minute: 0, body: 'Günün son su hatırlatması! Günlük su hedefini tamamla. 💧' },
     ],
-    motivationTitle: '⚡ VitaTribe Motivasyon',
+    motivationTitle: '⚡ StreakFit Motivasyon',
     // Her zaman dilimi, haftanın gününe göre farklı metin gösterir; tekrar hissi olmaz.
     motivations: [
       { hour: 8, minute: 30, bodies: [
@@ -200,25 +200,25 @@ export async function getLocalizedNotificationStrings(langOverride?: string) {
         'Yorgun musun? Antrenman en çok tam da böyle günlerde geri verir. ⚡',
       ] },
     ],
-    mealTitle: '🍽️ VitaTribe Beslenme',
+    mealTitle: '🍽️ StreakFit Beslenme',
     mealReminder: { hour: 14, minute: 0, bodies: [
       'Öğle yemeğini yedin mi? 10 saniyede kaydet, hedefinde kal! 🥗',
       'Kısa bir öğün kaydı beslenme hedeflerini dürüst tutar. Bugünkü öğlenini ekle! 📝',
       'Bugün tabağında ne var? Kaydet ve makrolarının durumunu gör. 🍎',
     ] },
-    testTitle: '🚀 VitaTribe Test Bildirimi',
-    testBody: 'Tebrikler! VitaTribe bildirimleri cihazınızda uygulama kapalıyken de sorunsuz çalışıyor! 🔥',
+    testTitle: '🚀 StreakFit Test Bildirimi',
+    testBody: 'Tebrikler! StreakFit bildirimleri cihazınızda uygulama kapalıyken de sorunsuz çalışıyor! 🔥',
     workoutPreTitle: '⏱️ Antrenman öncesi yakıt',
     workoutPre: 'Antrenmana 2 saat kaldı: sabit enerji için ~40 g kompleks karbonhidrat zamanı (yulaf, pirinç, muz). 🍌',
     workoutPostTitle: '🔋 Toparlanma penceresi',
     workoutPost: 'Toparlanma penceresi açık: önümüzdeki 1 saat içinde ~25 g protein ve biraz karbonhidrat al. 🥛',
-    comebackTitle: '👋 VitaTribe seni özledi!',
+    comebackTitle: '👋 StreakFit seni özledi!',
     comebacks: [
       { days: 3, body: '3 gündür yoksun. Serini yeniden başlatmak için kısa bir antrenman yeter! 🌱' },
       { days: 7, body: 'Bir hafta oldu! Kabilen antrenmana devam ediyor, sen de gel ve bugünü kaydet. 💪' },
       { days: 14, body: 'Hedeflerin seni bekliyor. 10 dakikalık bir seansla yeniden başla! 🔥' },
     ],
-    dietitianTitle: '🥗 VitaTribe Diyetisyen',
+    dietitianTitle: '🥗 StreakFit Diyetisyen',
     dietitianDaily: 'Günaydın! Danışanlarının son kayıtlarına göz at ve mesajlarını yanıtla. 📋',
     dietitianPending: 'Gün bitmeden bekleyen danışan taleplerini ve randevularını gözden geçir. ✅',
     dietitianWeekly: 'Haftayı planla: danışanlarının beslenme planlarını ve hedeflerini güncelle. 🗓️',

@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useTranslation, supportedLanguages } from '../../lib/i18n/i18n';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import InviteCard from '../../components/InviteCard';
 import { friendlyError } from '../../lib/useOnline';
 
@@ -15,8 +16,8 @@ export default function Profile() {
   const insets = useSafeAreaInsets();
   const [editModal, setEditModal] = useState(false);
   const [newName, setNewName] = useState(profile?.display_name || '');
-  const [instagram, setInstagram] = useState((profile as any)?.instagram_handle || 'vitatribe_user');
-  const [tiktok, setTiktok] = useState((profile as any)?.tiktok_handle || 'vitatribe_user');
+  const [instagram, setInstagram] = useState((profile as any)?.instagram_handle || '');
+  const [tiktok, setTiktok] = useState((profile as any)?.tiktok_handle || '');
   const [updating, setUpdating] = useState(false);
   const [specialty, setSpecialty] = useState((profile as any)?.specialty || '');
   const [bio, setBio] = useState((profile as any)?.bio || '');
@@ -81,14 +82,18 @@ export default function Profile() {
         
         {/* Social Badges */}
         <View style={styles.socialRow}>
-          <TouchableOpacity style={styles.socialChip} onPress={() => Linking.openURL(`https://instagram.com/${instagram}`)}>
-            <Text style={styles.socialIcon}>📸</Text>
-            <Text style={styles.socialText}>@{instagram}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.socialChip} onPress={() => Linking.openURL(`https://tiktok.com/@${tiktok}`)}>
-            <Text style={styles.socialIcon}>🎵</Text>
-            <Text style={styles.socialText}>@{tiktok}</Text>
-          </TouchableOpacity>
+          {!!instagram && (
+            <TouchableOpacity style={styles.socialChip} onPress={() => Linking.openURL(`https://instagram.com/${instagram}`)}>
+              <Ionicons name="logo-instagram" size={16} color="#e1306c" />
+              <Text style={styles.socialText}>@{instagram}</Text>
+            </TouchableOpacity>
+          )}
+          {!!tiktok && (
+            <TouchableOpacity style={styles.socialChip} onPress={() => Linking.openURL(`https://tiktok.com/@${tiktok}`)}>
+              <Ionicons name="logo-tiktok" size={16} color="#fff" />
+              <Text style={styles.socialText}>@{tiktok}</Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         <TouchableOpacity style={styles.editBtn} onPress={() => {
@@ -221,15 +226,6 @@ export default function Profile() {
         <Text style={styles.menuBtnText}>{t('profile2.fasting')}</Text>
       </TouchableOpacity>
 
-      {/* Streak Store Link */}
-      <TouchableOpacity 
-        style={styles.menuBtn} 
-        onPress={() => router.push('/store' as any)}
-      >
-        <Text style={styles.menuBtnIcon}>🛡️</Text>
-        <Text style={styles.menuBtnText}>{t('profile2.store')}</Text>
-      </TouchableOpacity>
-
       {/* Appointments Link */}
       <TouchableOpacity 
         style={styles.menuBtn} 
@@ -346,7 +342,7 @@ export default function Profile() {
         <Text style={styles.deleteText}>{t('profile.delete_account')}</Text>
       </TouchableOpacity>
 
-      <Text style={styles.version}>VITATRIBE v1.0.5</Text>
+      <Text style={styles.version}>STREAKFIT v1.0.5</Text>
     </ScrollView>
   );
 }

@@ -16,6 +16,7 @@ import { checkContentModeration } from '../../lib/profanityFilter';
 import { reportUser } from '../../lib/blocking';
 import AdMobBanner from '../../components/AdMobBanner';
 import { isNetworkError } from '../../lib/useOnline';
+import { Ionicons } from '@expo/vector-icons';
 
 type PostItem = {
   id: string;
@@ -153,6 +154,11 @@ export default function Feed() {
     }
   };
 
+  const openProfile = (userId: string) => {
+    Haptics.selectionAsync();
+    router.push(`/user/${userId}` as any);
+  };
+
   const handleReportPost = (item: PostItem) => {
     if (!profile) return;
     Alert.alert(
@@ -238,12 +244,12 @@ export default function Feed() {
             <View style={styles.logoRow}>
               <View style={{flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1}}>
                 <View style={styles.logoBox}>
-                  <Text style={styles.logoLetter}>F</Text>
+                  <Text style={styles.logoLetter}>S</Text>
                 </View>
-                <Text style={styles.logoText}>VITA<Text style={{color: '#10b981'}}>TRIBE</Text></Text>
+                <Text style={styles.logoText}>STREAK<Text style={{color: '#10b981'}}>FIT</Text></Text>
               </View>
               <TouchableOpacity onPress={() => { Haptics.selectionAsync(); router.push('/messages' as any); }} style={styles.msgBtn}>
-                <Text style={styles.msgIcon}>💬</Text>
+                <Ionicons name="paper-plane-outline" size={20} color="#10b981" />
               </TouchableOpacity>
             </View>
             <Text style={styles.title}>{t('feed.title')}</Text>
@@ -291,17 +297,18 @@ export default function Feed() {
           </View>
         }
         renderItem={({ item, index }) => (
+          <>
           <Animated.View
             entering={FadeInDown.delay(index * 60).duration(350).springify()}
             style={styles.card}
           >
             <View style={styles.cardHeader}>
-              <View style={styles.avatar}>
+              <TouchableOpacity activeOpacity={0.7} onPress={() => openProfile(item.user_id)} style={styles.avatar}>
                 <Text style={styles.avatarText}>
                   {(item.profile?.display_name || item.profile?.username || '?')[0].toUpperCase()}
                 </Text>
-              </View>
-              <View style={{ flex: 1 }}>
+              </TouchableOpacity>
+              <TouchableOpacity activeOpacity={0.7} onPress={() => openProfile(item.user_id)} style={{ flex: 1 }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
                   <Text style={styles.userName}>
                     {item.profile?.display_name || item.profile?.username}
@@ -327,7 +334,7 @@ export default function Feed() {
                 <Text style={styles.userMeta}>
                   {format(parseISO(item.created_at), t('feed2.date_fmt'), { locale: dateLocale })}
                 </Text>
-              </View>
+              </TouchableOpacity>
               {item.user_id !== profile?.id && (
                 <TouchableOpacity
                   style={styles.reportBtn}
@@ -345,15 +352,21 @@ export default function Feed() {
                 style={styles.actionBtn}
                 onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); toggleLike(item); }}
               >
-                <Text style={styles.actionEmoji}>{item.user_liked ? '❤️' : '🤍'}</Text>
+                <Ionicons name={item.user_liked ? 'heart' : 'heart-outline'} size={20} color={item.user_liked ? '#ef4444' : '#888'} />
                 <Text style={[styles.actionCount, item.user_liked && styles.likeCountActive]}>
                   {item.like_count}
                 </Text>
               </TouchableOpacity>
               <View style={styles.actionBtn}>
-                <Text style={styles.actionEmoji}>💬</Text>
+                <Ionicons name="chatbubble-outline" size={19} color="#888" />
                 <Text style={styles.actionCount}>{item.comment_count}</Text>
               </View>
+              {item.user_id !== profile?.id && (
+                <TouchableOpacity style={styles.actionBtn} onPress={() => openProfile(item.user_id)}>
+                  <Ionicons name="paper-plane-outline" size={19} color="#888" />
+                  <Text style={styles.actionCount}>{t('userProfile.message')}</Text>
+                </TouchableOpacity>
+              )}
               <TouchableOpacity
                 style={styles.actionBtn}
                 onPress={() => {
@@ -363,11 +376,13 @@ export default function Feed() {
                   });
                 }}
               >
-                <Text style={styles.actionEmoji}>📸</Text>
+                <Ionicons name="share-social-outline" size={19} color="#888" />
                 <Text style={styles.actionCount}>{t('feed2.share_story')}</Text>
               </TouchableOpacity>
             </View>
           </Animated.View>
+          {(index + 1) % 4 === 0 && <AdMobBanner style={{ marginHorizontal: 16 }} />}
+          </>
         )}
       />
     </KeyboardAvoidingView>

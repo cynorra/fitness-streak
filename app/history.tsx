@@ -8,6 +8,7 @@ import { getDateLocale } from '../lib/i18n/dateUtils';
 import { displayWorkoutType } from '../lib/workoutTypes';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from '../lib/i18n/i18n';
+import AdMobBanner from '../components/AdMobBanner';
 
 export default function WorkoutHistory() {
   const { profile } = useAuth();
@@ -75,6 +76,8 @@ export default function WorkoutHistory() {
             ))}
           </View>
         ))}
+
+        <AdMobBanner />
 
         {workouts.length === 0 && (
           <View style={styles.empty}>

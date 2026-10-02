@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as Haptics from 'expo-haptics';
 import { useTranslation } from '../../lib/i18n/i18n';
+import AdMobBanner from '../../components/AdMobBanner';
 
 // Dummy Video Data - Mümkün olan en popüler ve ücretsiz Youtube videoları
 const WORKOUT_CATEGORIES = [
@@ -55,7 +56,7 @@ export default function WorkoutsScreen() {
       </View>
 
       <ScrollView style={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        {WORKOUT_CATEGORIES.map((category) => (
+        {WORKOUT_CATEGORIES.map((category, idx) => (
           <View key={category.id} style={styles.categoryContainer}>
             <Text style={styles.categoryTitle}>{t(`workouts.${category.titleKey}`)}</Text>
             
@@ -86,8 +87,10 @@ export default function WorkoutsScreen() {
                 </TouchableOpacity>
               ))}
             </ScrollView>
+            {idx === 0 && <AdMobBanner style={{ marginTop: 16, width: 'auto', marginHorizontal: 20 }} />}
           </View>
         ))}
+        <AdMobBanner style={{ marginHorizontal: 20, width: 'auto' }} />
         <View style={{ height: 100 }} />
       </ScrollView>
     </SafeAreaView>

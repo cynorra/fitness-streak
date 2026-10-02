@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import { supabase } from '../../lib/supabase';
 import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../lib/auth';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from '../../lib/i18n/i18n';
@@ -134,10 +135,10 @@ export default function Friends() {
             <View style={styles.logoBox}>
               <Text style={styles.logoLetter}>S</Text>
             </View>
-            <Text style={styles.logoText}>VITA<Text style={{color: '#10b981'}}>TRIBE</Text></Text>
+            <Text style={styles.logoText}>STREAK<Text style={{color: '#10b981'}}>FIT</Text></Text>
           </View>
           <TouchableOpacity onPress={() => router.push('/messages' as any)} style={styles.msgBtn}>
-            <Text style={styles.msgIcon}>💬</Text>
+            <Ionicons name="paper-plane-outline" size={20} color="#10b981" />
           </TouchableOpacity>
         </View>
         <Text style={styles.title}>{t('friends.title')}</Text>

@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "VitaTribe",
+    "name": "StreakFit",
     "slug": "vitatribe",
     "owner": "ernsmsr",
     "version": "1.0.5",
@@ -58,7 +58,7 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "VitaTribe uses your location while the app is open to measure your activities."
+          "locationWhenInUsePermission": "StreakFit uses your location while the app is open to measure your activities."
         }
       ],
       "expo-localization",

@@ -113,6 +113,15 @@ function RootLayoutNav() {
         }}
       />
 
+      {/* Kullanıcı profili: sağdan sola */}
+      <Stack.Screen
+        name="user/[id]"
+        options={{
+          animation: 'slide_from_right',
+          animationDuration: 300,
+        }}
+      />
+
       {/* Chat: sağdan sola */}
       <Stack.Screen
         name="chat/[id]"
@@ -165,16 +174,6 @@ function RootLayoutNav() {
         options={{
           animation: 'slide_from_right',
           animationDuration: 300,
-        }}
-      />
-
-      {/* Streak Mağazası: modal */}
-      <Stack.Screen
-        name="store"
-        options={{
-          presentation: 'modal',
-          animation: 'slide_from_bottom',
-          animationDuration: 380,
         }}
       />
 
