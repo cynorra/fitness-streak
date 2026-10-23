@@ -1,20 +1,14 @@
-import mobileAds, { AdsConsent, TestIds, InterstitialAd, AdEventType } from 'react-native-google-mobile-ads';
+import mobileAds, { AdsConsent, InterstitialAd, AdEventType } from 'react-native-google-mobile-ads';
 import { Platform } from 'react-native';
 
 export const ADMOB_CONFIG = {
-  BANNER_ID: __DEV__
-    ? TestIds.BANNER
-    : (process.env.EXPO_PUBLIC_ADMOB_BANNER_ID || 'ca-app-pub-4674211063760769/3783071528'),
-
-  INTERSTITIAL_ID: __DEV__
-    ? TestIds.INTERSTITIAL
-    : (process.env.EXPO_PUBLIC_ADMOB_INTERSTITIAL_ID || 'ca-app-pub-4674211063760769/1969570638'),
+  // Kesinlikle sadece sizin resmi AdMob birimleriniz:
+  BANNER_ID: process.env.EXPO_PUBLIC_ADMOB_BANNER_ID || 'ca-app-pub-4674211063760769/3783071528',
+  INTERSTITIAL_ID: process.env.EXPO_PUBLIC_ADMOB_INTERSTITIAL_ID || 'ca-app-pub-4674211063760769/1969570638',
 };
 
 /**
- * Tüm cihazlarda ve işletim sistemi sürümlerinde güvenli başlatma:
- * - UMP rıza diyaloğu (GDPR/KVKK)
- * - Arka planda sessizce SDK başlatma
+ * AdMob SDK başlatma
  */
 export async function initializeAds() {
   if (Platform.OS === 'web') return;
@@ -25,35 +19,28 @@ export async function initializeAds() {
       await mobileAds().initialize();
     }
   } catch (error) {
-    console.log('[AdMob] Consent akışı pas geçildi / fallback initialize:', error);
     try {
       await mobileAds().initialize();
     } catch (initError) {
-      console.log('[AdMob] Initialize hatası:', initError);
+      console.log('[AdMob] Init hatası:', initError);
     }
   }
 
-  // Uygulama açılışında interstitial'ı önceden belleğe hazırla
   loadInterstitialAd();
 }
 
 let interstitialAd: InterstitialAd | null = null;
 let isLoaded = false;
-let isFallbackActive = false;
 
 /**
- * Geçiş reklamını (Interstitial) yükler.
- * Canlı reklam hata verirse TestIds.INTERSTITIAL'a geçer (cihazda reklamın çıkmama şansını sıfıra indirir).
+ * Yalnızca resmi geçiş reklamınızı yükler.
  */
 export function loadInterstitialAd() {
   if (Platform.OS === 'web') return;
-
-  const activeId = isFallbackActive
-    ? TestIds.INTERSTITIAL
-    : (ADMOB_CONFIG.INTERSTITIAL_ID || TestIds.INTERSTITIAL);
+  if (!ADMOB_CONFIG.INTERSTITIAL_ID) return;
 
   try {
-    interstitialAd = InterstitialAd.createForAdRequest(activeId, {
+    interstitialAd = InterstitialAd.createForAdRequest(ADMOB_CONFIG.INTERSTITIAL_ID, {
       requestNonPersonalizedAdsOnly: true,
     });
 
@@ -68,21 +55,17 @@ export function loadInterstitialAd() {
 
     interstitialAd.addAdEventListener(AdEventType.ERROR, (error) => {
       isLoaded = false;
-      console.log(`[AdMob Interstitial] Hata (${activeId}):`, error?.message || error);
-      if (!isFallbackActive && activeId !== TestIds.INTERSTITIAL) {
-        isFallbackActive = true;
-        loadInterstitialAd();
-      }
+      console.log('[AdMob Interstitial] Hata:', error?.message || error);
     });
 
     interstitialAd.load();
   } catch (err) {
-    console.log('[AdMob] Interstitial create hatası:', err);
+    console.log('[AdMob] Interstitial oluşturma hatası:', err);
   }
 }
 
 /**
- * Antrenman bitişinde veya kritik aksiyonlarda geçiş reklamını güvenle gösterir.
+ * Sadece resmi geçiş reklamınızı gösterir.
  */
 export function showInterstitialAd() {
   if (Platform.OS === 'web') return;
@@ -91,10 +74,9 @@ export function showInterstitialAd() {
     if (interstitialAd && isLoaded) {
       interstitialAd.show();
     } else {
-      console.log('[AdMob] Interstitial henüz yüklenmedi, yeniden yükleme tetiklendi.');
       loadInterstitialAd();
     }
   } catch (error) {
-    console.log('[AdMob] Interstitial gösterim hatası:', error);
+    console.log('[AdMob] Interstitial gösterme hatası:', error);
   }
 }

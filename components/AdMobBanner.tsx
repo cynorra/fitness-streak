@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, ViewStyle, Platform, useWindowDimensions } from 'react-native';
-import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
+import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
 import { ADMOB_CONFIG } from '../lib/admob';
 
 interface AdMobBannerProps {
@@ -10,11 +10,11 @@ interface AdMobBannerProps {
 }
 
 /**
- * 2026+ Universal Adaptive Banner:
- * - ANCHORED_ADAPTIVE_BANNER boyutu küçük ekranlardan büyük tabletlere (Fold, Tablet, vb.)
- *   cihaz genişliğine göre pikseli otomatik hesaplar.
- * - Canlı reklam gelmezse veya onay/bölge gecikmesi olursa TestIds.BANNER devreye girer.
- * - Asla ekran düzenini kaydırmaz, taşma yapmaz (overflow hidden, responsive min-height).
+ * StreakFit Official AdMob Banner:
+ * - Yalnızca sizin resmi AdMob Reklam Biriminiz (ca-app-pub-4674211063760769/3783071528) çalışır.
+ * - TestIds kesinlikle gösterilmez.
+ * - Tüm cihazlara (telefon/tablet) otomatik uyum sağlayan ANCHORED_ADAPTIVE_BANNER kullanılır.
+ * - Reklam gelmediği anlarda ekran düzenini bozmaz (sessizce gizlenir, asla hata vermez).
  */
 export default function AdMobBanner({
   style,
@@ -24,20 +24,17 @@ export default function AdMobBanner({
   const { width } = useWindowDimensions();
   const [adLoaded, setAdLoaded] = useState(false);
   const [adFailed, setAdFailed] = useState(false);
-  const [useTestFallback, setUseTestFallback] = useState(false);
 
-  // Web'de veya iki deneme de başarısızsa render etme
   if (Platform.OS === 'web' || adFailed) {
     return null;
   }
 
-  const primaryUnitId = unitId || ADMOB_CONFIG.BANNER_ID;
-  const activeUnitId = useTestFallback ? TestIds.BANNER : primaryUnitId;
+  const adUnitId = unitId || ADMOB_CONFIG.BANNER_ID;
 
   return (
     <View style={[styles.container, { maxWidth: width }, style]}>
       <BannerAd
-        unitId={activeUnitId}
+        unitId={adUnitId}
         size={size}
         requestOptions={{
           requestNonPersonalizedAdsOnly: true,
@@ -46,13 +43,8 @@ export default function AdMobBanner({
           setAdLoaded(true);
         }}
         onAdFailedToLoad={(error) => {
-          console.log(`[AdMob Banner] Yüklenemedi (${activeUnitId}):`, error?.message || error);
-          if (!useTestFallback && activeUnitId !== TestIds.BANNER) {
-            // Canlı reklam envanteri henüz oluşmadıysa veya cihaz testi engelliyorsa test reklamına geç
-            setUseTestFallback(true);
-          } else {
-            setAdFailed(true);
-          }
+          console.log(`[AdMob Banner] (${adUnitId}):`, error?.message || error);
+          setAdFailed(true);
         }}
       />
     </View>
