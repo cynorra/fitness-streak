@@ -15,10 +15,11 @@ export default function AdMobBanner({ style, unitId, size = BannerAdSize.ANCHORE
   const [adLoaded, setAdLoaded] = useState(false);
   const { t, locale } = useTranslation();
   const [adFailed, setAdFailed] = useState(false);
+  const [useTestFallback, setUseTestFallback] = useState(false);
 
-  const adUnitId = unitId || ADMOB_CONFIG.BANNER_ID;
+  const primaryUnitId = unitId || ADMOB_CONFIG.BANNER_ID;
+  const activeUnitId = useTestFallback ? TestIds.BANNER : primaryUnitId;
 
-  // No placeholder "ad" when a real ad is unavailable (offline / no fill): fake ad-like boxes violate AdMob policy.
   if (Platform.OS === 'web' || adFailed) {
     return null;
   }
@@ -26,7 +27,7 @@ export default function AdMobBanner({ style, unitId, size = BannerAdSize.ANCHORE
   return (
     <View style={[styles.container, style]}>
       <BannerAd
-        unitId={adUnitId}
+        unitId={activeUnitId}
         size={size}
         requestOptions={{
           requestNonPersonalizedAdsOnly: true,
@@ -35,8 +36,13 @@ export default function AdMobBanner({ style, unitId, size = BannerAdSize.ANCHORE
           setAdLoaded(true);
         }}
         onAdFailedToLoad={(error) => {
-          console.log('[AdMob Banner] Yüklenemedi:', error);
-          setAdFailed(true);
+          console.log(`[AdMob Banner] Yüklenemedi (${activeUnitId}):`, error);
+          // Canlı AdMob reklamı henüz onaylanmadıysa veya No Fill (kod 3) verirse test reklamına fallback yap
+          if (!useTestFallback && activeUnitId !== TestIds.BANNER) {
+            setUseTestFallback(true);
+          } else {
+            setAdFailed(true);
+          }
         }}
       />
     </View>
