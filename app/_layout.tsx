@@ -12,13 +12,19 @@ import * as Notifications from 'expo-notifications';
 import { registerForPushNotificationsAsync, syncNotificationSchedules } from '../lib/notifications';
 import { initializeAds } from '../lib/admob';
 import OfflineBanner from '../components/OfflineBanner';
+import AnimatedSplashScreen from '../components/AnimatedSplashScreen';
 
-SplashScreen.preventAutoHideAsync();
+SplashScreen.preventAutoHideAsync().catch(() => {});
 
 function RootLayoutNav() {
   const { session, profile, loading, profileLoadFailed } = useAuth();
   const segments = useSegments();
   const router = useRouter();
+
+  // Hide the crude static native splash immediately so the animated splash displays smoothly
+  useEffect(() => {
+    SplashScreen.hideAsync().catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (loading) return;
@@ -34,8 +40,6 @@ function RootLayoutNav() {
         router.replace('/(tabs)');
       }
     }
-    
-    SplashScreen.hideAsync();
   }, [session, loading, segments, profile?.onboarding_completed]);
 
   // Register push + rebuild reminders once per login/role change (not on every navigation).
@@ -207,13 +211,23 @@ function RootLayoutNav() {
   );
 }
 
+function AppContent() {
+  const { loading } = useAuth();
+  return (
+    <>
+      <RootLayoutNav />
+      <OfflineBanner />
+      <AnimatedSplashScreen isReady={!loading} />
+    </>
+  );
+}
+
 export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <AuthProvider>
         <I18nProvider>
-          <RootLayoutNav />
-          <OfflineBanner />
+          <AppContent />
         </I18nProvider>
       </AuthProvider>
     </SafeAreaProvider>

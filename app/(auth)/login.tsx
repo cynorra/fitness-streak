@@ -21,7 +21,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { friendlyError } from '../../lib/useOnline';
 import AppIcon from '../../components/AppIcon';
 import AmbientBackground from '../../components/AmbientBackground';
-import StreakFlame from '../../components/StreakFlame';
+import StreakFitLogo from '../../components/StreakFitLogo';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -184,9 +184,9 @@ export default function Login() {
 
       <ScrollView contentContainerStyle={styles.scroll}>
         <View style={styles.brand}>
-          <StreakFlame size={72} />
+          <StreakFitLogo size={88} animated />
           <Text style={styles.title}>
-            STREAK<Text style={{ color: '#10b981' }}>FIT</Text>
+            STREAK<Text style={{ color: '#ff7a00' }}>FIT</Text>
           </Text>
           <Text style={styles.tagline}>{t('login.tagline')}</Text>
         </View>

@@ -20,6 +20,7 @@ import { useTranslation } from '../../lib/i18n/i18n';
 import { getDateLocale } from '../../lib/i18n/dateUtils';
 import { displayWorkoutType } from '../../lib/workoutTypes';
 import AnimatedStreakNumber from '../../components/AnimatedStreakNumber';
+import StreakFitLogo from '../../components/StreakFitLogo';
 import AdMobBanner from '../../components/AdMobBanner';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -133,22 +134,31 @@ export default function StreakHome() {
         <Animated.View entering={FadeInDown.duration(400).springify()} style={[styles.header, { paddingTop: insets.top + 20 }]}>
           <View style={styles.logoRow}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1 }}>
-              <View style={styles.logoBox}>
-                <Text style={styles.logoLetter}>S</Text>
-              </View>
+              <StreakFitLogo size={36} animated />
               <Text style={styles.logoText}>
-                STREAK<Text style={{ color: '#10b981' }}>FIT</Text>
+                STREAK<Text style={{ color: '#ff7a00' }}>FIT</Text>
               </Text>
             </View>
-            <TouchableOpacity
-              onPress={() => {
-                Haptics.selectionAsync();
-                router.push('/messages' as any);
-              }}
-              style={styles.msgBtn}
-            >
-              <Ionicons name="paper-plane-outline" size={20} color="#10b981" />
-            </TouchableOpacity>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+              <TouchableOpacity
+                onPress={() => {
+                  Haptics.selectionAsync();
+                  router.push('/(tabs)/notifications' as any);
+                }}
+                style={styles.msgBtn}
+              >
+                <Ionicons name="notifications-outline" size={20} color="#ff7a00" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  Haptics.selectionAsync();
+                  router.push('/messages' as any);
+                }}
+                style={styles.msgBtn}
+              >
+                <Ionicons name="paper-plane-outline" size={20} color="#ff7a00" />
+              </TouchableOpacity>
+            </View>
           </View>
           <Text style={styles.hello}>
             {t('common.hello')}, {profile?.display_name?.toUpperCase() || profile?.username?.toUpperCase()}
@@ -227,20 +237,50 @@ export default function StreakHome() {
           ))}
         </Animated.View>
 
-        {/* Stat Kartları */}
+        {/* 2026 Athletic Performance Widgets: Today's Focus & Quick Action */}
         <Animated.View
           entering={FadeInUp.delay(300).duration(450).springify()}
-          style={styles.statsRow}
+          style={styles.performanceRow}
         >
-          <GradientCard style={{ flex: 1 }} accent="#f97316" padding={20}>
-            <Ionicons name="trophy" size={18} color="#f97316" />
-            <Text style={styles.statValue}>{profile?.longest_streak ?? 0}</Text>
-            <Text style={styles.statLabel}>{t('dashboard.longest_streak')}</Text>
+          {/* Quick Workout Launcher */}
+          <GradientCard style={{ flex: 1.1 }} accent="#ff7a00" padding={18}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+              <View style={styles.badgePill}>
+                <View style={[styles.pulseDot, { backgroundColor: '#ff7a00' }]} />
+                <Text style={styles.badgePillText}>DAILY TARGET</Text>
+              </View>
+              <Ionicons name="flash" size={16} color="#ff7a00" />
+            </View>
+            <Text style={styles.targetTitle}>
+              {weekWorkouts.length > 0 ? `${weekWorkouts.length} Logged This Week` : '30 Min Target'}
+            </Text>
+            <Text style={styles.targetSub}>
+              {streak > 0 ? `${streak} Day Momentum Active` : 'Log workout to ignite streak'}
+            </Text>
+            <TouchableOpacity
+              style={styles.quickStartBtn}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                router.push('/log' as any);
+              }}
+            >
+              <Text style={styles.quickStartText}>+ QUICK LOG</Text>
+              <Ionicons name="arrow-forward" size={14} color="#000" />
+            </TouchableOpacity>
           </GradientCard>
-          <GradientCard style={{ flex: 1 }} accent="#6366f1" padding={20}>
-            <Ionicons name="barbell" size={18} color="#818cf8" />
-            <Text style={styles.statValue}>{weekWorkouts.length}</Text>
-            <Text style={styles.statLabel}>{t('dashboard.weekly_workouts')}</Text>
+
+          {/* Athletic Consistency / Record Dial */}
+          <GradientCard style={{ flex: 0.9 }} accent="#10b981" padding={18}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+              <Text style={styles.metricLabel}>BEST RECORD</Text>
+              <Ionicons name="trophy-outline" size={16} color="#10b981" />
+            </View>
+            <Text style={styles.metricBigNum}>{profile?.longest_streak ?? 0}</Text>
+            <Text style={styles.metricUnit}>DAYS PEAK</Text>
+            <View style={styles.metricDivider} />
+            <Text style={styles.metricSub}>
+              {weekWorkouts.length} sessions in last 7 days
+            </Text>
           </GradientCard>
         </Animated.View>
 
@@ -455,6 +495,19 @@ const styles = StyleSheet.create({
   },
   checkmark: { color: '#fff', fontWeight: '900', fontSize: 18 },
   dayNum: { color: '#666', fontSize: 10, fontWeight: '900', marginTop: 6 },
+  performanceRow: { flexDirection: 'row', paddingHorizontal: 16, gap: 12, marginBottom: 28 },
+  badgePill: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(255,122,0,0.12)', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12 },
+  pulseDot: { width: 5, height: 5, borderRadius: 2.5 },
+  badgePillText: { color: '#ff7a00', fontSize: 9, fontWeight: '800', letterSpacing: 1 },
+  targetTitle: { color: '#ffffff', fontSize: 16, fontWeight: '900', letterSpacing: -0.5, marginBottom: 4 },
+  targetSub: { color: '#78716c', fontSize: 11, fontWeight: '600', marginBottom: 14, lineHeight: 15 },
+  quickStartBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, backgroundColor: '#ff7a00', paddingVertical: 9, paddingHorizontal: 12, borderRadius: 12 },
+  quickStartText: { color: '#000000', fontSize: 11, fontWeight: '900', letterSpacing: 0.5 },
+  metricLabel: { color: '#64748b', fontSize: 9, fontWeight: '800', letterSpacing: 1.5, textTransform: 'uppercase' },
+  metricBigNum: { color: '#10b981', fontSize: 32, fontWeight: '900', letterSpacing: -1.5, marginTop: 4, fontVariant: ['tabular-nums'] },
+  metricUnit: { color: '#94a3b8', fontSize: 9, fontWeight: '800', letterSpacing: 1, textTransform: 'uppercase' },
+  metricDivider: { height: 1, backgroundColor: 'rgba(255,255,255,0.06)', marginVertical: 8 },
+  metricSub: { color: '#64748b', fontSize: 10, fontWeight: '600', lineHeight: 14 },
   statsRow: { flexDirection: 'row', paddingHorizontal: 16, gap: 12, marginBottom: 32 },
   statValue: { color: '#fff', fontSize: 36, fontWeight: '900', letterSpacing: -2, marginTop: 6 },
   statLabel: { color: '#6b7280', fontSize: 9, fontWeight: '900', marginTop: 4, textTransform: 'uppercase', letterSpacing: 1.5 },

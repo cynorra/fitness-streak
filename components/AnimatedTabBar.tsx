@@ -16,12 +16,11 @@ import { useTranslation } from '../lib/i18n/i18n';
 type IconName = React.ComponentProps<typeof Ionicons>['name'];
 
 const TABS: { name: string; icon: IconName; iconActive: IconName }[] = [
-  { name: 'index',         icon: 'flame-outline',         iconActive: 'flame' },
-  { name: 'workouts',      icon: 'compass-outline',       iconActive: 'compass' },
-  { name: 'feed',          icon: 'newspaper-outline',     iconActive: 'newspaper' },
-  { name: 'notifications', icon: 'notifications-outline', iconActive: 'notifications' },
-  { name: 'friends',       icon: 'people-outline',        iconActive: 'people' },
-  { name: 'profile',       icon: 'person-outline',        iconActive: 'person' },
+  { name: 'index',    icon: 'flame-outline',     iconActive: 'flame' },
+  { name: 'workouts', icon: 'compass-outline',   iconActive: 'compass' },
+  { name: 'feed',     icon: 'newspaper-outline', iconActive: 'newspaper' },
+  { name: 'friends',  icon: 'people-outline',    iconActive: 'people' },
+  { name: 'profile',  icon: 'person-outline',    iconActive: 'person' },
 ];
 
 const BAR_PADDING = 6;
@@ -56,8 +55,8 @@ function TabButton({ tab, isActive, onPress }: { tab: typeof TABS[0]; isActive: 
       <Animated.View style={iconStyle}>
         <Ionicons
           name={isActive ? tab.iconActive : tab.icon}
-          size={23}
-          color={isActive ? '#34d399' : '#7b8494'}
+          size={22}
+          color={isActive ? '#ff7a00' : '#64748b'}
         />
       </Animated.View>
       <Animated.Text numberOfLines={1} style={[styles.label, labelStyle, isActive && styles.labelActive]}>
@@ -131,13 +130,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#050607',
   },
   bar: {
-    borderRadius: 30,
+    borderRadius: 28,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.09)',
+    borderColor: 'rgba(255,255,255,0.08)',
     padding: BAR_PADDING,
-    shadowColor: '#10b981',
-    shadowOpacity: 0.25,
-    shadowRadius: 20,
+    shadowColor: '#ff7a00',
+    shadowOpacity: 0.22,
+    shadowRadius: 18,
     shadowOffset: { width: 0, height: 6 },
     elevation: 12,
   },
@@ -150,11 +149,12 @@ const styles = StyleSheet.create({
   },
   pillFill: {
     flex: 1,
-    borderRadius: 24,
+    borderRadius: 22,
     borderWidth: 1,
-    borderColor: 'rgba(52,211,153,0.35)',
+    borderColor: 'rgba(255,122,0,0.35)',
+    backgroundColor: 'rgba(255,122,0,0.08)',
   },
-  tabItem: { flex: 1, alignItems: 'center', gap: 3, paddingVertical: 9 },
-  label: { fontSize: 9.5, fontWeight: '800', color: '#7b8494', letterSpacing: 0.3 },
-  labelActive: { color: '#34d399' },
+  tabItem: { flex: 1, alignItems: 'center', gap: 3, paddingVertical: 8 },
+  label: { fontSize: 10, fontWeight: '700', color: '#64748b', letterSpacing: 0.3 },
+  labelActive: { color: '#ff7a00', fontWeight: '900' },
 });

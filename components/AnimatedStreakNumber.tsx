@@ -7,52 +7,61 @@ import Animated, {
   withRepeat,
   withSequence,
   Easing,
-  interpolate,
 } from 'react-native-reanimated';
 import { StyleSheet, Text, View } from 'react-native';
+import Svg, { Circle, Path, Defs, RadialGradient, Stop } from 'react-native-svg';
 import { useTranslation } from '../lib/i18n/i18n';
+import StreakFitLogo from './StreakFitLogo';
 
 interface AnimatedStreakNumberProps {
   streak: number;
-  emoji?: string;
 }
 
 /**
- * Streak sayısını animasyonlu olarak gösteren bileşen.
- * - Ekrana gelince büyüyerek belirir (scale spring)
- * - Emoji sürekli pulse atar
- * - Glow efekti var
+ * 2026+ Performance Sports Dial & Flame Streak Counter:
+ * - Orijinal StreakFit alev amblemi ve dinamik enerji arkı
+ * - Sayı kadranı, zümrüt/amber kor ışıması
+ * - Çocuksu yaprak veya rastgele emojiler yerine elit performans kadranı
  */
-export default function AnimatedStreakNumber({ streak, emoji = '🌱' }: AnimatedStreakNumberProps) {
+export default function AnimatedStreakNumber({ streak }: AnimatedStreakNumberProps) {
   const { t } = useTranslation();
-  const scale = useSharedValue(0.5);
+  const scale = useSharedValue(0.7);
   const opacity = useSharedValue(0);
-  const emojiScale = useSharedValue(1);
-  const glowOpacity = useSharedValue(0.05);
+  const flamePulse = useSharedValue(1);
+  const ringRotate = useSharedValue(0);
+  const glowPulse = useSharedValue(0.3);
+
+  const isActive = streak > 0;
+  const accentColor = streak >= 30 ? '#eab308' : streak >= 7 ? '#ff6b00' : '#10b981';
 
   useEffect(() => {
-    // Sayı giriş animasyonu
-    scale.value = withSpring(1, { damping: 12, stiffness: 150 });
-    opacity.value = withTiming(1, { duration: 400, easing: Easing.out(Easing.cubic) });
+    scale.value = withSpring(1, { damping: 11, stiffness: 120 });
+    opacity.value = withTiming(1, { duration: 450, easing: Easing.out(Easing.cubic) });
 
-    // Emoji pulse — sonsuz döngü
-    emojiScale.value = withRepeat(
-      withSequence(
-        withTiming(1.12, { duration: 900, easing: Easing.inOut(Easing.sin) }),
-        withTiming(1.0, { duration: 900, easing: Easing.inOut(Easing.sin) })
-      ),
+    // Enerji halkası yavaşça dönsün
+    ringRotate.value = withRepeat(
+      withTiming(360, { duration: 16000, easing: Easing.linear }),
       -1,
       false
     );
 
-    // Glow pulse
-    glowOpacity.value = withRepeat(
+    // Alev ve kor nefes alışı
+    flamePulse.value = withRepeat(
       withSequence(
-        withTiming(0.18, { duration: 1200, easing: Easing.inOut(Easing.sin) }),
-        withTiming(0.05, { duration: 1200, easing: Easing.inOut(Easing.sin) })
+        withTiming(1.08, { duration: 900, easing: Easing.inOut(Easing.ease) }),
+        withTiming(1.0, { duration: 900, easing: Easing.inOut(Easing.ease) })
       ),
       -1,
-      false
+      true
+    );
+
+    glowPulse.value = withRepeat(
+      withSequence(
+        withTiming(0.75, { duration: 1200, easing: Easing.inOut(Easing.ease) }),
+        withTiming(0.25, { duration: 1200, easing: Easing.inOut(Easing.ease) })
+      ),
+      -1,
+      true
     );
   }, [streak]);
 
@@ -61,32 +70,77 @@ export default function AnimatedStreakNumber({ streak, emoji = '🌱' }: Animate
     transform: [{ scale: scale.value }],
   }));
 
-  const emojiStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: emojiScale.value }],
+  const ringStyle = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${ringRotate.value}deg` }],
   }));
 
   const glowStyle = useAnimatedStyle(() => ({
-    opacity: glowOpacity.value,
+    opacity: glowPulse.value,
+  }));
+
+  const flameAnimStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: flamePulse.value }],
   }));
 
   return (
     <View style={styles.container}>
-      {/* Glow arka planı */}
-      <Animated.View style={[styles.glow, glowStyle]} />
+      {/* Radial Glow Arkası */}
+      <Animated.View style={[styles.glowWrap, glowStyle]}>
+        <Svg width={260} height={260}>
+          <Defs>
+            <RadialGradient id="dialGlow" cx="50%" cy="50%" r="50%">
+              <Stop offset="0" stopColor={accentColor} stopOpacity="0.4" />
+              <Stop offset="0.6" stopColor={accentColor} stopOpacity="0.1" />
+              <Stop offset="1" stopColor="transparent" stopOpacity="0" />
+            </RadialGradient>
+          </Defs>
+          <Circle cx={130} cy={130} r={130} fill="url(#dialGlow)" />
+        </Svg>
+      </Animated.View>
 
-      {/* Emoji */}
-      <Animated.Text style={[styles.emoji, emojiStyle]}>
-        {streak >= 100 ? '💎' : streak >= 30 ? '🏆' : streak >= 7 ? '🔥' : emoji}
-      </Animated.Text>
+      {/* Dönen Enerji Arkı (Sport Circular Arc) */}
+      <Animated.View style={[styles.arcWrap, ringStyle]}>
+        <Svg width={230} height={230} viewBox="0 0 100 100">
+          {/* Arka plan sönük iz */}
+          <Circle
+            cx="50"
+            cy="50"
+            r="44"
+            stroke="rgba(255,255,255,0.06)"
+            strokeWidth="3.5"
+            fill="none"
+          />
+          {/* Aktif enerji segmenti */}
+          <Circle
+            cx="50"
+            cy="50"
+            r="44"
+            stroke={accentColor}
+            strokeWidth="3.5"
+            strokeDasharray="70 200"
+            strokeLinecap="round"
+            fill="none"
+          />
+        </Svg>
+      </Animated.View>
 
-      {/* Sayı */}
-      <Animated.Text style={[styles.number, numberStyle]}>
+      {/* Orijinal Alev Amblemi / Logo S */}
+      <Animated.View style={[styles.logoCenter, flameAnimStyle]}>
+        <StreakFitLogo size={68} animated style={{ opacity: isActive ? 1 : 0.85 }} />
+      </Animated.View>
+
+      {/* Büyük Sayı */}
+      <Animated.Text style={[styles.number, { color: accentColor }, numberStyle]}>
         {streak}
       </Animated.Text>
 
-      <Text style={styles.label}>
-        {t('streakNumber.label')}
-      </Text>
+      {/* Metin Etiketi */}
+      <View style={styles.badgeRow}>
+        <View style={[styles.dot, { backgroundColor: accentColor }]} />
+        <Text style={styles.label}>
+          {streak === 0 ? 'START YOUR STREAK' : t('streakNumber.label')}
+        </Text>
+      </View>
     </View>
   );
 }
@@ -94,35 +148,47 @@ export default function AnimatedStreakNumber({ streak, emoji = '🌱' }: Animate
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
+    justifyContent: 'center',
     position: 'relative',
-    paddingVertical: 8,
+    paddingVertical: 12,
   },
-  glow: {
+  glowWrap: {
     position: 'absolute',
-    width: 180,
-    height: 180,
-    borderRadius: 90,
-    backgroundColor: '#10b981',
-    top: -20,
+    pointerEvents: 'none',
   },
-  emoji: {
-    fontSize: 80,
-    zIndex: 1,
-    marginBottom: 4,
+  arcWrap: {
+    position: 'absolute',
+    pointerEvents: 'none',
+  },
+  logoCenter: {
+    marginBottom: 6,
+    zIndex: 2,
   },
   number: {
-    fontSize: 112,
+    fontSize: 88,
     fontWeight: '900',
-    color: '#10b981',
-    letterSpacing: -6,
-    lineHeight: 112,
-    zIndex: 1,
+    letterSpacing: -4,
+    lineHeight: 90,
+    zIndex: 2,
+    fontVariant: ['tabular-nums'],
+  },
+  badgeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 6,
+    zIndex: 2,
+  },
+  dot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
   },
   label: {
-    color: '#555',
-    fontSize: 10,
-    fontWeight: '900',
+    color: '#94a3b8',
+    fontSize: 11,
+    fontWeight: '800',
     letterSpacing: 3,
-    marginTop: 4,
+    textTransform: 'uppercase',
   },
 });
