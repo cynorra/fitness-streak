@@ -211,14 +211,19 @@ function RootLayoutNav() {
   );
 }
 
+const MAX_CONTENT_WIDTH = 720;
+
 function AppContent() {
   const { loading } = useAuth();
   return (
-    <>
-      <RootLayoutNav />
+    <View style={{ flex: 1, backgroundColor: '#050607' }}>
+      {/* Tablet/large screens: keep a centered phone-width column instead of stretching layouts */}
+      <View style={{ flex: 1, width: '100%', maxWidth: MAX_CONTENT_WIDTH, alignSelf: 'center' }}>
+        <RootLayoutNav />
+      </View>
       <OfflineBanner />
       <AnimatedSplashScreen isReady={!loading} />
-    </>
+    </View>
   );
 }
 
