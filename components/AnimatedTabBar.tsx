@@ -65,7 +65,7 @@ function TabButton({ tab, isActive, onPress }: { tab: typeof TABS[0]; isActive: 
           <Ionicons
             name={isActive ? tab.iconActive : tab.icon}
             size={22}
-            color={isActive ? '#ff7a00' : '#64748b'}
+            color={isActive ? '#10b981' : '#64748b'}
           />
         )}
       </Animated.View>
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.08)',
     padding: BAR_PADDING,
-    shadowColor: '#ff7a00',
+    shadowColor: '#10b981',
     shadowOpacity: 0.22,
     shadowRadius: 18,
     shadowOffset: { width: 0, height: 6 },
@@ -167,5 +167,5 @@ const styles = StyleSheet.create({
   },
   tabItem: { flex: 1, alignItems: 'center', gap: 3, paddingVertical: 8 },
   label: { fontSize: 10, fontWeight: '700', color: '#64748b', letterSpacing: 0.3 },
-  labelActive: { color: '#ff7a00', fontWeight: '900' },
+  labelActive: { color: '#10b981', fontWeight: '900' },
 });

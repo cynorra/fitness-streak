@@ -113,11 +113,11 @@ export default function AnimatedSplashScreen({ isReady, onAnimationComplete }: P
     <Animated.View style={[StyleSheet.absoluteFill, styles.container, containerAnim]}>
       {/* Premium Obsidian Gradient */}
       <LinearGradient
-        colors={['#0a0807', '#050404', '#000000']}
+        colors={['#031a2e', '#010E24', '#00060f']}
         style={StyleSheet.absoluteFill}
       />
 
-      {/* Warm Fire Glow behind the logo */}
+      {/* Emerald glow behind the logo */}
       <Animated.View
         style={[
           styles.fireAura,
@@ -132,7 +132,7 @@ export default function AnimatedSplashScreen({ isReady, onAnimationComplete }: P
 
       {/* Center Brand Identity */}
       <View style={styles.centerBox}>
-        {/* Real App Icon - Flame S */}
+        {/* Real App Icon - D + flame-leaf */}
         <Animated.View style={[styles.logoCard, logoAnim]}>
           <Image
             source={require('../assets/icon.png')}
@@ -174,14 +174,14 @@ const styles = StyleSheet.create({
   },
   fireAura: {
     position: 'absolute',
-    backgroundColor: 'rgba(255, 107, 0, 0.28)',
-    shadowColor: '#ff6b00',
+    backgroundColor: 'rgba(16, 185, 129, 0.28)',
+    shadowColor: '#10b981',
     shadowOpacity: 0.9,
     shadowRadius: 50,
     elevation: 30,
   },
   logoCard: {
-    shadowColor: '#ff6b00',
+    shadowColor: '#10b981',
     shadowOffset: { width: 0, height: 12 },
     shadowOpacity: 0.55,
     shadowRadius: 30,
@@ -201,13 +201,13 @@ const styles = StyleSheet.create({
     letterSpacing: 2,
   },
   titleFit: {
-    color: '#ff7a00',
+    color: '#10b981',
     fontSize: 26,
     fontWeight: '900',
     letterSpacing: 2,
   },
   tagline: {
-    color: '#fb923c',
+    color: '#34d399',
     fontSize: 11,
     fontWeight: '800',
     letterSpacing: 2,
@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: '#ff7a00',
+    backgroundColor: '#10b981',
   },
   footerText: {
     color: '#78716c',
