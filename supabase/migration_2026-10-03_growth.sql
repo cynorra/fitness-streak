@@ -71,8 +71,8 @@ begin
   loop
     perform public.send_expo_push(
       p_user,
-      '🎉 VitaTribe', 'Meydan okumayı tamamladın: ' || r.title,
-      '🎉 VitaTribe', 'You completed the challenge: ' || r.title,
+      '🎉 DietitianFit', 'Meydan okumayı tamamladın: ' || r.title,
+      '🎉 DietitianFit', 'You completed the challenge: ' || r.title,
       'challenges'
     );
   end loop;
@@ -252,8 +252,8 @@ begin
   select coalesce(display_name, username, '') into v_name from public.profiles where id = auth.uid();
   perform public.send_expo_push(
     v_referrer,
-    '🤝 VitaTribe', v_name || ' davetinle katıldı!',
-    '🤝 VitaTribe', v_name || ' joined with your invite!',
+    '🤝 DietitianFit', v_name || ' davetinle katıldı!',
+    '🤝 DietitianFit', v_name || ' joined with your invite!',
     '(tabs)/profile'
   );
   return 'ok';

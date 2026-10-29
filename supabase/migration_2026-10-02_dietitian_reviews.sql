@@ -108,8 +108,8 @@ begin
   select coalesce(display_name, username, '') into v_name from public.profiles where id = new.client_id;
   perform public.send_expo_push(
     new.dietitian_id,
-    'VitaTribe ⭐', v_name || ' sana ' || new.rating || ' yıldız verdi',
-    'VitaTribe ⭐', v_name || ' rated you ' || new.rating || ' stars',
+    'DietitianFit ⭐', v_name || ' sana ' || new.rating || ' yıldız verdi',
+    'DietitianFit ⭐', v_name || ' rated you ' || new.rating || ' stars',
     'dietitian/clients'
   );
   return new;

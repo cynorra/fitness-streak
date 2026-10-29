@@ -61,15 +61,15 @@ begin
   select coalesce(display_name, username, '') into v_name from public.profiles where id = new.actor_id;
 
   if new.type = 'like' then
-    perform public.send_expo_push(new.user_id, 'VitaTribe', v_name || ' gönderini beğendi ❤️', 'VitaTribe', v_name || ' liked your post ❤️', '(tabs)/notifications');
+    perform public.send_expo_push(new.user_id, 'DietitianFit', v_name || ' gönderini beğendi ❤️', 'DietitianFit', v_name || ' liked your post ❤️', '(tabs)/notifications');
   elsif new.type = 'comment' then
-    perform public.send_expo_push(new.user_id, 'VitaTribe', v_name || ' gönderine yorum yaptı 💬', 'VitaTribe', v_name || ' commented on your post 💬', '(tabs)/notifications');
+    perform public.send_expo_push(new.user_id, 'DietitianFit', v_name || ' gönderine yorum yaptı 💬', 'DietitianFit', v_name || ' commented on your post 💬', '(tabs)/notifications');
   elsif new.type = 'repost' then
-    perform public.send_expo_push(new.user_id, 'VitaTribe', v_name || ' gönderini paylaştı 🔄', 'VitaTribe', v_name || ' reposted your post 🔄', '(tabs)/notifications');
+    perform public.send_expo_push(new.user_id, 'DietitianFit', v_name || ' gönderini paylaştı 🔄', 'DietitianFit', v_name || ' reposted your post 🔄', '(tabs)/notifications');
   elsif new.type = 'dietitian_request' then
-    perform public.send_expo_push(new.user_id, 'VitaTribe 🥗', v_name || ' seninle çalışmak istiyor', 'VitaTribe 🥗', v_name || ' wants to work with you', 'dietitian/clients');
+    perform public.send_expo_push(new.user_id, 'DietitianFit 🥗', v_name || ' seninle çalışmak istiyor', 'DietitianFit 🥗', v_name || ' wants to work with you', 'dietitian/clients');
   elsif new.type = 'dietitian_approved' then
-    perform public.send_expo_push(new.user_id, 'VitaTribe 🥗', v_name || ' talebini onayladı ✅', 'VitaTribe 🥗', v_name || ' approved your request ✅', '(tabs)/notifications');
+    perform public.send_expo_push(new.user_id, 'DietitianFit 🥗', v_name || ' talebini onayladı ✅', 'DietitianFit 🥗', v_name || ' approved your request ✅', '(tabs)/notifications');
   end if;
   return new;
 end;

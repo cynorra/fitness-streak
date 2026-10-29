@@ -1,4 +1,4 @@
--- Appointments become usable (create / confirm / cancel) + StreakFit push branding. Idempotent.
+-- Appointments become usable (create / confirm / cancel) + DietitianFit push branding. Idempotent.
 
 -- 1. Participants may update an appointment (confirm / cancel / complete).
 drop policy if exists "Randevu guncelle" on public.appointments;
@@ -40,15 +40,15 @@ begin
 
   if tg_op = 'INSERT' then
     if new.status = 'pending' then
-      perform public.send_expo_push(v_target, 'StreakFit 📅', v_name || ' ' || v_when_tr || ' için randevu istedi', 'StreakFit 📅', v_name || ' requested an appointment for ' || v_when_en, 'appointments');
+      perform public.send_expo_push(v_target, 'DietitianFit 📅', v_name || ' ' || v_when_tr || ' için randevu istedi', 'DietitianFit 📅', v_name || ' requested an appointment for ' || v_when_en, 'appointments');
     else
-      perform public.send_expo_push(v_target, 'StreakFit 📅', v_name || ' seninle ' || v_when_tr || ' için randevu oluşturdu', 'StreakFit 📅', v_name || ' booked an appointment with you for ' || v_when_en, 'appointments');
+      perform public.send_expo_push(v_target, 'DietitianFit 📅', v_name || ' seninle ' || v_when_tr || ' için randevu oluşturdu', 'DietitianFit 📅', v_name || ' booked an appointment with you for ' || v_when_en, 'appointments');
     end if;
   elsif tg_op = 'UPDATE' and new.status is distinct from old.status then
     if new.status = 'confirmed' then
-      perform public.send_expo_push(v_target, 'StreakFit 📅', v_name || ' randevunu onayladı (' || v_when_tr || ')', 'StreakFit 📅', v_name || ' confirmed your appointment (' || v_when_en || ')', 'appointments');
+      perform public.send_expo_push(v_target, 'DietitianFit 📅', v_name || ' randevunu onayladı (' || v_when_tr || ')', 'DietitianFit 📅', v_name || ' confirmed your appointment (' || v_when_en || ')', 'appointments');
     elsif new.status = 'cancelled' then
-      perform public.send_expo_push(v_target, 'StreakFit 📅', v_name || ' randevuyu iptal etti (' || v_when_tr || ')', 'StreakFit 📅', v_name || ' cancelled the appointment (' || v_when_en || ')', 'appointments');
+      perform public.send_expo_push(v_target, 'DietitianFit 📅', v_name || ' randevuyu iptal etti (' || v_when_tr || ')', 'DietitianFit 📅', v_name || ' cancelled the appointment (' || v_when_en || ')', 'appointments');
     end if;
   end if;
   return new;
@@ -60,7 +60,7 @@ create trigger trg_push_on_appointment
 after insert or update on public.appointments
 for each row execute function public.push_on_appointment();
 
--- 4. Rebrand the in-app-notification pushes (VitaTribe -> StreakFit).
+-- 4. Rebrand the in-app-notification pushes (DietitianFit -> DietitianFit).
 create or replace function public.push_on_notification()
 returns trigger
 language plpgsql
@@ -73,15 +73,15 @@ begin
   select coalesce(display_name, username, '') into v_name from public.profiles where id = new.actor_id;
 
   if new.type = 'like' then
-    perform public.send_expo_push(new.user_id, 'StreakFit', v_name || ' gönderini beğendi ❤️', 'StreakFit', v_name || ' liked your post ❤️', '(tabs)/notifications');
+    perform public.send_expo_push(new.user_id, 'DietitianFit', v_name || ' gönderini beğendi ❤️', 'DietitianFit', v_name || ' liked your post ❤️', '(tabs)/notifications');
   elsif new.type = 'comment' then
-    perform public.send_expo_push(new.user_id, 'StreakFit', v_name || ' gönderine yorum yaptı 💬', 'StreakFit', v_name || ' commented on your post 💬', '(tabs)/notifications');
+    perform public.send_expo_push(new.user_id, 'DietitianFit', v_name || ' gönderine yorum yaptı 💬', 'DietitianFit', v_name || ' commented on your post 💬', '(tabs)/notifications');
   elsif new.type = 'repost' then
-    perform public.send_expo_push(new.user_id, 'StreakFit', v_name || ' gönderini paylaştı 🔄', 'StreakFit', v_name || ' reposted your post 🔄', '(tabs)/notifications');
+    perform public.send_expo_push(new.user_id, 'DietitianFit', v_name || ' gönderini paylaştı 🔄', 'DietitianFit', v_name || ' reposted your post 🔄', '(tabs)/notifications');
   elsif new.type = 'dietitian_request' then
-    perform public.send_expo_push(new.user_id, 'StreakFit 🥗', v_name || ' seninle çalışmak istiyor', 'StreakFit 🥗', v_name || ' wants to work with you', 'dietitian/clients');
+    perform public.send_expo_push(new.user_id, 'DietitianFit 🥗', v_name || ' seninle çalışmak istiyor', 'DietitianFit 🥗', v_name || ' wants to work with you', 'dietitian/clients');
   elsif new.type = 'dietitian_approved' then
-    perform public.send_expo_push(new.user_id, 'StreakFit 🥗', v_name || ' talebini onayladı ✅', 'StreakFit 🥗', v_name || ' approved your request ✅', '(tabs)/notifications');
+    perform public.send_expo_push(new.user_id, 'DietitianFit 🥗', v_name || ' talebini onayladı ✅', 'DietitianFit 🥗', v_name || ' approved your request ✅', '(tabs)/notifications');
   end if;
   return new;
 end;
