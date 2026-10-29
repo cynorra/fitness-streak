@@ -9,6 +9,7 @@ export default function TabsLayout() {
     >
       <Tabs.Screen name="index" />
       <Tabs.Screen name="workouts" />
+      <Tabs.Screen name="dietitians" />
       <Tabs.Screen name="feed" />
       <Tabs.Screen name="notifications" />
       <Tabs.Screen name="friends" />

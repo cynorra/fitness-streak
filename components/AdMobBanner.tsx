@@ -10,7 +10,7 @@ interface AdMobBannerProps {
 }
 
 /**
- * StreakFit Official AdMob Banner:
+ * DietitianFit Official AdMob Banner:
  * - Yalnızca sizin resmi AdMob Reklam Biriminiz (ca-app-pub-4674211063760769/3783071528) çalışır.
  * - TestIds kesinlikle gösterilmez.
  * - Tüm cihazlara (telefon/tablet) otomatik uyum sağlayan ANCHORED_ADAPTIVE_BANNER kullanılır.

@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "StreakFit",
+    "name": "DietitianFit",
     "slug": "vitatribe",
     "scheme": "vitatribe",
     "owner": "ernsmsr",
     "version": "1.0.9",
-    "description": "Share workout & diet streaks with friends and dietitians, track habits & stay motivated!",
+    "description": "Book real dietitians, follow diet plans, track workouts & streaks with friends.",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
@@ -59,7 +59,7 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "StreakFit uses your location while the app is open to measure your activities."
+          "locationWhenInUsePermission": "DietitianFit uses your location while the app is open to measure your activities."
         }
       ],
       "expo-localization",

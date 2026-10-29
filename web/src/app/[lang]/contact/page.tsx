@@ -33,7 +33,7 @@ export default async function ContactPage({ params }: Props) {
       <div className="max-w-3xl mx-auto bg-emerald-500 text-white rounded-[3rem] p-12 text-center relative overflow-hidden shadow-2xl shadow-emerald-500/20">
          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
          <h2 className="text-3xl md:text-5xl font-black mb-4 relative z-10">Bize Katıl!</h2>
-         <p className="text-zinc-400 dark:text-zinc-500 font-bold mb-0 relative z-10 text-white/80">VitaTribe topluluğunu beraber büyütelim.</p>
+         <p className="text-zinc-400 dark:text-zinc-500 font-bold mb-0 relative z-10 text-white/80">DietitianFit topluluğunu beraber büyütelim.</p>
         </div>
       </main>
       <Footer lang={lang} />

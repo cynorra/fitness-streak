@@ -16,7 +16,7 @@ export const feed2 = {
     badge_pro: '🏆 Pro Sporcu',
     badge_member: '💪 Üye',
     date_fmt: 'd MMM HH:mm',
-    share_msg: '🔥 StreakFit Spor Serisi Paylaşımı: "{{content}}" - Sen de katıl! #StreakFit #Fitness #Diyet',
+    share_msg: '🔥 DietitianFit Spor Serisi Paylaşımı: "{{content}}" - Sen de katıl! #DietitianFit #Fitness #Diyet',
     share_story: 'Hikayede Paylaş',
   },
   en: {
@@ -36,7 +36,7 @@ export const feed2 = {
     badge_pro: '🏆 Pro Athlete',
     badge_member: '💪 Member',
     date_fmt: 'MMM d, HH:mm',
-    share_msg: '🔥 StreakFit workout streak: "{{content}}" - Join me! #StreakFit #Fitness #Diet',
+    share_msg: '🔥 DietitianFit workout streak: "{{content}}" - Join me! #DietitianFit #Fitness #Diet',
     share_story: 'Share to Story',
   },
 };

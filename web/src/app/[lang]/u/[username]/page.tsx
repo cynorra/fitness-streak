@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: { params: Promise<{ username:
     .eq('username', username)
     .single()
 
-  if (!profile) return { title: 'Kullanıcı Bulunamadı | VitaTribe' }
+  if (!profile) return { title: 'Kullanıcı Bulunamadı | DietitianFit' }
 
   const name = profile.display_name || profile.username
   const streak = profile.current_streak || 0
@@ -41,7 +41,7 @@ export async function generateMetadata({ params }: { params: Promise<{ username:
   return {
     metadataBase: new URL(BASE_URL),
     title: `${name} (@${profile.username}) | ${streak} Günlük Seri`,
-    description: profile.bio || `${name} kullanıcısının fitness profilini ve antrenman serisini VitaTribe üzerinde takip et. ${streak} günlük aktif serisi var!`,
+    description: profile.bio || `${name} kullanıcısının fitness profilini ve antrenman serisini DietitianFit üzerinde takip et. ${streak} günlük aktif serisi var!`,
     alternates: {
       canonical: profileUrl,
     },
@@ -49,21 +49,21 @@ export async function generateMetadata({ params }: { params: Promise<{ username:
       title: `${name} | ${streak} Günlük Seri 🔥`,
       description: profile.bio || `${name} kullanıcısının gelişimini takip et. ${streak} günlük aktif serisi var!`,
       url: profileUrl,
-      siteName: 'VitaTribe',
+      siteName: 'DietitianFit',
       type: 'profile',
       images: [
         {
           url: '/og-image.png',
           width: 1200,
           height: 630,
-          alt: `${name} — VitaTribe Profili`,
+          alt: `${name} — DietitianFit Profili`,
         },
       ],
     },
     twitter: {
       card: 'summary_large_image',
       title: `${name} | ${streak} Günlük Seri 🔥`,
-      description: profile.bio || `${name} kullanıcısının VitaTribe fitness profilini takip et.`,
+      description: profile.bio || `${name} kullanıcısının DietitianFit fitness profilini takip et.`,
       images: ['/og-image.png'],
     },
   }
@@ -188,7 +188,7 @@ export default async function UserProfile({ params }: { params: Promise<{ userna
     sameAs: [`${BASE_URL}/tr/u/${profile.username}`],
     ...(profile.role === 'dietitian' && {
       jobTitle: 'Diyetisyen',
-      worksFor: { '@type': 'Organization', name: 'VitaTribe' },
+      worksFor: { '@type': 'Organization', name: 'DietitianFit' },
     }),
   };
 

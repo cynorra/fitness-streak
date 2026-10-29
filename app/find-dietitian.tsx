@@ -15,7 +15,7 @@ import AmbientBackground from '../components/AmbientBackground';
 type Dietitian = { id: string; username: string; display_name: string | null; bio: string | null; specialty: string | null };
 type Status = 'pending' | 'approved' | 'rejected';
 
-export default function FindDietitian() {
+export default function FindDietitian({ hideBack }: { hideBack?: boolean } = {}) {
   const { profile } = useAuth();
   const { t } = useTranslation();
   const router = useRouter();
@@ -126,9 +126,11 @@ export default function FindDietitian() {
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <AmbientBackground />
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <Ionicons name="arrow-back" size={24} color="#fff" />
-        </TouchableOpacity>
+        {!hideBack && (
+          <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
+            <Ionicons name="arrow-back" size={24} color="#fff" />
+          </TouchableOpacity>
+        )}
         <Text style={styles.title}>{t('dietitianCare.find_title')}</Text>
       </View>
 

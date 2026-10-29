@@ -10,7 +10,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://vitatribe.com';
 const websiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  name: "VitaTribe",
+  name: "DietitianFit",
   url: BASE_URL,
   description: "Yapay zeka destekli sosyal fitness ağı. Streak takibi, diyetisyen desteği ve topluluk.",
   inLanguage: ["tr", "en", "es", "pt", "ru", "zh", "ja", "ko"],
@@ -27,10 +27,10 @@ const websiteSchema = {
 const appSchema = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
-  name: "VitaTribe",
+  name: "DietitianFit",
   applicationCategory: "HealthApplication",
   operatingSystem: ["Android", "iOS", "Web"],
-  description: "VitaTribe ile günlük antrenman yap, streak serini koru, diyetisyenlerle birebir çalış ve fitness topluluğuna katıl.",
+  description: "DietitianFit ile günlük antrenman yap, streak serini koru, diyetisyenlerle birebir çalış ve fitness topluluğuna katıl.",
   url: BASE_URL,
   offers: {
     "@type": "Offer",
@@ -48,7 +48,7 @@ const appSchema = {
 const orgSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  name: "VitaTribe",
+  name: "DietitianFit",
   url: BASE_URL,
   logo: `${BASE_URL}/og-image.png`,
   sameAs: [
@@ -192,7 +192,7 @@ export default async function Home({ params }: { params: Promise<{ lang: Locale 
         <section className="px-6 py-32">
            <div className="max-w-7xl mx-auto text-center mb-20">
               <h2 className="text-4xl md:text-7xl font-black text-zinc-900 dark:text-zinc-50 tracking-tight leading-none mb-6">Herkes İçin Bir Yer.</h2>
-              <p className="text-zinc-500 dark:text-zinc-400 text-xl font-medium">İster sporcu ol, ister uzman. VitaTribe seni bekliyor.</p>
+              <p className="text-zinc-500 dark:text-zinc-400 text-xl font-medium">İster sporcu ol, ister uzman. DietitianFit seni bekliyor.</p>
            </div>
            <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12">
               <div className="p-12 bg-zinc-900 rounded-[3.5rem] text-white shadow-2xl relative overflow-hidden group border border-white/5">
@@ -218,7 +218,7 @@ export default async function Home({ params }: { params: Promise<{ lang: Locale 
               Geleceğini <br /> Bugün Şekillendir.
             </h2>
             <p className="text-xl md:text-2xl text-zinc-400 dark:text-zinc-500 font-bold mb-16 max-w-xl mx-auto relative z-10">
-              VitaTribe ile gelişimini bir üst seviyeye taşıma zamanı geldi.
+              DietitianFit ile gelişimini bir üst seviyeye taşıma zamanı geldi.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-6 relative z-10">
                <Link href="/login" className="px-12 py-6 bg-emerald-500 text-white rounded-[2rem] font-black uppercase tracking-widest hover:scale-110 transition-all shadow-2xl shadow-emerald-500/20">

@@ -258,7 +258,7 @@ export default function Learn() {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.actionBtn}
-              onPress={() => Share.share({ message: `${item.title}\n\n${item.body}\n\n— ${item.authorName} · StreakFit` }).catch(() => {})}
+              onPress={() => Share.share({ message: `${item.title}\n\n${item.body}\n\n— ${item.authorName} · DietitianFit` }).catch(() => {})}
             >
               <Ionicons name="share-social-outline" size={24} color="#fff" />
             </TouchableOpacity>

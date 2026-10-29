@@ -248,7 +248,7 @@ export default function Feed() {
                 <View style={styles.logoBox}>
                   <Text style={styles.logoLetter}>S</Text>
                 </View>
-                <Text style={styles.logoText}>STREAK<Text style={{color: '#10b981'}}>FIT</Text></Text>
+                <Text style={styles.logoText}>DIETITIAN<Text style={{color: '#10b981'}}>FIT</Text></Text>
               </View>
               <TouchableOpacity onPress={() => { Haptics.selectionAsync(); router.push('/messages' as any); }} style={styles.msgBtn}>
                 <Ionicons name="paper-plane-outline" size={20} color="#10b981" />

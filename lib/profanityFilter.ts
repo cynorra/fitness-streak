@@ -1,5 +1,5 @@
 /**
- * StreakFit Anti-Spam & Profanity Moderation Utility
+ * DietitianFit Anti-Spam & Profanity Moderation Utility
  * Filters inappropriate content, offensive language (+18, Turkish & English profanity), and troll submissions.
  */
 

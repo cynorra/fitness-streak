@@ -9,17 +9,17 @@ import Animated, {
   Easing,
 } from 'react-native-reanimated';
 
-interface StreakFitLogoProps {
+interface DietitianFitLogoProps {
   size?: number;
   animated?: boolean;
   style?: ImageStyle;
 }
 
 /**
- * StreakFit'in asıl kurumsal logosu (assets/icon.png):
+ * DietitianFit'in asıl kurumsal logosu (assets/icon.png):
  * Koyu zemin üzerinde yanan fütüristik alev S amblemi.
  */
-export default function StreakFitLogo({ size = 48, animated = false, style }: StreakFitLogoProps) {
+export default function DietitianFitLogo({ size = 48, animated = false, style }: DietitianFitLogoProps) {
   const pulse = useSharedValue(1);
   const glow = useSharedValue(0.4);
 

@@ -81,7 +81,7 @@ export default function LogWorkout() {
             <View style={styles.logoBox}>
               <Text style={styles.logoLetter}>S</Text>
             </View>
-            <Text style={styles.logoText}>STREAK<Text style={{color: '#10b981'}}>FIT</Text></Text>
+            <Text style={styles.logoText}>DIETITIAN<Text style={{color: '#10b981'}}>FIT</Text></Text>
           </View>
           <TouchableOpacity onPress={() => router.push('/messages' as any)} style={styles.msgBtn}>
             <AppIcon name="paper-plane-outline" color="#10b981" size={20} bare />

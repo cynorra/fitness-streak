@@ -33,7 +33,7 @@ const ShareCard = forwardRef<View, ShareCardProps>(function ShareCard(props, ref
             <Text style={{ color: '#fff', fontWeight: '900', fontSize: 18 * s }}>S</Text>
           </View>
           <Text style={{ color: '#fff', fontWeight: '900', fontSize: 18 * s, letterSpacing: 1.5 }}>
-            STREAK<Text style={{ color: '#10b981' }}>FIT</Text>
+            DIETITIAN<Text style={{ color: '#10b981' }}>FIT</Text>
           </Text>
         </View>
 

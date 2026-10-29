@@ -16,7 +16,7 @@ export default async function PrivacyPage({ params }: Props) {
         <div className="prose prose-zinc dark:prose-invert max-w-none space-y-6 text-zinc-600 dark:text-zinc-400 font-medium leading-relaxed">
           <p className="text-sm">Son güncelleme: 8 Eylül 2026</p>
           <p>
-            VitaTribe (&quot;Uygulama&quot;, &quot;biz&quot;) olarak, 6698 sayılı Kişisel Verilerin Korunması Kanunu (&quot;KVKK&quot;) ve Avrupa Birliği Genel Veri Koruma Tüzüğü&apos;ne (&quot;GDPR&quot;) uygun şekilde, veri sorumlusu sıfatıyla kişisel verilerinizi işliyoruz. Bu politika, VitaTribe mobil uygulamasını ve web sitesini kullandığınızda hangi verilerin toplandığını, nasıl kullanıldığını, kimlerle paylaşıldığını ve haklarınızı açıklar.
+            DietitianFit (&quot;Uygulama&quot;, &quot;biz&quot;) olarak, 6698 sayılı Kişisel Verilerin Korunması Kanunu (&quot;KVKK&quot;) ve Avrupa Birliği Genel Veri Koruma Tüzüğü&apos;ne (&quot;GDPR&quot;) uygun şekilde, veri sorumlusu sıfatıyla kişisel verilerinizi işliyoruz. Bu politika, DietitianFit mobil uygulamasını ve web sitesini kullandığınızda hangi verilerin toplandığını, nasıl kullanıldığını, kimlerle paylaşıldığını ve haklarınızı açıklar.
           </p>
 
           <h2 className="text-2xl font-black text-zinc-900 dark:text-zinc-50 mt-12 mb-4">1. Topladığımız Veriler</h2>
@@ -72,7 +72,7 @@ export default async function PrivacyPage({ params }: Props) {
 
           <h2 className="text-2xl font-black text-zinc-900 dark:text-zinc-50 mt-12 mb-4">9. Çocukların Gizliliği</h2>
           <p>
-            VitaTribe, 16 yaşın altındaki kişilere yönelik değildir ve bu kullanıcılardan bilerek veri toplamaz. 16 yaşından küçük bir kullanıcının verilerini topladığımızı fark edersek, bu verileri derhal sileriz.
+            DietitianFit, 16 yaşın altındaki kişilere yönelik değildir ve bu kullanıcılardan bilerek veri toplamaz. 16 yaşından küçük bir kullanıcının verilerini topladığımızı fark edersek, bu verileri derhal sileriz.
           </p>
 
           <h2 className="text-2xl font-black text-zinc-900 dark:text-zinc-50 mt-12 mb-4">10. Politika Değişiklikleri</h2>

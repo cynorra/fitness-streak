@@ -22,6 +22,7 @@ import { displayWorkoutType } from '../../lib/workoutTypes';
 import AnimatedStreakNumber from '../../components/AnimatedStreakNumber';
 import StreakFitLogo from '../../components/StreakFitLogo';
 import AdMobBanner from '../../components/AdMobBanner';
+import FeaturedDietitians from '../../components/FeaturedDietitians';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AppIcon from '../../components/AppIcon';
@@ -135,8 +136,8 @@ export default function StreakHome() {
           <View style={styles.logoRow}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1 }}>
               <StreakFitLogo size={36} animated />
-              <Text style={styles.logoText}>
-                STREAK<Text style={{ color: '#ff7a00' }}>FIT</Text>
+              <Text style={styles.logoText} numberOfLines={1} adjustsFontSizeToFit>
+                DIETITIAN<Text style={{ color: '#ff7a00' }}>FIT</Text>
               </Text>
             </View>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
@@ -212,6 +213,13 @@ export default function StreakHome() {
                 </View>
               </GradientCard>
             </PressableScale>
+          </Animated.View>
+        )}
+
+        {/* Dietitian side promo (clients only) */}
+        {profile && profile.role !== 'dietitian' && (
+          <Animated.View entering={FadeInUp.delay(160).duration(450).springify()}>
+            <FeaturedDietitians userId={profile.id} />
           </Animated.View>
         )}
 
@@ -466,7 +474,7 @@ const styles = StyleSheet.create({
   msgIcon: { fontSize: 20 },
   logoBox: { width: 32, height: 32, backgroundColor: '#10b981', borderRadius: 8, justifyContent: 'center', alignItems: 'center' },
   logoLetter: { color: '#fff', fontWeight: '900', fontSize: 18 },
-  logoText: { color: '#fff', fontSize: 24, fontWeight: '900', letterSpacing: -1.5 },
+  logoText: { color: '#fff', fontSize: 22, fontWeight: '900', letterSpacing: -1.5 },
   hello: { color: '#666', fontSize: 11, fontWeight: '900', letterSpacing: 2 },
   streakCard: { margin: 16 },
   dtHeader: { flexDirection: 'row', alignItems: 'center', gap: 12 },

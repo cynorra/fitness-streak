@@ -53,7 +53,7 @@ export default function AnimatedSplashScreen({ isReady, onAnimationComplete }: P
     );
     textOpacity.value = withDelay(250, withTiming(1, { duration: 500 }));
 
-    // 4. IGNITE YOUR MOMENTUM sloganı
+    // 4. DIETITIANS · WORKOUTS · STREAKS sloganı
     taglineOpacity.value = withDelay(450, withTiming(1, { duration: 550 }));
   }, []);
 
@@ -143,20 +143,20 @@ export default function AnimatedSplashScreen({ isReady, onAnimationComplete }: P
 
         {/* STREAKFIT Typography */}
         <Animated.View style={[styles.titleRow, textAnim]}>
-          <Text style={styles.titleStreak}>STREAK</Text>
+          <Text style={styles.titleStreak}>DIETITIAN</Text>
           <Text style={styles.titleFit}>FIT</Text>
         </Animated.View>
 
         {/* Real Brand Tagline */}
         <Animated.View style={taglineAnim}>
-          <Text style={styles.tagline}>IGNITE YOUR MOMENTUM</Text>
+          <Text style={styles.tagline}>DIETITIANS · WORKOUTS · STREAKS</Text>
         </Animated.View>
       </View>
 
       {/* Bottom Brand Stamp */}
       <View style={styles.footerWrap}>
         <View style={styles.statusDot} />
-        <Text style={styles.footerText}>PERFORMANCE FITNESS</Text>
+        <Text style={styles.footerText}>DIETITIAN + FITNESS</Text>
       </View>
     </Animated.View>
   );
@@ -196,21 +196,21 @@ const styles = StyleSheet.create({
   },
   titleStreak: {
     color: '#ffffff',
-    fontSize: 32,
+    fontSize: 26,
     fontWeight: '900',
-    letterSpacing: 3,
+    letterSpacing: 2,
   },
   titleFit: {
     color: '#ff7a00',
-    fontSize: 32,
+    fontSize: 26,
     fontWeight: '900',
-    letterSpacing: 3,
+    letterSpacing: 2,
   },
   tagline: {
     color: '#fb923c',
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '800',
-    letterSpacing: 4,
+    letterSpacing: 2,
     textTransform: 'uppercase',
   },
   footerWrap: {

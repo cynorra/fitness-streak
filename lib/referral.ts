@@ -29,10 +29,10 @@ export async function redeemReferral(code: string): Promise<RedeemResult> {
 export function buildInviteMessage(code: string, locale: string, isDietitian: boolean): string {
   if (locale === 'tr') {
     return isDietitian
-      ? `StreakFit'de danışanlarımı takip ediyorum: beslenme planı, günlük takip ve motivasyon tek uygulamada. Katılırken davet kodumu gir: ${code}\n${STORE_URL}`
-      : `StreakFit ile seri tutuyorum! Antrenman, beslenme ve diyetisyen desteği tek uygulamada. Katılırken davet kodumu gir: ${code}\n${STORE_URL}`;
+      ? `DietitianFit'de danışanlarımı takip ediyorum: beslenme planı, günlük takip ve motivasyon tek uygulamada. Katılırken davet kodumu gir: ${code}\n${STORE_URL}`
+      : `DietitianFit ile seri tutuyorum! Antrenman, beslenme ve diyetisyen desteği tek uygulamada. Katılırken davet kodumu gir: ${code}\n${STORE_URL}`;
   }
   return isDietitian
-    ? `I track my clients with StreakFit: meal plans, daily tracking and motivation in one app. Use my invite code when you join: ${code}\n${STORE_URL}`
-    : `I'm keeping my streak with StreakFit! Workouts, nutrition and dietitian support in one app. Use my invite code when you join: ${code}\n${STORE_URL}`;
+    ? `I track my clients with DietitianFit: meal plans, daily tracking and motivation in one app. Use my invite code when you join: ${code}\n${STORE_URL}`
+    : `I'm keeping my streak with DietitianFit! Workouts, nutrition and dietitian support in one app. Use my invite code when you join: ${code}\n${STORE_URL}`;
 }

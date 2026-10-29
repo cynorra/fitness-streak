@@ -186,7 +186,7 @@ export default function Login() {
         <View style={styles.brand}>
           <StreakFitLogo size={88} animated />
           <Text style={styles.title}>
-            STREAK<Text style={{ color: '#ff7a00' }}>FIT</Text>
+            DIETITIAN<Text style={{ color: '#ff7a00' }}>FIT</Text>
           </Text>
           <Text style={styles.tagline}>{t('login.tagline')}</Text>
         </View>

@@ -1,6 +1,6 @@
 export const login = {
   tr: {
-    tagline: 'Her gün bir adım. Seri alevin hiç sönmesin.',
+    tagline: 'Spor serin, diyetisyen desteğin. Tek uygulamada.',
     google: 'GOOGLE İLE İLERLE',
     or_email: 'VEYA E-POSTA İLE',
     account_type: 'HESAP TİPİ SEÇ',
@@ -30,7 +30,7 @@ export const login = {
     reset_sent: 'Şifre sıfırlama bağlantısı e-posta adresinize gönderildi.',
   },
   en: {
-    tagline: 'One step every day. Never let your streak flame go out.',
+    tagline: 'Your workouts. Your dietitian. One app.',
     google: 'CONTINUE WITH GOOGLE',
     or_email: 'OR WITH EMAIL',
     account_type: 'CHOOSE ACCOUNT TYPE',

@@ -17,7 +17,7 @@ export default async function Footer({ lang }: { lang: Locale }) {
           <Link href={`/${lang}/contact`} className="hover:text-emerald-500 transition-colors">{dict.footer.contact}</Link>
         </div>
         <div className="border-t border-zinc-200 dark:border-zinc-800 mt-12 pt-8 text-center text-sm text-zinc-500 dark:text-zinc-400">
-          &copy; {new Date().getFullYear()} VitaTribe. {dict.footer.copyright}
+          &copy; {new Date().getFullYear()} DietitianFit. {dict.footer.copyright}
         </div>
       </div>
     </footer>

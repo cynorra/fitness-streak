@@ -19,7 +19,7 @@ interface AnimatedStreakNumberProps {
 
 /**
  * 2026+ Performance Sports Dial & Flame Streak Counter:
- * - Orijinal StreakFit alev amblemi ve dinamik enerji arkı
+ * - Orijinal DietitianFit alev amblemi ve dinamik enerji arkı
  * - Sayı kadranı, zümrüt/amber kor ışıması
  * - Çocuksu yaprak veya rastgele emojiler yerine elit performans kadranı
  */

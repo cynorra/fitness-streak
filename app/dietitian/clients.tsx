@@ -27,7 +27,7 @@ import { fetchClientCockpit, ClientCockpit, STATUS_COLORS } from '../../lib/clie
 import { fetchDietitianScores, trustColor, DietitianScore } from '../../lib/dietitianScores';
 import AmbientBackground from '../../components/AmbientBackground';
 
-export default function DietitianClients() {
+export default function DietitianClients({ hideBack }: { hideBack?: boolean } = {}) {
   const { profile } = useAuth();
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -180,9 +180,11 @@ export default function DietitianClients() {
       <AmbientBackground />
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <Ionicons name="arrow-back" size={24} color="#fff" />
-        </TouchableOpacity>
+        {!hideBack && (
+          <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
+            <Ionicons name="arrow-back" size={24} color="#fff" />
+          </TouchableOpacity>
+        )}
         <View style={styles.headerTitles}>
           <Text style={styles.headerTitle}>{t('clients.title')}</Text>
           <Text style={styles.headerSub}>{t('clients.sub')}</Text>
