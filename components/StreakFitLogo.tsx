@@ -17,7 +17,7 @@ interface DietitianFitLogoProps {
 
 /**
  * DietitianFit'in asıl kurumsal logosu (assets/icon.png):
- * Koyu zemin üzerinde yanan fütüristik alev S amblemi.
+ * Zümrüt D harfi, alev-yaprak amblemi ve filiz.
  */
 export default function DietitianFitLogo({ size = 48, animated = false, style }: DietitianFitLogoProps) {
   const pulse = useSharedValue(1);
@@ -93,8 +93,8 @@ const styles = StyleSheet.create({
   },
   glowRing: {
     position: 'absolute',
-    backgroundColor: 'rgba(255, 122, 0, 0.35)',
-    shadowColor: '#ff7a00',
+    backgroundColor: 'rgba(16, 185, 129, 0.35)',
+    shadowColor: '#10b981',
     shadowOpacity: 0.8,
     shadowRadius: 20,
     elevation: 12,
