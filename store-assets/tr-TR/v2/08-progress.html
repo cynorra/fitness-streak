@@ -1,0 +1,36 @@
+<!DOCTYPE html><html lang="tr"><head><meta charset="UTF-8"><link rel="stylesheet" href="common.css">
+<style>
+.title { font-size: 26px; font-weight: 900; letter-spacing: -.5px; padding: 6px 16px 8px; position:relative; z-index:2; }
+.bars { display:flex; align-items:flex-end; gap:9px; height:96px; margin-top:12px; }
+.bars div { flex:1; border-radius:8px 8px 4px 4px; background: linear-gradient(180deg,#34d399,#0f766e); position:relative; }
+.bars div.lo { background: linear-gradient(180deg,rgba(255,255,255,.22),rgba(255,255,255,.06)); }
+.days { display:flex; gap:9px; margin-top:6px; } .days span { flex:1; text-align:center; font-size:10px; font-weight:800; color:var(--t3); }
+.kp { flex:1; padding:11px 12px; } .kv { font-size:24px; font-weight:900; letter-spacing:-.5px; margin-top:3px; }
+.map { height:150px; border-radius:18px; position:relative; overflow:hidden; background: linear-gradient(135deg,#0d1a17,#0a1220); border:1px solid rgba(255,255,255,.08); margin-top:10px; }
+.map:before { content:""; position:absolute; inset:0; background-image: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px); background-size: 26px 26px; }
+.map svg { position:absolute; inset:0; width:100%; height:100%; }
+</style></head><body><div class="canvas"><div class="grain"></div>
+<div class="cap"><div class="eyebrow"><i></i>İlerleme ve GPS</div>
+<h1>İlerlemeni gör.<br><em class="in">Hedeflerini sahiplen.</em></h1>
+<div class="sub">Haftalık aktiviteni izle, dış mekan koşularını GPS ile kaydet, rakamlarının gelişmesini izle.</div></div>
+
+<div class="phone"><div class="screen"><div class="ui">
+<div class="orb" style="left:-120px;top:-100px;width:340px;height:340px;background:rgba(99,102,241,.28)"></div>
+<div class="orb" style="right:-140px;top:440px;width:340px;height:340px;background:rgba(16,185,129,.22)"></div>
+<div data-sb></div>
+<div class="hdr"><div class="circ"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg></div><div class="wm" style="font-size:20px;letter-spacing:.5px;text-align:center;padding-right:34px">ANALİZ</div></div>
+<div class="pad">
+<div class="row" style="gap:10px;margin-bottom:10px">
+<div class="card kp in"><div class="h2" style="color:var(--in2)">ANTRENMAN</div><div class="kv">24</div><div class="meta" style="font-size:10.5px;color:var(--em2)">▲ geçen aya göre %20</div></div>
+<div class="card kp or"><div class="h2" style="color:var(--or2)">AKTİF DK</div><div class="kv">1,280</div><div class="meta" style="font-size:10.5px;color:var(--em2)">▲ geçen aya göre %12</div></div></div>
+<div class="card em"><div class="row"><div class="h2">BU HAFTA</div><span class="pill em" style="margin-left:auto">6 / 7 gün</span></div>
+<div class="bars"><div style="height:60%"></div><div style="height:82%"></div><div style="height:48%"></div><div style="height:92%"></div><div style="height:70%"></div><div style="height:100%"></div><div class="lo" style="height:18%"></div></div>
+<div class="days"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div></div>
+
+<div class="card" style="margin-top:10px;padding:12px"><div class="row"><div class="name">Sabah Koşusu</div><span class="pill in" style="margin-left:auto">GPS</span></div>
+<div class="map"><svg viewBox="0 0 300 150"><defs><linearGradient id="rt" x1="0" x2="1"><stop offset="0" stop-color="#34d399"/><stop offset="1" stop-color="#818cf8"/></linearGradient></defs><path d="M30 120 C60 60, 90 130, 120 80 S190 20, 220 70 S260 110, 275 40" fill="none" stroke="rgba(16,185,129,.35)" stroke-width="10" stroke-linecap="round"/><path d="M30 120 C60 60, 90 130, 120 80 S190 20, 220 70 S260 110, 275 40" fill="none" stroke="url(#rt)" stroke-width="4" stroke-linecap="round"/><circle cx="30" cy="120" r="7" fill="#34d399"/><circle cx="275" cy="40" r="7" fill="#818cf8"/></svg></div>
+<div class="row" style="margin-top:10px;justify-content:space-between"><div><div class="h2">MESAFE</div><div class="name" style="font-size:16px">5.2 km</div></div><div><div class="h2">TEMPO</div><div class="name" style="font-size:16px">5:31 /km</div></div><div><div class="h2">SÜRE</div><div class="name" style="font-size:16px">28:40</div></div></div></div>
+</div></div></div></div>
+
+<div class="float" style="right:30px;top:700px"><div class="fl-row"><div class="fl-ic" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></svg></div><div><div class="big">Yeni kişisel rekor</div><div class="small">En uzun koşu · 5,2 km</div></div></div></div>
+</div><script src="common.js"></script></body></html>
