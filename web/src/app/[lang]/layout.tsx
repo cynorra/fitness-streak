@@ -6,11 +6,11 @@ const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://vitatribe.com';
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: "DietitianFit | Yapay Zeka Destekli Sosyal Fitness Ağı ve Motivasyon Uygulaması",
+    default: "DietitianFit | Diyetisyen, Kilo Verme ve Spor Takip Uygulaması",
     template: "%s | DietitianFit",
   },
-  description: "DietitianFit ile her gün antrenman yap, spor topluluğuna katıl, diyetisyenlerle birebir çalış ve streak serini koru. Sağlıklı yaşam ve fitness motivasyonunu keşfet.",
-  keywords: ["fitness uygulaması", "diyetisyen", "streak takibi", "spor motivasyonu", "fitness ağı", "sağlıklı beslenme", "yapay zeka fitness", "antrenman programı", "DietitianFit"],
+  description: "DietitianFit ile gerçek diyetisyenlerle birebir çalış, kilo verme ve beslenme planı al, antrenmanını ve spor salonu serini arkadaşlarınla takip et. Sağlıklı yaşam ve fitness motivasyonunu keşfet.",
+  keywords: ["diyetisyen", "diyetisyen bul", "kilo verme", "fitness uygulaması", "spor salonu", "antrenman takibi", "streak takibi", "spor motivasyonu", "fitness ağı", "sağlıklı beslenme", "yapay zeka fitness", "antrenman programı", "DietitianFit"],
   authors: [{ name: "DietitianFit Team" }],
   alternates: {
     canonical: BASE_URL,
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "DietitianFit | Türkiye'nin Yeni Nesil Sosyal Fitness Ağı",
+    title: "DietitianFit | Diyetisyen + Spor Tek Uygulamada",
     description: "Antrenman serini koru, uzman diyetisyenlerden destek al ve arkadaşlarınla beraber geliş. DietitianFit'e bugün katıl.",
     url: BASE_URL,
     siteName: "DietitianFit",
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "DietitianFit — Sosyal Fitness Ağı",
+        alt: "DietitianFit — Diyetisyen ve Spor Uygulaması",
       },
     ],
   },
