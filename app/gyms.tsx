@@ -92,7 +92,7 @@ export default function GymsScreen() {
             facilities: Array.isArray(g.facilities)
               ? g.facilities
               : ['Serbest Ağırlık', 'Sauna'],
-            discount_code: g.discount_code || 'STREAKFIT20',
+            discount_code: g.discount_code || 'DIETITIANFIT20',
             image_emoji: g.image_emoji || '🏋️‍♂️',
           }))
         );
@@ -141,7 +141,7 @@ export default function GymsScreen() {
         district: newDistrict || t('gyms.default_district'),
         phone: newPhone,
         address: newAddress,
-        discount_code: newDiscount || 'STREAKFIT15',
+        discount_code: newDiscount || 'DIETITIANFIT15',
         rating: 4.9,
         image_emoji: '🏋️‍♂️',
         facilities: ['Serbest Ağırlık', 'Sauna', 'PT'],
@@ -376,7 +376,7 @@ export default function GymsScreen() {
               <Text style={styles.label}>{t('gyms.code')}</Text>
               <TextInput
                 style={styles.input}
-                placeholder="STREAKFIT20"
+                placeholder="DIETITIANFIT20"
                 placeholderTextColor="#64748b"
                 value={newDiscount}
                 onChangeText={setNewDiscount}

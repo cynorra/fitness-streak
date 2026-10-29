@@ -141,7 +141,7 @@ export default function AnimatedSplashScreen({ isReady, onAnimationComplete }: P
           />
         </Animated.View>
 
-        {/* STREAKFIT Typography */}
+        {/* DIETITIANFIT Typography */}
         <Animated.View style={[styles.titleRow, textAnim]}>
           <Text style={styles.titleStreak}>DIETITIAN</Text>
           <Text style={styles.titleFit}>FIT</Text>
