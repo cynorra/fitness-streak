@@ -283,7 +283,7 @@ export default function Profile() {
         <>
           <PressableScale index={9}
             style={styles.menuBtn}
-            onPress={() => router.push('/find-dietitian' as any)}
+            onPress={() => router.push('/(tabs)/dietitians' as any)}
           >
             <AppIcon name="search" color="#3b82f6" size={40} style={{ marginRight: 14 }} />
             <Text style={styles.menuBtnText}>{t('dietitianCare.find_link')}</Text>

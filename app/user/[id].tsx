@@ -8,6 +8,10 @@ import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../lib/auth';
 import { useTranslation } from '../../lib/i18n/i18n';
 import { friendlyError } from '../../lib/useOnline';
+import StarRating from '../../components/StarRating';
+import { fetchDietitianScores, trustColor, DietitianScore } from '../../lib/dietitianScores';
+
+type Review = { id: string; rating: number; comment: string | null; client_id: string };
 
 type PublicProfile = {
   id: string;
@@ -29,6 +33,11 @@ export default function UserProfileScreen() {
   const [user, setUser] = useState<PublicProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [opening, setOpening] = useState(false);
+  const [score, setScore] = useState<DietitianScore | null>(null);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [names, setNames] = useState<Record<string, string>>({});
+  const [status, setStatus] = useState<'pending' | 'approved' | 'rejected' | null>(null);
+  const [requesting, setRequesting] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -40,8 +49,38 @@ export default function UserProfileScreen() {
         .maybeSingle();
       setUser((data as PublicProfile) || null);
       setLoading(false);
+      if ((data as PublicProfile | null)?.role === 'dietitian') {
+        const [scores, rev, rel] = await Promise.all([
+          fetchDietitianScores(),
+          supabase.from('dietitian_reviews').select('id, rating, comment, client_id').eq('dietitian_id', id).order('created_at', { ascending: false }).limit(10),
+          me ? supabase.from('dietitian_clients').select('status').eq('dietitian_id', id).eq('client_id', me.id).maybeSingle() : Promise.resolve({ data: null } as any),
+        ]);
+        setScore(scores.get(id) || null);
+        const rows = (rev.data || []) as Review[];
+        setReviews(rows);
+        setStatus(((rel as any).data?.status as any) || null);
+        if (rows.length) {
+          const { data: ps } = await supabase.from('profiles').select('id, display_name, username').in('id', rows.map((r) => r.client_id));
+          setNames(Object.fromEntries((ps || []).map((p: any) => [p.id, p.display_name || p.username])));
+        }
+      }
     })();
   }, [id]);
+
+  const requestDietitian = async () => {
+    if (!me || !user || requesting) return;
+    setRequesting(true);
+    const { error } = await supabase.from('dietitian_clients').insert({ dietitian_id: user.id, client_id: me.id, status: 'pending' });
+    setRequesting(false);
+    // 23505 = a request already exists: just reflect it.
+    if (error && error.code !== '23505') {
+      Alert.alert(t('common.error'), friendlyError(error.message, t));
+      return;
+    }
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    setStatus((s) => s || 'pending');
+    if (!error) Alert.alert(t('dietitianCare.request_sent'), t('dietitianCare.request_sent_msg'));
+  };
 
   // The chat route expects a conversation id: find the existing one or create it.
   const openChat = async () => {
@@ -120,6 +159,55 @@ export default function UserProfileScreen() {
             </View>
           </View>
 
+          {user.role === 'dietitian' && (
+            <View style={styles.dtBox}>
+              <View style={styles.dtStats}>
+                <View style={styles.dtStat}>
+                  <Text style={styles.dtStatVal}>{score && score.review_count > 0 ? score.avg_rating.toFixed(1) : '-'}</Text>
+                  <StarRating value={score?.avg_rating || 0} size={13} />
+                  <Text style={styles.dtStatLbl}>{score ? t('dietitianCare.reviews_n', { n: score.review_count }) : t('dietitianCare.no_reviews')}</Text>
+                </View>
+                <View style={styles.dtStat}>
+                  <Text style={[styles.dtStatVal, score && { color: trustColor(score.trust_score) }]}>{score?.trust_score ?? '-'}</Text>
+                  <Text style={styles.dtStatLbl}>{t('userProfile.trust')}</Text>
+                </View>
+                <View style={styles.dtStat}>
+                  <Text style={styles.dtStatVal}>{score?.client_count ?? 0}</Text>
+                  <Text style={styles.dtStatLbl}>{t('userProfile.clients_lbl')}</Text>
+                </View>
+              </View>
+
+              {!isMe && (status === 'approved' ? (
+                <TouchableOpacity style={styles.dtPrimary} onPress={() => router.push({ pathname: '/appointments' as any, params: { book: user.id } })}>
+                  <Ionicons name="calendar" size={18} color="#fff" />
+                  <Text style={styles.dmText}>{t('userProfile.book')}</Text>
+                </TouchableOpacity>
+              ) : status ? (
+                <View style={styles.dtStatus}><Text style={styles.dtStatusText}>{t(`dietitianCare.st_${status}`)}</Text></View>
+              ) : (
+                <TouchableOpacity style={[styles.dtPrimary, requesting && { opacity: 0.5 }]} onPress={requestDietitian} disabled={requesting}>
+                  <Ionicons name="person-add" size={18} color="#fff" />
+                  <Text style={styles.dmText}>{t('userProfile.become_client')}</Text>
+                </TouchableOpacity>
+              ))}
+
+              <Text style={styles.dtReviewsTitle}>{t('userProfile.reviews_title')}</Text>
+              {reviews.length === 0 ? (
+                <Text style={styles.muted}>{t('userProfile.no_reviews_yet')}</Text>
+              ) : (
+                reviews.map((r) => (
+                  <View key={r.id} style={styles.review}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <Text style={styles.reviewName}>{names[r.client_id] || t('userProfile.anonymous')}</Text>
+                      <StarRating value={r.rating} size={12} />
+                    </View>
+                    {!!r.comment && <Text style={styles.reviewText}>{r.comment}</Text>}
+                  </View>
+                ))
+              )}
+            </View>
+          )}
+
           {!isMe && (
             <TouchableOpacity style={[styles.dmBtn, opening && { opacity: 0.6 }]} onPress={openChat} disabled={opening}>
               <Ionicons name="paper-plane" size={18} color="#fff" />
@@ -146,6 +234,18 @@ const styles = StyleSheet.create({
   handle: { color: '#888', fontSize: 14 },
   badge: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: '#10b98118', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10, marginTop: 4 },
   badgeText: { color: '#10b981', fontSize: 12, fontWeight: '700' },
+  dtBox: { alignSelf: 'stretch', marginTop: 20 },
+  dtStats: { flexDirection: 'row', gap: 10 },
+  dtStat: { flex: 1, alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 14, paddingVertical: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)' },
+  dtStatVal: { color: '#fff', fontSize: 22, fontWeight: '900' },
+  dtStatLbl: { color: '#8b93a1', fontSize: 11, fontWeight: '700', marginTop: 4 },
+  dtPrimary: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: '#10b981', borderRadius: 14, paddingVertical: 14, marginTop: 14 },
+  dtStatus: { backgroundColor: '#f59e0b22', borderRadius: 14, paddingVertical: 12, alignItems: 'center', marginTop: 14 },
+  dtStatusText: { color: '#f59e0b', fontWeight: '800' },
+  dtReviewsTitle: { color: '#fff', fontSize: 12, fontWeight: '900', letterSpacing: 1.5, marginTop: 22, marginBottom: 10 },
+  review: { backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 14, padding: 12, marginBottom: 8 },
+  reviewName: { color: '#fff', fontSize: 13, fontWeight: '800' },
+  reviewText: { color: '#aaa', fontSize: 13, marginTop: 6, lineHeight: 18 },
   specialty: { color: '#aaa', fontSize: 14, marginTop: 4 },
   bio: { color: '#ccc', fontSize: 15, textAlign: 'center', marginTop: 8, lineHeight: 22 },
   statsRow: { flexDirection: 'row', gap: 12, marginTop: 20, alignSelf: 'stretch' },

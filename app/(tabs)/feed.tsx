@@ -7,6 +7,7 @@ import Animated, { FadeInDown, FadeInUp, ZoomIn } from 'react-native-reanimated'
 import * as Haptics from 'expo-haptics';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../lib/auth';
+import FeaturedDietitians from '../../components/FeaturedDietitians';
 import { format, parseISO } from 'date-fns';
 import { useRouter } from 'expo-router';
 import { useTranslation } from '../../lib/i18n/i18n';
@@ -246,7 +247,7 @@ export default function Feed() {
             <View style={styles.logoRow}>
               <View style={{flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1}}>
                 <View style={styles.logoBox}>
-                  <Text style={styles.logoLetter}>S</Text>
+                  <Text style={styles.logoLetter}>D</Text>
                 </View>
                 <Text style={styles.logoText}>DIETITIAN<Text style={{color: '#10b981'}}>FIT</Text></Text>
               </View>
@@ -255,6 +256,11 @@ export default function Feed() {
               </TouchableOpacity>
             </View>
             <Text style={styles.title}>{t('feed.title')}</Text>
+            {profile && profile.role !== 'dietitian' && (
+              <View style={{ marginHorizontal: -16, marginTop: 8 }}>
+                <FeaturedDietitians userId={profile.id} variant="strip" />
+              </View>
+            )}
 
             {/* Create Post Section */}
             <Animated.View entering={FadeInUp.delay(150).duration(400).springify()} style={styles.createPostContainer}>

@@ -9,6 +9,8 @@ import PressableScale from '../../components/PressableScale';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import AmbientBackground from '../../components/AmbientBackground';
+import FeaturedDietitians from '../../components/FeaturedDietitians';
+import { useAuth } from '../../lib/auth';
 
 // Dummy Video Data - Mümkün olan en popüler ve ücretsiz Youtube videoları
 const WORKOUT_CATEGORIES = [
@@ -39,6 +41,7 @@ const WORKOUT_CATEGORIES = [
 ];
 
 export default function WorkoutsScreen() {
+  const { profile } = useAuth();
   const router = useRouter();
   const { width } = useWindowDimensions();
   const { t, locale } = useTranslation();
@@ -61,6 +64,11 @@ export default function WorkoutsScreen() {
       </View>
 
       <ScrollView style={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        {profile && profile.role !== 'dietitian' && (
+          <View style={{ marginTop: 16 }}>
+            <FeaturedDietitians userId={profile.id} />
+          </View>
+        )}
         {WORKOUT_CATEGORIES.map((category, idx) => (
           <View key={category.id} style={styles.categoryContainer}>
             <Text style={styles.categoryTitle}>{t(`workouts.${category.titleKey}`)}</Text>

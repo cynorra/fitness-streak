@@ -4,7 +4,7 @@ import {
 } from 'react-native';
 import { useAuth } from '../lib/auth';
 import { supabase } from '../lib/supabase';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
@@ -29,6 +29,7 @@ export default function Appointments() {
   const { t, locale } = useTranslation();
   const dateLocale = getDateLocale(locale);
   const isDietitian = profile?.role === 'dietitian';
+  const { book } = useLocalSearchParams<{ book?: string }>();
 
   const [appointments, setAppointments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -78,6 +79,15 @@ export default function Appointments() {
     loadAppointments();
     loadPeople();
   }, [loadAppointments, loadPeople]);
+
+  // Deep link from a dietitian's profile: open the booking sheet with that person preselected.
+  useEffect(() => {
+    if (!book || !people.some((p) => p.id === book)) return;
+    setPersonId(book);
+    setSlot(null);
+    setDayOffset(1);
+    setBookVisible(true);
+  }, [book, people]);
 
   const onRefresh = async () => {
     setRefreshing(true);
