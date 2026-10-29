@@ -1,82 +1,60 @@
-# VitaTribe — Play Store Listing (en-US)
+# DietitianFit — Play Store Listing (en-US)
+
+Generated from `store-assets/play-store-listings-all-languages.csv` (source: `scripts/store-listing/`).
 
 ## App title (30 char limit)
 ```
-VitaTribe: Fitness Diet Streak
+DietitianFit: Fitness Workout
 ```
 
 ## Short description (80 char limit)
 ```
-Track workout & diet streaks, connect with friends and real dietitians.
+Dietitians, weight loss plans, gym & workout tracker, streaks with friends.
 ```
 
 ## Full description (4000 char limit)
 ```
-VitaTribe turns your workouts and nutrition into a daily streak — so showing up becomes a habit, not a decision.
-
-Log a workout, keep your streak alive, and watch your consistency compound day after day. Add friends, cheer each other on with Kudos, and climb the leaderboard together. When you're ready for real nutrition guidance, book a certified dietitian right inside the app.
-
-STREAKS THAT KEEP YOU HONEST
-• Log any workout type and duration in seconds
-• Streaks reset at your local 04:00, so late-night sessions still count
-• Weekly summary shows exactly where you stand
-
-TRAIN WITH FRIENDS
-• Add friends by username
-• See their live streaks and workout activity
-• Send "Kudos" to keep each other motivated
-• Compete on the friends leaderboard
+DietitianFit brings real dietitians and your workouts into one app. Book certified dietitians for weight loss and healthy eating plans, then track every gym session, workout and streak with friends.
 
 REAL DIETITIANS, NOT GENERIC PLANS
-• Browse and book certified dietitians
-• Manage appointments and personal nutrition packages
-• Dietitians get their own dashboard to track clients and build plans
+• Browse rated dietitians and send a request in one tap
+• Meal plans, appointments and 1:1 chat for weight loss and healthy eating
+• Dietitians get their own dashboard to build plans and manage clients
 
-STAY ON TRACK
-• Smart reminder notifications so you never break a streak by accident
-• Location-aware activity tracking for outdoor workouts
-• In-app blog with training and nutrition tips
+WORKOUT & GYM TRACKER
+• Log any workout in seconds: gym, abs, legs, biceps, running and more
+• Find gyms nearby with member discounts and follow guided workout videos
+• Weekly stats and charts show your progress
 
-WHO IS VITATRIBE FOR?
-Anyone who wants fitness and diet tracking to feel social instead of solitary — beginners building their first habit, athletes chasing a personal record streak, and dietitians who want a lightweight way to manage clients and appointments.
+STREAKS WITH FRIENDS
+• Keep your daily streak alive with smart reminders
+• Add friends, send kudos and climb the leaderboard
+• Join challenges and share your progress cards
 
-FREQUENTLY ASKED QUESTIONS
+NUTRITION TOOLS
+• Calorie and meal log, water tracker and intermittent fasting timer
+• Tips, articles and Q&A from dietitians
+• Export your nutrition plan as a PDF
 
-What is VitaTribe?
-VitaTribe is a habit-tracking fitness and nutrition app that turns workouts and diet consistency into a streak you share with friends and a real dietitian.
-
-How does the streak system work?
-Every day you log a workout, your streak grows. Streaks reset based on your local time zone at 04:00, so it always feels fair.
-
-Can I really talk to a dietitian in the app?
-Yes. VitaTribe lets you find, book, and message certified dietitians who can build you a personalized nutrition plan and track your progress.
-
-Is VitaTribe free?
-Yes, VitaTribe is free to use — streak tracking, friends, the leaderboard, and booking a dietitian are all included.
-
-Download VitaTribe today and turn your next workout into day one of a streak you won't want to break.
+Download DietitianFit and start your fitness and nutrition journey with a real dietitian by your side. DietitianFit does not replace professional medical advice.
 ```
 
-## Release name (internal, Play Console only — not user-facing)
+## Release name (internal, Play Console only)
 ```
-1.0.1 (2) - First Release
+1.0.10 (13) - DietitianFit
 ```
 
-## Release notes / What's New (500 char limit, user-facing)
+## Release notes / What's New (500 char limit)
 ```
-🎉 Welcome to VitaTribe!
+🎉 Meet DietitianFit — the new name of your streak app, now built around real dietitians.
 
-Turn your workouts and nutrition into a daily streak. Log training, keep your streak alive, and stay motivated with friends.
-
-✅ Workout & habit streak tracking
-✅ Add friends, send "kudos" to cheer them on
-✅ Leaderboard & weekly summary
-✅ Find a dietitian, book appointments, get a personal nutrition plan
-✅ Smart reminder notifications
-
-Start your streak today! 🔥
+✅ New Dietitians tab: browse rated dietitians, send a request, book appointments
+✅ Dietitian profiles with reviews and trust score
+✅ "My Dietitian" card on your home screen
+✅ Top dietitians leaderboard
+✅ New icon, fresh look and fixes
 ```
 
 ## Notes
-- `versionName "1.0.0"` / `versionCode 1` in `android/app/build.gradle` and `app.json` are already correct for this first release — no code changes needed.
-- Set **English (United States)** as the default store listing locale in Play Console, then paste the sections above into the matching fields (App name, Short description, Full description, Release name, Release notes).
+- `versionName "1.0.10"` / `versionCode 13` in `android/app/build.gradle` and `app.json`.
+- Package name stays `com.vitatribe.fitness.spor.diyet.diyetisyen` (renaming would create a new Play app).

@@ -1,0 +1,51 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><link rel="stylesheet" href="common.css">
+<style>
+html, body { width: 1024px; height: 500px; }
+.canvas { width:1024px; height:500px; }
+.left { position:absolute; left:56px; top:70px; width:520px; z-index:5; }
+.ic { width:92px; height:92px; border-radius:26px; overflow:hidden; box-shadow: 0 14px 40px rgba(249,115,22,.45); }
+.ic img { width:92px; height:92px; display:block; }
+.left h1 { font-size:62px; letter-spacing:-2px; line-height:1.02; margin-top:22px; }
+.left .sub { font-size:23px; margin-top:16px; max-width:480px; line-height:1.35; }
+.tags { display:flex; gap:10px; margin-top:20px; }
+.tags span { padding:9px 16px; border-radius:999px; background:rgba(255,255,255,.07); border:1.5px solid rgba(255,255,255,.14); font-size:15px; font-weight:800; letter-spacing:1.5px; color:var(--em2); text-transform:uppercase; }
+.ph { position:absolute; width:300px; height:520px; border-radius:48px; padding:8px; background: linear-gradient(145deg,#3a3f4b,#11141a 40%,#2a2e38); box-shadow: 0 0 0 1.5px #0a0c10, 0 40px 80px rgba(0,0,0,.7); }
+.ph .sc { position:relative; width:284px; height:504px; border-radius:40px; overflow:hidden; background:#06080c; }
+.ph .ui { transform: scale(.728); width:390px; height:692px; }
+.p1 { left:600px; top:60px; transform: rotate(-6deg); z-index:3; }
+.p2 { left:790px; top:150px; transform: rotate(6deg); z-index:2; }
+.week { display:flex; justify-content:space-between; padding:0 6px; margin:14px 0; }
+.dc { display:flex; flex-direction:column; align-items:center; gap:5px; } .dc .d { width:38px; height:38px; border-radius:13px; background: linear-gradient(135deg,#34d399,#10b981); display:flex; align-items:center; justify-content:center; font-weight:900; color:#04251b; font-size:16px; box-shadow: 0 6px 16px rgba(16,185,129,.45); }
+.dc .l,.dc .n { font-size:10px; font-weight:800; color:var(--t3); }
+.trust { margin-left:auto; text-align:center; } .ring { width:46px; height:46px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:15px; background: conic-gradient(var(--em) calc(var(--p)*1%), rgba(255,255,255,.08) 0); position:relative; } .ring:after { content:""; position:absolute; inset:4px; border-radius:50%; background:#0f141b; } .ring span { position:relative; z-index:1; }
+.vb { display:inline-flex; width:15px; height:15px; border-radius:50%; background:var(--em); align-items:center; justify-content:center; margin-left:5px; vertical-align:-2px; } .vb svg { width:9px; height:9px; stroke:#04251b; stroke-width:3.4; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+</style></head><body><div class="canvas"><div class="grain"></div>
+<div class="left"><div class="ic" data-icon></div>
+<h1>Real dietitians.<br><em class="or">Real workouts.</em></h1>
+<div class="sub">Book certified dietitians, track gym & workouts, keep streaks with friends.</div>
+<div class="tags"><span>Dietitians</span><span>Workouts</span><span>Streaks</span></div></div>
+
+<div class="ph p1"><div class="sc"><div class="ui">
+<div class="orb" style="left:-100px;top:-100px;width:300px;height:300px;background:rgba(16,185,129,.22)"></div>
+<div data-sb></div>
+<div class="hdr"><div class="logo" data-icon></div><div class="wm">DIETITIAN<b>FIT</b></div></div>
+<div class="pad"><div class="card em" style="text-align:center;padding:18px 14px 16px;border-radius:30px;margin-top:8px">
+<div data-flame="56" style="display:flex;justify-content:center"></div>
+<div style="font-size:84px;font-weight:900;letter-spacing:-4px;line-height:.95;margin-top:2px">47</div>
+<div class="h2" style="margin-top:4px;color:var(--t2)">DAY STREAK</div></div>
+<div class="week"><div class="dc"><div class="d">✓</div></div><div class="dc"><div class="d">✓</div></div><div class="dc"><div class="d">✓</div></div><div class="dc"><div class="d">✓</div></div><div class="dc"><div class="d">✓</div></div><div class="dc"><div class="d">✓</div></div></div>
+</div></div></div></div>
+
+<div class="ph p2"><div class="sc"><div class="ui">
+<div class="orb" style="right:-120px;top:240px;width:300px;height:300px;background:rgba(99,102,241,.3)"></div>
+<div data-sb></div>
+<div class="hdr"><div class="wm" style="font-size:18px;letter-spacing:1px;text-align:center">FIND A DIETITIAN</div></div>
+<div class="pad" style="margin-top:10px">
+<div class="card em" style="margin-bottom:12px"><div class="row"><div class="av g1" style="width:48px;height:48px">E</div>
+<div><div class="name">Dr. Elena Cruz<span class="vb"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg></span></div><div style="margin-top:3px"><span class="pill em">Sports nutrition</span></div><div class="meta" style="margin-top:4px"><span class="star">★★★★★</span> 4.9</div></div>
+<div class="trust"><div class="ring" style="--p:96"><span>96</span></div></div></div><div class="btn" style="margin-top:12px">Book appointment</div></div>
+<div class="card"><div class="row"><div class="av g3" style="width:48px;height:48px">M</div>
+<div><div class="name">Maya Chen, RD<span class="vb"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg></span></div><div style="margin-top:3px"><span class="pill in">Weight management</span></div></div>
+<div class="trust"><div class="ring" style="--p:92"><span>92</span></div></div></div></div>
+</div></div></div></div>
+</div><script src="common.js"></script></body></html>

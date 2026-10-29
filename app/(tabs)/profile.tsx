@@ -347,7 +347,7 @@ export default function Profile() {
         <Text style={styles.deleteText}>{t('profile.delete_account')}</Text>
       </TouchableOpacity>
 
-      <Text style={styles.version}>DIETITIANFIT v1.0.9</Text>
+      <Text style={styles.version}>DIETITIANFIT v1.0.10</Text>
     </ScrollView>
     </View>
   );

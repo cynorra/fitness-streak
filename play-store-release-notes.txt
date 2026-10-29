@@ -1,0 +1,130 @@
+<en-US>
+🎉 Meet DietitianFit — the new name of your streak app, now built around real dietitians.
+
+✅ New Dietitians tab: browse rated dietitians, send a request, book appointments
+✅ Dietitian profiles with reviews and trust score
+✅ "My Dietitian" card on your home screen
+✅ Top dietitians leaderboard
+✅ New icon, fresh look and fixes
+</en-US>
+
+<tr-TR>
+🎉 DietitianFit ile tanış — seri uygulamanın yeni adı, artık gerçek diyetisyenlerle!
+
+✅ Yeni Diyetisyen sekmesi: puanlı diyetisyenleri incele, talep gönder, randevu al
+✅ Yorum ve güven puanlı diyetisyen profilleri
+✅ Ana ekranda "Diyetisyenim" kartı
+✅ En güvenilir diyetisyenler tablosu
+✅ Yeni simge, yeni görünüm ve düzeltmeler
+</tr-TR>
+
+<de-DE>
+🎉 Willkommen bei DietitianFit — der neue Name deiner Streak-App, jetzt mit echten Ernährungsberatern!
+
+✅ Neuer Tab: Berater mit Bewertungen entdecken, anfragen, Termine buchen
+✅ Berater-Profile mit Rezensionen und Vertrauenswert
+✅ Karte "Mein Berater" auf dem Startbildschirm
+✅ Rangliste der besten Berater
+✅ Neues Icon, frisches Design und Fehlerbehebungen
+</de-DE>
+
+<fr-FR>
+🎉 Découvrez DietitianFit — le nouveau nom de votre appli de séries, désormais avec de vrais diététiciens !
+
+✅ Nouvel onglet : diététiciens notés, demandes et rendez-vous
+✅ Profils avec avis et score de confiance
+✅ Carte « Mon diététicien » sur l'accueil
+✅ Classement des meilleurs diététiciens
+✅ Nouvelle icône, nouveau look et correctifs
+</fr-FR>
+
+<es-ES>
+🎉 Conoce DietitianFit — el nuevo nombre de tu app de rachas, ahora con dietistas reales.
+
+✅ Nueva pestaña: dietistas valorados, solicitudes y citas
+✅ Perfiles con reseñas y puntuación de confianza
+✅ Tarjeta "Mi dietista" en la pantalla de inicio
+✅ Ranking de mejores dietistas
+✅ Nuevo icono, nuevo diseño y correcciones
+</es-ES>
+
+<pt-BR>
+🎉 Conheça o DietitianFit — o novo nome do seu app de sequências, agora com nutricionistas de verdade!
+
+✅ Nova aba: nutricionistas avaliados, pedidos e consultas
+✅ Perfis com avaliações e nota de confiança
+✅ Cartão "Meu nutricionista" na tela inicial
+✅ Ranking dos melhores nutricionistas
+✅ Novo ícone, novo visual e correções
+</pt-BR>
+
+<it-IT>
+🎉 Scopri DietitianFit — il nuovo nome della tua app di serie, ora con dietisti reali!
+
+✅ Nuova scheda: dietisti con valutazioni, richieste e appuntamenti
+✅ Profili con recensioni e punteggio di fiducia
+✅ Scheda "Il mio dietista" nella home
+✅ Classifica dei migliori dietisti
+✅ Nuova icona, nuovo look e correzioni
+</it-IT>
+
+<nl-NL>
+🎉 Maak kennis met DietitianFit — de nieuwe naam van je streak-app, nu met echte diëtisten!
+
+✅ Nieuw tabblad: beoordeelde diëtisten, aanvragen en afspraken
+✅ Profielen met reviews en vertrouwensscore
+✅ Kaart "Mijn diëtist" op het startscherm
+✅ Ranglijst van beste diëtisten
+✅ Nieuw icoon, frisse look en verbeteringen
+</nl-NL>
+
+<ru-RU>
+🎉 Знакомьтесь: DietitianFit — новое имя вашего приложения для серий, теперь с настоящими диетологами!
+
+✅ Новая вкладка: диетологи с рейтингом, заявки и записи
+✅ Профили с отзывами и рейтингом доверия
+✅ Карточка «Мой диетолог» на главном экране
+✅ Рейтинг лучших диетологов
+✅ Новая иконка, новый вид и исправления
+</ru-RU>
+
+<ar>
+🎉 تعرّف على DietitianFit — الاسم الجديد لتطبيق السلاسل، الآن مع أخصائيي تغذية حقيقيين!
+
+✅ تبويب جديد: أخصائيون بتقييمات وطلبات ومواعيد
+✅ ملفات تعريف مع مراجعات ودرجة ثقة
+✅ بطاقة "أخصائي التغذية الخاص بي" في الشاشة الرئيسية
+✅ قائمة أفضل أخصائيي التغذية
+✅ أيقونة جديدة ومظهر جديد وإصلاحات
+</ar>
+
+<ja-JP>
+🎉 DietitianFitが登場 — 連続記録アプリの新しい名前、本物の栄養士と一緒に！
+
+✅ 新しい栄養士タブ：評価付き栄養士の閲覧、依頼、予約
+✅ レビューと信頼スコア付きのプロフィール
+✅ ホームに「マイ栄養士」カード
+✅ 人気栄養士ランキング
+✅ 新アイコン、新デザイン、不具合修正
+</ja-JP>
+
+<ko-KR>
+🎉 DietitianFit을 만나보세요 — 연속 기록 앱의 새 이름, 이제 진짜 영양사와 함께!
+
+✅ 새 영양사 탭: 평점 영양사 탐색, 요청, 예약
+✅ 리뷰와 신뢰 점수가 있는 프로필
+✅ 홈 화면의 "내 영양사" 카드
+✅ 인기 영양사 순위
+✅ 새 아이콘, 새 디자인, 오류 수정
+</ko-KR>
+
+<id>
+🎉 Kenalkan DietitianFit — nama baru aplikasi streak-mu, kini bersama ahli gizi sungguhan!
+
+✅ Tab baru: ahli gizi berating, permintaan, dan janji temu
+✅ Profil dengan ulasan dan skor kepercayaan
+✅ Kartu "Ahli Gizi Saya" di layar utama
+✅ Peringkat ahli gizi terbaik
+✅ Ikon baru, tampilan segar, dan perbaikan
+</id>
+

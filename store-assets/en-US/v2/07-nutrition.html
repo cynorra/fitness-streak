@@ -1,0 +1,38 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><link rel="stylesheet" href="common.css">
+<style>
+.title { font-size: 26px; font-weight: 900; letter-spacing: -.5px; padding: 6px 16px 8px; position:relative; z-index:2; }
+.big-ring { width:150px; height:150px; border-radius:50%; background: conic-gradient(var(--em2) 0 66%, rgba(255,255,255,.08) 0); display:flex; align-items:center; justify-content:center; position:relative; box-shadow: 0 0 40px rgba(16,185,129,.3); flex:none; }
+.big-ring:after { content:""; position:absolute; inset:12px; border-radius:50%; background:#0e1319; }
+.big-ring div { position:relative; z-index:1; text-align:center; } .big-ring b { font-size:30px; font-weight:900; letter-spacing:-1px; display:block; line-height:1; } .big-ring span { font-size:10px; color:var(--t3); font-weight:800; letter-spacing:1px; }
+.mini { flex:1; padding:11px 12px; } .mv { font-size:22px; font-weight:900; letter-spacing:-.5px; margin-top:3px; }
+.bar { height:6px; border-radius:6px; background: rgba(255,255,255,.08); overflow:hidden; margin-top:6px; } .bar i { display:block; height:100%; border-radius:6px; }
+.glass { display:flex; gap:5px; margin-top:8px; } .glass i { flex:1; height:26px; border-radius:7px; background:rgba(56,189,248,.14); border:1px solid rgba(56,189,248,.3); } .glass i.f { background: linear-gradient(180deg,#38bdf8,#3b82f6); border-color:#38bdf8; }
+.food { display:flex; align-items:center; gap:10px; padding: 9px 0; border-top:1px solid rgba(255,255,255,.07); }
+.food .e { width:34px; height:34px; border-radius:11px; background: rgba(255,255,255,.06); display:flex; align-items:center; justify-content:center; font-size:17px; }
+</style></head><body><div class="canvas"><div class="grain"></div>
+<div class="cap"><div class="eyebrow"><i></i>Nutrition tracking</div>
+<h1>Track meals,<br>water &amp; <em>fasting.</em></h1>
+<div class="sub">Log what you eat, hit your calorie and macro targets and keep your dietitian in the loop.</div></div>
+
+<div class="phone"><div class="screen"><div class="ui">
+<div class="orb" style="left:-120px;top:-100px;width:340px;height:340px;background:rgba(16,185,129,.22)"></div>
+<div class="orb" style="right:-140px;top:440px;width:340px;height:340px;background:rgba(56,189,248,.22)"></div>
+<div data-sb></div>
+<div class="hdr"><div class="circ"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg></div><div class="wm" style="font-size:20px;letter-spacing:.5px;text-align:center;padding-right:34px">TODAY'S MEALS</div></div>
+<div class="pad">
+<div class="card em"><div class="row" style="gap:16px"><div class="big-ring"><div><b>1,420</b><span>OF 2,150 KCAL</span></div></div>
+<div style="flex:1"><div class="h2" style="color:var(--em2)">MACROS</div>
+<div class="row" style="margin-top:8px;justify-content:space-between"><div class="meta">Protein</div><div class="name" style="font-size:13px">112 / 160g</div></div><div class="bar"><i style="width:70%;background:#34d399"></i></div>
+<div class="row" style="margin-top:8px;justify-content:space-between"><div class="meta">Carbs</div><div class="name" style="font-size:13px">148 / 230g</div></div><div class="bar"><i style="width:64%;background:#818cf8"></i></div>
+<div class="row" style="margin-top:8px;justify-content:space-between"><div class="meta">Fat</div><div class="name" style="font-size:13px">41 / 62g</div></div><div class="bar"><i style="width:66%;background:#fb923c"></i></div></div></div></div>
+
+<div class="row" style="gap:10px;margin:12px 0">
+<div class="card mini" style="border-color:rgba(56,189,248,.35)"><div class="h2" style="color:var(--sky)">💧 WATER</div><div class="mv">5 / 8</div><div class="glass"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i></i><i></i><i></i></div></div>
+<div class="card mini or"><div class="h2" style="color:var(--or2)">⏱ FASTING</div><div class="mv">14:22</div><div class="bar"><i style="width:90%;background:linear-gradient(90deg,#fb923c,#fbbf24)"></i></div><div class="meta" style="font-size:10.5px;margin-top:5px">16:8 · ends 6:00 PM</div></div></div>
+
+<div class="card" style="padding:6px 14px"><div class="food" style="border-top:0"><div class="e">🥣</div><div style="flex:1"><div class="name" style="font-size:13px">Oats, berries &amp; whey</div><div class="meta" style="font-size:11px">Breakfast</div></div><div class="name" style="font-size:12px;color:var(--em2)">420 kcal</div></div>
+<div class="food"><div class="e">🍗</div><div style="flex:1"><div class="name" style="font-size:13px">Chicken rice bowl</div><div class="meta" style="font-size:11px">Lunch</div></div><div class="name" style="font-size:12px;color:var(--em2)">640 kcal</div></div></div>
+</div></div></div></div>
+
+<div class="float" style="right:30px;top:1750px"><div class="fl-row"><div class="fl-ic" style="background:linear-gradient(135deg,#10b981,#059669)"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg></div><div><div class="big">Dietitian reviewed</div><div class="small">“Perfect protein today!”</div></div></div></div>
+</div><script src="common.js"></script></body></html>

@@ -4,7 +4,7 @@
     "slug": "vitatribe",
     "scheme": "vitatribe",
     "owner": "ernsmsr",
-    "version": "1.0.9",
+    "version": "1.0.10",
     "description": "Book real dietitians, follow diet plans, track workouts & streaks with friends.",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -29,7 +29,7 @@
         "backgroundColor": "#0a0a0a"
       },
       "package": "com.vitatribe.fitness.spor.diyet.diyetisyen",
-      "versionCode": 12,
+      "versionCode": 13,
       "googleServicesFile": "./android/app/google-services.json",
       "permissions": [
         "INTERNET",
