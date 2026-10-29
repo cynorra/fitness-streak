@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Pressable, LayoutChangeEvent } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Image, LayoutChangeEvent } from 'react-native';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import Animated, {
   useSharedValue,
@@ -25,6 +25,8 @@ const TABS: { name: string; icon: IconName; iconActive: IconName }[] = [
 ];
 
 const BAR_PADDING = 6;
+
+const BRAND_ICON_SIZE = 26;
 
 function TabButton({ tab, isActive, onPress }: { tab: typeof TABS[0]; isActive: boolean; onPress: () => void }) {
   const { t } = useTranslation();
@@ -54,11 +56,18 @@ function TabButton({ tab, isActive, onPress }: { tab: typeof TABS[0]; isActive: 
   return (
     <Pressable style={styles.tabItem} onPress={handlePress}>
       <Animated.View style={iconStyle}>
-        <Ionicons
-          name={isActive ? tab.iconActive : tab.icon}
-          size={22}
-          color={isActive ? '#ff7a00' : '#64748b'}
-        />
+        {tab.name === 'index' ? (
+          <Image
+            source={require('../assets/icon.png')}
+            style={[styles.brandIcon, { opacity: isActive ? 1 : 0.6 }]}
+          />
+        ) : (
+          <Ionicons
+            name={isActive ? tab.iconActive : tab.icon}
+            size={22}
+            color={isActive ? '#ff7a00' : '#64748b'}
+          />
+        )}
       </Animated.View>
       <Animated.Text numberOfLines={1} style={[styles.label, labelStyle, isActive && styles.labelActive]}>
         {t(`tabs.${tab.name}`)}
@@ -125,6 +134,7 @@ export default function AnimatedTabBar({ state, navigation }: BottomTabBarProps)
 }
 
 const styles = StyleSheet.create({
+  brandIcon: { width: BRAND_ICON_SIZE, height: BRAND_ICON_SIZE, borderRadius: 7 },
   outer: {
     paddingHorizontal: 14,
     paddingTop: 8,
