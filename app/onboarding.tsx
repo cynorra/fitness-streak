@@ -5,6 +5,7 @@ import Animated, { FadeInDown, FadeInUp, SlideInRight } from 'react-native-reani
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '../lib/auth';
 import { supabase } from '../lib/supabase';
+import { track } from '../lib/analytics';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { useTranslation } from '../lib/i18n/i18n';
@@ -71,6 +72,7 @@ export default function Onboarding() {
       }
 
       await refreshProfile();
+      track.onboardingCompleted();
       router.replace('/(tabs)');
     } catch (err: any) {
       console.error('Onboarding update error:', err);

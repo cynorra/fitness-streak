@@ -17,6 +17,7 @@ import AppIcon from '../components/AppIcon';
 import AmbientBackground from '../components/AmbientBackground';
 import PressableScale from '../components/PressableScale';
 import { friendlyError } from '../lib/useOnline';
+import { track } from '../lib/analytics';
 
 type Person = { id: string; display_name: string | null; username: string };
 
@@ -161,6 +162,7 @@ export default function Appointments() {
       return;
     }
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    track.appointmentBooked();
     setBookVisible(false);
     loadAppointments();
   };

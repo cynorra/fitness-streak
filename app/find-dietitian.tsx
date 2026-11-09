@@ -10,6 +10,7 @@ import { useAuth } from '../lib/auth';
 import { supabase } from '../lib/supabase';
 import { useTranslation } from '../lib/i18n/i18n';
 import { friendlyError } from '../lib/useOnline';
+import { track } from '../lib/analytics';
 import AmbientBackground from '../components/AmbientBackground';
 
 type Dietitian = { id: string; username: string; display_name: string | null; bio: string | null; specialty: string | null };
@@ -83,7 +84,10 @@ export default function FindDietitian({ hideBack }: { hideBack?: boolean } = {})
     }
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     setStatusById((s) => ({ ...s, [d.id]: s[d.id] || 'pending' }));
-    if (!error) Alert.alert(t('dietitianCare.request_sent'), t('dietitianCare.request_sent_msg'));
+    if (!error) {
+      track.dietitianRequestSent();
+      Alert.alert(t('dietitianCare.request_sent'), t('dietitianCare.request_sent_msg'));
+    }
   };
 
   const openRate = (d: Dietitian) => {

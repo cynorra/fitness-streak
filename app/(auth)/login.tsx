@@ -15,6 +15,7 @@ import * as Haptics from 'expo-haptics';
 import * as WebBrowser from 'expo-web-browser';
 import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '../../lib/supabase';
+import { track } from '../../lib/analytics';
 import GlassCard from '../../components/GlassCard';
 import { useTranslation, supportedLanguages } from '../../lib/i18n/i18n';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -86,6 +87,7 @@ export default function Login() {
       }
 
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      track.login('google');
     } catch (err: any) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert(t('common.error'), friendlyError(err.message, t) || t('login.err_google_start'));
@@ -114,6 +116,7 @@ export default function Login() {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        track.login('email');
       } else {
         const { error } = await supabase.auth.signUp({
           email,
@@ -122,6 +125,7 @@ export default function Login() {
         });
         if (error) throw error;
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        track.signUp('email');
         Alert.alert(t('login.welcome_title'), t('login.welcome_message'));
       }
     } catch (err: any) {

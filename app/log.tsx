@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { supabase, WORKOUT_TYPES } from '../lib/supabase';
+import { track } from '../lib/analytics';
 import { useAuth } from '../lib/auth';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { loadInterstitialAd, showInterstitialAd } from '../lib/admob';
@@ -59,6 +60,7 @@ export default function LogWorkout() {
     }
 
     markWorkoutLoggedToday().catch(() => {});
+    track.workoutLogged(minutes);
     await refreshProfile();
     setSelectedType(null);
     setDuration('');
