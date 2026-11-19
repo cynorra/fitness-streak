@@ -20,6 +20,10 @@ lerna-debug.log*
 .pnpm-debug.log*
 hs_err_pid*.log
 replay_pid*.log
+__pycache__/
+*.pyc
+temp_tok.txt
+
 
 # Environment files
 .env
@@ -57,3 +61,7 @@ graphify-out/
 client_secret_*.json
 hs_err_pid*.log
 replay_pid*.log
+__pycache__/
+*.pyc
+temp_tok.txt
+
