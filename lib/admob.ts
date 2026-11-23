@@ -1,10 +1,15 @@
-import mobileAds, { AdsConsent, InterstitialAd, AdEventType } from 'react-native-google-mobile-ads';
+import mobileAds, { AdsConsent, InterstitialAd, AdEventType, TestIds } from 'react-native-google-mobile-ads';
 import { Platform } from 'react-native';
 
 export const ADMOB_CONFIG = {
-  // Kesinlikle sadece sizin resmi AdMob birimleriniz:
-  BANNER_ID: process.env.EXPO_PUBLIC_ADMOB_BANNER_ID || 'ca-app-pub-4674211063760769/3783071528',
-  INTERSTITIAL_ID: process.env.EXPO_PUBLIC_ADMOB_INTERSTITIAL_ID || 'ca-app-pub-4674211063760769/1969570638',
+  // Release builds use the real ad units. Development builds (__DEV__) use Google's test
+  // units so developer devices never generate invalid traffic on the live units.
+  BANNER_ID: __DEV__
+    ? TestIds.ADAPTIVE_BANNER
+    : process.env.EXPO_PUBLIC_ADMOB_BANNER_ID || 'ca-app-pub-4674211063760769/3783071528',
+  INTERSTITIAL_ID: __DEV__
+    ? TestIds.INTERSTITIAL
+    : process.env.EXPO_PUBLIC_ADMOB_INTERSTITIAL_ID || 'ca-app-pub-4674211063760769/1969570638',
 };
 
 /**
