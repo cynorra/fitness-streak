@@ -34,6 +34,7 @@ export default function CreateNutritionPlan() {
   const [clients, setClients] = useState<any[]>([]);
   const [selectedClient, setSelectedClient] = useState<any>(null);
   const [planTitle, setPlanTitle] = useState('');
+  const [targets, setTargets] = useState({ cal: '', p: '', c: '', f: '' });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -94,15 +95,20 @@ export default function CreateNutritionPlan() {
 
     setSaving(true);
     try {
-      const { data: planData, error: planError } = await supabase
-        .from('nutrition_plans')
-        .insert({
-          dietitian_id: profile?.id,
-          client_id: selectedClient.client_id,
-          title: planTitle,
-        })
-        .select()
-        .single();
+      const base = { dietitian_id: profile?.id, client_id: selectedClient.client_id, title: planTitle };
+      const num = (v: string) => (parseInt(v, 10) > 0 ? parseInt(v, 10) : null);
+      const withTargets = {
+        ...base,
+        target_calories: num(targets.cal),
+        target_protein_g: num(targets.p),
+        target_carbs_g: num(targets.c),
+        target_fat_g: num(targets.f),
+      };
+      let { data: planData, error: planError } = await supabase.from('nutrition_plans').insert(withTargets).select().single();
+      if (planError) {
+        // Target columns missing (migration pending): save the plan the original way.
+        ({ data: planData, error: planError } = await supabase.from('nutrition_plans').insert(base).select().single());
+      }
 
       if (planError) throw planError;
 
@@ -112,6 +118,7 @@ export default function CreateNutritionPlan() {
         day_of_week: parseInt(m.day_of_week) || 1,
         content: m.content,
         calories: parseInt(m.calories) || 0,
+        macros: { protein_g: parseInt(m.protein) || 0, carbs_g: parseInt(m.carbs) || 0, fat_g: parseInt(m.fat) || 0 },
       }));
 
       const { error: mealsError } = await supabase.from('nutrition_meals').insert(mealsToInsert);
@@ -199,6 +206,23 @@ export default function CreateNutritionPlan() {
           onChangeText={setPlanTitle}
         />
 
+        <Text style={styles.label}>{t('platform.plan_targets')}</Text>
+        <View style={{ flexDirection: 'row', gap: 8 }}>
+          {([['cal', 'platform.plan_kcal'], ['p', 'platform.plan_p'], ['c', 'platform.plan_c'], ['f', 'platform.plan_f']] as const).map(([k, label]) => (
+            <View key={k} style={{ flex: 1 }}>
+              <Text style={styles.subLabel}>{t(label)}</Text>
+              <TextInput
+                style={styles.inputSmall}
+                keyboardType="numeric"
+                placeholder="0"
+                placeholderTextColor="#64748b"
+                value={targets[k]}
+                onChangeText={(v) => setTargets({ ...targets, [k]: v })}
+              />
+            </View>
+          ))}
+        </View>
+
         <Text style={styles.sectionTitle}>{t('plan.meals_menu')}</Text>
         {meals.map((meal, index) => (
           <View key={index} style={styles.mealCard}>
@@ -250,6 +274,22 @@ export default function CreateNutritionPlan() {
                   onChangeText={(v) => updateMeal(index, 'calories', v)}
                 />
               </View>
+            </View>
+
+            <View style={{ flexDirection: 'row', gap: 8, marginBottom: 6 }}>
+              {([['protein', 'platform.plan_p'], ['carbs', 'platform.plan_c'], ['fat', 'platform.plan_f']] as const).map(([k, label]) => (
+                <View key={k} style={{ flex: 1 }}>
+                  <Text style={styles.subLabel}>{t(label)}</Text>
+                  <TextInput
+                    style={styles.inputSmall}
+                    keyboardType="numeric"
+                    placeholder="0"
+                    placeholderTextColor="#64748b"
+                    value={meal[k] || ''}
+                    onChangeText={(v) => updateMeal(index, k, v)}
+                  />
+                </View>
+              ))}
             </View>
 
             <Text style={styles.subLabel}>{t('plan.content')}</Text>

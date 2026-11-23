@@ -11,6 +11,7 @@ import { friendlyError } from '../../lib/useOnline';
 import AppIcon from '../../components/AppIcon';
 import PressableScale from '../../components/PressableScale';
 import AmbientBackground from '../../components/AmbientBackground';
+import PrivacySettings from '../../components/PrivacySettings';
 
 export default function Profile() {
   const { profile, session, refreshProfile } = useAuth();
@@ -339,6 +340,8 @@ export default function Profile() {
           <Text style={styles.legalText}>{t('profile.terms_of_use')}</Text>
         </TouchableOpacity>
       </View>
+
+      <PrivacySettings />
 
       <TouchableOpacity 
         style={styles.deleteBtn} 

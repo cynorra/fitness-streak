@@ -30,6 +30,8 @@ export type Profile = {
   last_workout_date: string | null;
   role: 'user' | 'dietitian' | 'admin';
   onboarding_completed: boolean;
+  units?: 'metric' | 'imperial' | null;
+  country?: string | null;
 };
 
 export type Workout = {

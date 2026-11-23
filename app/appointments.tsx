@@ -18,6 +18,9 @@ import AmbientBackground from '../components/AmbientBackground';
 import PressableScale from '../components/PressableScale';
 import { friendlyError } from '../lib/useOnline';
 import { track } from '../lib/analytics';
+import * as WebBrowser from 'expo-web-browser';
+import { jitsiUrl, canJoinNow } from '../lib/jitsi';
+import { formatInZone, deviceTimezone } from '../lib/units';
 
 type Person = { id: string; display_name: string | null; username: string };
 
@@ -45,6 +48,21 @@ export default function Appointments() {
   const [personId, setPersonId] = useState<string | null>(null);
   const [dayOffset, setDayOffset] = useState(1);
   const [slot, setSlot] = useState<string | null>(null);
+  // Real availability published by the dietitian (UTC instants). null/empty -> fall back to the free hour grid below.
+  const [serverSlots, setServerSlots] = useState<Date[]>([]);
+  useEffect(() => {
+    setServerSlots([]);
+    setSlot(null);
+    if (!bookVisible || isDietitian || !personId) return;
+    const from = new Date();
+    const to = addDays(from, 14);
+    const ymd = (d: Date) => format(d, 'yyyy-MM-dd');
+    supabase.rpc('get_available_slots', { p_dietitian: personId, p_from: ymd(from), p_to: ymd(to) }).then(({ data, error }) => {
+      if (!error && Array.isArray(data)) setServerSlots(data.map((r: any) => new Date(r.slot_start)));
+    });
+  }, [bookVisible, isDietitian, personId]);
+  const usingServerSlots = serverSlots.length > 0;
+  const daySlots = serverSlots.filter((d) => format(d, 'yyyy-MM-dd') === format(addDays(new Date(), dayOffset), 'yyyy-MM-dd'));
   const [saving, setSaving] = useState(false);
 
   const loadAppointments = useCallback(async () => {
@@ -142,8 +160,8 @@ export default function Appointments() {
 
   const submitBooking = async () => {
     if (!profile || !personId || !slot || saving) return;
-    const [h, m] = slot.split(':').map(Number);
-    const when = setMinutes(setHours(startOfDay(addDays(new Date(), dayOffset)), h), m);
+    const [h, m] = usingServerSlots ? [0, 0] : slot.split(':').map(Number);
+    const when = usingServerSlots ? new Date(slot) : setMinutes(setHours(startOfDay(addDays(new Date(), dayOffset)), h), m);
     if (!isAfter(when, new Date())) {
       Alert.alert(t('common.error'), t('appointments.past_time'));
       return;
@@ -204,6 +222,21 @@ export default function Appointments() {
           </View>
         </View>
 
+        {apt.dietitian_timezone && apt.dietitian_timezone !== deviceTimezone() && (
+          <Text style={styles.tzNote}>
+            {t('platform.your_time')}: {formatInZone(apt.appointment_time, deviceTimezone())} · {t('platform.their_time')}: {formatInZone(apt.appointment_time, apt.dietitian_timezone)}
+          </Text>
+        )}
+        {apt.status === 'confirmed' && !!jitsiUrl(apt.video_room) && canJoinNow(apt.appointment_time) && (
+          <>
+            <TouchableOpacity style={[styles.actionBtn, { borderColor: '#10b981', backgroundColor: '#10b98122', marginTop: 10 }]} onPress={() => WebBrowser.openBrowserAsync(jitsiUrl(apt.video_room)!)}>
+              <Ionicons name="videocam" size={16} color="#10b981" />
+              <Text style={[styles.actionText, { color: '#10b981' }]}>{t('platform.join_video')}</Text>
+            </TouchableOpacity>
+            <Text style={styles.tzNote}>{t('platform.video_privacy')}</Text>
+          </>
+        )}
+
         <View style={styles.actionsRow}>
           {apt.status === 'pending' && isDietitian && (
             <TouchableOpacity style={[styles.actionBtn, { borderColor: '#10b981', backgroundColor: '#10b98118' }]} onPress={() => setStatus(apt.id, 'confirmed')}>
@@ -257,9 +290,16 @@ export default function Appointments() {
           <Ionicons name="arrow-back" size={22} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.title}>{t('appointments.title')}</Text>
-        <TouchableOpacity onPress={openBooking} style={[styles.iconBtn, styles.addBtn]}>
-          <Ionicons name="add" size={24} color="#fff" />
-        </TouchableOpacity>
+        <View style={{ flexDirection: 'row', gap: 8 }}>
+          {isDietitian && (
+            <TouchableOpacity onPress={() => router.push('/dietitian/availability' as any)} style={styles.iconBtn} accessibilityLabel={t('platform.avail_title')}>
+              <Ionicons name="time-outline" size={22} color="#fff" />
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity onPress={openBooking} style={[styles.iconBtn, styles.addBtn]}>
+            <Ionicons name="add" size={24} color="#fff" />
+          </TouchableOpacity>
+        </View>
       </View>
 
       <ScrollView
@@ -330,11 +370,22 @@ export default function Appointments() {
 
             <Text style={styles.sheetLabel}>{t('appointments.time')}</Text>
             <View style={styles.slotGrid}>
-              {TIME_SLOTS.map((s) => (
-                <TouchableOpacity key={s} style={[styles.slot, slot === s && styles.chipActive]} onPress={() => setSlot(s)}>
-                  <Text style={[styles.chipText, slot === s && styles.chipTextActive]}>{s}</Text>
-                </TouchableOpacity>
-              ))}
+              {usingServerSlots
+                ? daySlots.length === 0
+                  ? <Text style={styles.tzNote}>{t('platform.no_slots')}</Text>
+                  : daySlots.map((d) => {
+                      const iso = d.toISOString();
+                      return (
+                        <TouchableOpacity key={iso} style={[styles.slot, slot === iso && styles.chipActive]} onPress={() => setSlot(iso)}>
+                          <Text style={[styles.chipText, slot === iso && styles.chipTextActive]}>{format(d, 'HH:mm')}</Text>
+                        </TouchableOpacity>
+                      );
+                    })
+                : TIME_SLOTS.map((s) => (
+                    <TouchableOpacity key={s} style={[styles.slot, slot === s && styles.chipActive]} onPress={() => setSlot(s)}>
+                      <Text style={[styles.chipText, slot === s && styles.chipTextActive]}>{s}</Text>
+                    </TouchableOpacity>
+                  ))}
             </View>
 
             <TouchableOpacity
@@ -388,6 +439,7 @@ const styles = StyleSheet.create({
   dateText: { color: '#fff', fontSize: 15, fontWeight: '800' },
   statusBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 },
   statusText: { fontSize: 10, fontWeight: '900', letterSpacing: 1 },
+  tzNote: { color: '#71717a', fontSize: 11, marginTop: 8 },
   personInfo: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   avatar: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(16,185,129,0.15)', justifyContent: 'center', alignItems: 'center' },
   avatarText: { color: '#10b981', fontSize: 16, fontWeight: '900' },

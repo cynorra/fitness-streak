@@ -10,6 +10,9 @@ import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { useTranslation } from '../lib/i18n/i18n';
 import AppIcon from '../components/AppIcon';
+import { recordHealthConsent } from '../lib/consent';
+import { deviceTimezone, defaultUnitsForRegion } from '../lib/units';
+import * as Localization from 'expo-localization';
 
 const SLIDE_KEYS = [
   { key: 's1', icon: '🔥' },
@@ -22,6 +25,7 @@ export default function Onboarding() {
   const [selectedRole, setSelectedRole] = useState<'user' | 'dietitian'>('user');
   const [loading, setLoading] = useState(false);
   const [inviteCode, setInviteCode] = useState('');
+  const [consent, setConsent] = useState(false);
   const { session, refreshProfile } = useAuth();
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -37,15 +41,31 @@ export default function Onboarding() {
 
   const handleFinish = async () => {
     if (!session?.user) return;
+    if (!consent) {
+      alert(t('platform.consent_required'));
+      return;
+    }
     setLoading(true);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     try {
-      const patch = { role: selectedRole, onboarding_completed: true };
-      const { data, error } = await supabase
+      const region = Localization.getLocales?.()[0]?.regionCode ?? null;
+      const patch = {
+        role: selectedRole,
+        onboarding_completed: true,
+        timezone: deviceTimezone(),
+        country: region,
+        units: defaultUnitsForRegion(region),
+      };
+      let { data, error } = await supabase
         .from('profiles')
         .update(patch)
         .eq('id', session.user.id)
         .select('id');
+      if (error) {
+        // New columns may not exist yet (migration pending): retry with the original minimal patch.
+        const basic = { role: selectedRole, onboarding_completed: true };
+        ({ data, error } = await supabase.from('profiles').update(basic).eq('id', session.user.id).select('id'));
+      }
 
       if (error) throw error;
 
@@ -71,9 +91,14 @@ export default function Onboarding() {
         redeemReferral(inviteCode).catch(() => {});
       }
 
+      // Explicit, versioned, revocable health-data consent (user_consents). Failure never blocks sign-up.
+      recordHealthConsent(session.user.id).catch(() => {});
+
       await refreshProfile();
       track.onboardingCompleted();
       router.replace('/(tabs)');
+      // Dietitians stay hidden from the directory until verified: send them straight to the verification form.
+      if (selectedRole === 'dietitian') router.push('/dietitian/verification' as any);
     } catch (err: any) {
       console.error('Onboarding update error:', err);
       alert(`${t('onboarding.error')}: ${err?.message ?? t('onboarding.unknown_error')}`);
@@ -137,6 +162,13 @@ export default function Onboarding() {
             maxLength={12}
           />
 
+          <TouchableOpacity style={styles.consentRow} onPress={() => setConsent(!consent)} activeOpacity={0.7}>
+            <Text style={styles.consentBox}>{consent ? '☑' : '☐'}</Text>
+            <Text style={styles.consentText}>{t('platform.consent_check')}</Text>
+          </TouchableOpacity>
+          <Text style={styles.consentBody}>{t('platform.consent_body')}</Text>
+          <Text style={styles.consentBody}>{t('platform.disclaimer')}</Text>
+
           <TouchableOpacity style={[styles.button, { bottom: insets.bottom + 48 }, loading && styles.buttonDisabled]} onPress={handleFinish} disabled={loading}>
             <Text style={styles.buttonText}>{loading ? t('onboarding.waiting') : t('onboarding.start')}</Text>
           </TouchableOpacity>
@@ -147,6 +179,10 @@ export default function Onboarding() {
 }
 
 const styles = StyleSheet.create({
+  consentRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 16, width: '100%' },
+  consentBox: { color: '#10b981', fontSize: 24 },
+  consentText: { color: '#fff', fontSize: 13, fontWeight: '700', flex: 1 },
+  consentBody: { color: '#71717a', fontSize: 11, marginTop: 6, width: '100%' },
   inviteInput: {
     marginTop: 20,
     width: '100%',

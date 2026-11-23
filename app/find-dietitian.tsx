@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, TextInput, ActivityIndicator, Alert, RefreshControl, Modal } from 'react-native';
+import { Share, View, Text, StyleSheet, TouchableOpacity, FlatList, TextInput, ActivityIndicator, Alert, RefreshControl, Modal } from 'react-native';
 import StarRating from '../components/StarRating';
 import { fetchDietitianScores, trustColor, DietitianScore } from '../lib/dietitianScores';
 import { useRouter } from 'expo-router';
@@ -12,8 +12,9 @@ import { useTranslation } from '../lib/i18n/i18n';
 import { friendlyError } from '../lib/useOnline';
 import { track } from '../lib/analytics';
 import AmbientBackground from '../components/AmbientBackground';
+import { dietitianLink } from '../lib/dietitianSlug';
 
-type Dietitian = { id: string; username: string; display_name: string | null; bio: string | null; specialty: string | null };
+type Dietitian = { id: string; username: string; display_name: string | null; bio: string | null; specialty: string | null; title?: string | null; specialties?: string[]; languages?: string[]; country?: string | null; session_price?: number | null; price_currency?: string | null; slug?: string | null; verified?: boolean };
 type Status = 'pending' | 'approved' | 'rejected';
 
 export default function FindDietitian({ hideBack }: { hideBack?: boolean } = {}) {
@@ -34,6 +35,11 @@ export default function FindDietitian({ hideBack }: { hideBack?: boolean } = {})
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
   const [savingReview, setSavingReview] = useState(false);
+  const [favs, setFavs] = useState<Set<string>>(new Set());
+  const [favOnly, setFavOnly] = useState(false);
+  const [country, setCountry] = useState('');
+  const [language, setLanguage] = useState('');
+  const [specialty, setSpecialty] = useState('');
 
   const load = useCallback(async () => {
     if (!profile) return;
@@ -46,22 +52,49 @@ export default function FindDietitian({ hideBack }: { hideBack?: boolean } = {})
       Object.fromEntries((reviewsRes.data || []).map((r: any) => [r.dietitian_id, { rating: r.rating, comment: r.comment }]))
     );
     const [list, mine] = await Promise.all([
-      supabase
-        .from('profiles')
-        .select('id, username, display_name, bio, specialty')
-        .eq('role', 'dietitian')
-        .neq('id', profile.id)
-        .limit(100),
+      // Directory RPC returns VERIFIED dietitians only (server-side); filters are applied there too.
+      supabase.rpc('search_dietitians', {
+        p_query: search.trim() || null,
+        p_country: country.trim().toUpperCase() || null,
+        p_language: language.trim().toLowerCase() || null,
+        p_specialty: specialty.trim().toLowerCase() || null,
+        p_limit: 100,
+      }),
       supabase.from('dietitian_clients').select('dietitian_id, status').eq('client_id', profile.id),
     ]);
-    setDietitians((list.data || []) as Dietitian[]);
+    const favRes = await supabase.from('dietitian_favorites').select('dietitian_id').eq('user_id', profile.id);
+    setFavs(new Set((favRes.data || []).map((r: any) => r.dietitian_id)));
+    let rows: any[] = (list.data || []) as any[];
+    if (list.error) {
+      // Migration not applied yet: keep the original behaviour (plain role='dietitian' listing).
+      const old = await supabase.from('profiles').select('id, username, display_name, bio, specialty').eq('role', 'dietitian').limit(100);
+      rows = old.data || [];
+    }
+    setDietitians(rows.filter((d: any) => d.id !== profile.id).map((d) => ({ ...d, specialty: d.title || (d.specialties || [])[0] || null })) as Dietitian[]);
     setStatusById(Object.fromEntries((mine.data || []).map((r: any) => [r.dietitian_id, r.status as Status])));
     setLoading(false);
-  }, [profile]);
+  }, [profile, search, country, language, specialty]);
 
   useEffect(() => {
-    load();
+    const h = setTimeout(load, 350);
+    return () => clearTimeout(h);
   }, [load]);
+
+  const toggleFav = async (d: Dietitian) => {
+    if (!profile) return;
+    const on = favs.has(d.id);
+    setFavs((prev) => {
+      const n = new Set(prev);
+      on ? n.delete(d.id) : n.add(d.id);
+      return n;
+    });
+    if (on) await supabase.from('dietitian_favorites').delete().match({ user_id: profile.id, dietitian_id: d.id });
+    else await supabase.from('dietitian_favorites').insert({ user_id: profile.id, dietitian_id: d.id });
+  };
+
+  const shareProfile = (d: Dietitian) => {
+    Share.share({ message: `${d.display_name || d.username}: ${dietitianLink(d.slug || d.id)}` }).catch(() => {});
+  };
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -123,6 +156,7 @@ export default function FindDietitian({ hideBack }: { hideBack?: boolean } = {})
   const q = search.trim().toLowerCase();
   // Highest trust score first; the score itself rises with ratings.
   const filtered = dietitians
+    .filter((d) => !favOnly || favs.has(d.id))
     .filter((d) => !q || `${d.display_name || ''} ${d.username} ${d.specialty || ''}`.toLowerCase().includes(q))
     .sort((a, b) => (scores.get(b.id)?.trust_score ?? 0) - (scores.get(a.id)?.trust_score ?? 0));
 
@@ -146,6 +180,16 @@ export default function FindDietitian({ hideBack }: { hideBack?: boolean } = {})
         onChangeText={setSearch}
       />
 
+      <Text style={styles.disclaimer}>{t('platform.disclaimer')}</Text>
+      <View style={styles.filters}>
+        <TextInput style={styles.chipInput} value={country} onChangeText={setCountry} placeholder={t('platform.filter_country')} placeholderTextColor="#666" maxLength={2} autoCapitalize="characters" />
+        <TextInput style={styles.chipInput} value={language} onChangeText={setLanguage} placeholder={t('platform.filter_language')} placeholderTextColor="#666" autoCapitalize="none" maxLength={5} />
+        <TextInput style={[styles.chipInput, { flex: 1.5 }]} value={specialty} onChangeText={setSpecialty} placeholder={t('platform.filter_specialty')} placeholderTextColor="#666" autoCapitalize="none" />
+        <TouchableOpacity style={[styles.favFilter, favOnly && { backgroundColor: '#ec489933' }]} onPress={() => setFavOnly(!favOnly)} accessibilityLabel={t('platform.fav_only')}>
+          <Ionicons name={favOnly ? 'heart' : 'heart-outline'} size={18} color="#ec4899" />
+        </TouchableOpacity>
+      </View>
+
       {loading ? (
         <ActivityIndicator color="#10b981" style={{ marginTop: 40 }} />
       ) : (
@@ -165,7 +209,8 @@ export default function FindDietitian({ hideBack }: { hideBack?: boolean } = {})
                     <Text style={styles.avatarText}>{(item.display_name || item.username)[0].toUpperCase()}</Text>
                   </TouchableOpacity>
                   <TouchableOpacity activeOpacity={0.7} style={{ flex: 1 }} onPress={() => router.push(`/user/${item.id}` as any)}>
-                    <Text style={styles.name}>{item.display_name || item.username}</Text>
+                    <Text style={styles.name}>{item.display_name || item.username}{item.verified ? '  ✓' : ''}</Text>
+                    {!!item.verified && <Text style={styles.verified}>{t('platform.verified')}</Text>}
                     {!!item.specialty && <Text style={styles.specialty}>{item.specialty}</Text>}
                     <View style={styles.ratingRow}>
                       <StarRating value={score?.avg_rating || 0} size={15} />
@@ -185,6 +230,18 @@ export default function FindDietitian({ hideBack }: { hideBack?: boolean } = {})
                       <Text style={styles.trustLabel}>{t('dietitianCare.trust')}</Text>
                     </View>
                   )}
+                </View>
+                <View style={styles.actionsLine}>
+                  {item.session_price != null && (
+                    <Text style={styles.price}>{t('platform.price_from', { price: `${item.session_price} ${item.price_currency || ''}`.trim() })}</Text>
+                  )}
+                  <View style={{ flex: 1 }} />
+                  <TouchableOpacity onPress={() => toggleFav(item)} style={styles.iconBtn} accessibilityLabel="favorite">
+                    <Ionicons name={favs.has(item.id) ? 'heart' : 'heart-outline'} size={20} color="#ec4899" />
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => shareProfile(item)} style={styles.iconBtn} accessibilityLabel={t('platform.share_profile')}>
+                    <Ionicons name="share-social-outline" size={20} color="#a1a1aa" />
+                  </TouchableOpacity>
                 </View>
                 {!!item.bio && <Text style={styles.bio} numberOfLines={3}>{item.bio}</Text>}
 
@@ -263,6 +320,14 @@ export default function FindDietitian({ hideBack }: { hideBack?: boolean } = {})
 }
 
 const styles = StyleSheet.create({
+  disclaimer: { color: '#71717a', fontSize: 10, marginHorizontal: 20, marginTop: 6 },
+  filters: { flexDirection: 'row', gap: 8, marginHorizontal: 20, marginTop: 8, alignItems: 'center' },
+  chipInput: { flex: 1, backgroundColor: 'rgba(255,255,255,0.05)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)', borderRadius: 10, paddingVertical: 8, paddingHorizontal: 10, color: '#fff', fontSize: 12 },
+  favFilter: { width: 38, height: 38, borderRadius: 10, borderWidth: 1, borderColor: '#ec489966', alignItems: 'center', justifyContent: 'center' },
+  verified: { color: '#10b981', fontSize: 11, fontWeight: '800' },
+  actionsLine: { flexDirection: 'row', alignItems: 'center', marginTop: 8 },
+  price: { color: '#a1a1aa', fontSize: 12, fontWeight: '700' },
+  iconBtn: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center' },
   container: { flex: 1, backgroundColor: '#050607' },
   header: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 12, paddingBottom: 8 },
   backBtn: { width: 44, height: 44, justifyContent: 'center', alignItems: 'center' },

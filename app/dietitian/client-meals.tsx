@@ -4,6 +4,7 @@ import {
   KeyboardAvoidingView, Platform, Alert, ActivityIndicator, RefreshControl,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import WeeklyProgress from '../../components/WeeklyProgress';
 import { addDays, format, subDays } from 'date-fns';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
@@ -165,6 +166,7 @@ export default function ClientMeals() {
         keyboardShouldPersistTaps="handled"
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#10b981" />}
       >
+        {!!clientId && <WeeklyProgress clientId={String(clientId)} />}
         {loading ? (
           <ActivityIndicator color="#10b981" style={{ marginTop: 40 }} />
         ) : failed ? (

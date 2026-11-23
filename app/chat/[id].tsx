@@ -18,13 +18,41 @@ import { setActiveChat } from '../../lib/notifications';
 import AppIcon from '../../components/AppIcon';
 import { Ionicons } from '@expo/vector-icons';
 import AmbientBackground from '../../components/AmbientBackground';
+import { Image, Linking } from 'react-native';
+import { pickImage, pickDocument, uploadPrivate, signedUrl } from '../../lib/attachments';
 
 type Message = {
   id: string;
   sender_id: string;
-  content: string;
+  content: string | null;
   created_at: string;
+  attachment_path?: string | null;
+  attachment_type?: 'image' | 'file' | null;
+  attachment_name?: string | null;
 };
+
+// Attachment bubble: fetches a short-lived signed URL from the private chat-files bucket.
+function Attachment({ msg }: { msg: Message }) {
+  const [url, setUrl] = useState<string | null>(null);
+  useEffect(() => {
+    if (msg.attachment_path) signedUrl('chat-files', msg.attachment_path).then(setUrl);
+  }, [msg.attachment_path]);
+  if (!msg.attachment_path) return null;
+  if (msg.attachment_type === 'image') {
+    return url ? (
+      <TouchableOpacity onPress={() => Linking.openURL(url)}>
+        <Image source={{ uri: url }} style={{ width: 200, height: 200, borderRadius: 12 }} />
+      </TouchableOpacity>
+    ) : (
+      <ActivityIndicator color="#fff" />
+    );
+  }
+  return (
+    <TouchableOpacity disabled={!url} onPress={() => url && Linking.openURL(url)}>
+      <Text style={{ color: '#fff', fontWeight: '800' }}>{msg.attachment_name || 'file'}</Text>
+    </TouchableOpacity>
+  );
+}
 
 export default function ChatScreen() {
   const { id } = useLocalSearchParams();
@@ -121,6 +149,28 @@ export default function ChatScreen() {
     } else {
       // Update conversation timestamp
       await supabase.from('conversations').update({ updated_at: new Date() }).eq('id', id);
+    }
+  };
+
+  const sendAttachment = async (kind: 'photo' | 'file') => {
+    if (!profile || typeof id !== 'string') return;
+    try {
+      const f = kind === 'photo' ? await pickImage() : await pickDocument();
+      if (!f) return;
+      const path = await uploadPrivate('chat-files', id, f);
+      const { error } = await supabase.from('messages').insert({
+        conversation_id: id,
+        sender_id: profile.id,
+        content: null,
+        attachment_path: path,
+        attachment_type: f.kind,
+        attachment_name: f.name,
+        attachment_size: f.size || null,
+      });
+      if (error) throw error;
+      await supabase.from('conversations').update({ updated_at: new Date() }).eq('id', id);
+    } catch (e: any) {
+      Alert.alert(t('chat.send_failed'), friendlyError(e?.message || '', t));
     }
   };
 
@@ -231,9 +281,12 @@ export default function ChatScreen() {
           return (
             <View style={[styles.messageRow, isMe ? styles.myRow : styles.otherRow]}>
               <View style={[styles.bubble, isMe ? styles.myBubble : styles.otherBubble]}>
-                <Text style={[styles.content, isMe ? styles.myContent : styles.otherContent]}>
-                  {item.content}
-                </Text>
+                {!!item.content && (
+                  <Text style={[styles.content, isMe ? styles.myContent : styles.otherContent]}>
+                    {item.content}
+                  </Text>
+                )}
+                <Attachment msg={item} />
                 <Text style={styles.time}>
                   {format(new Date(item.created_at), 'HH:mm', { locale: getDateLocale(locale) })}
                 </Text>
@@ -244,6 +297,9 @@ export default function ChatScreen() {
       />
 
       <View style={[styles.inputArea, { paddingBottom: insets.bottom + 12 }]}>
+        <TouchableOpacity style={styles.attachBtn} onPress={() => sendAttachment('photo')} onLongPress={() => sendAttachment('file')} accessibilityLabel={t('platform.attach')}>
+          <Ionicons name="attach" size={22} color="#fff" />
+        </TouchableOpacity>
         <TextInput
           style={styles.input}
           placeholder={t('chat.placeholder')}
@@ -297,5 +353,6 @@ const styles = StyleSheet.create({
     width: 48, height: 48, borderRadius: 24, backgroundColor: '#10b981', 
     justifyContent: 'center', alignItems: 'center' 
   },
+  attachBtn: { width: 44, height: 48, justifyContent: 'center', alignItems: 'center' },
   sendIcon: { color: '#fff', fontSize: 20, fontWeight: '900' },
 });

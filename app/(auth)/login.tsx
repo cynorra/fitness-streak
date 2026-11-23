@@ -36,11 +36,42 @@ export default function Login() {
   const [selectedRole, setSelectedRole] = useState<'user' | 'dietitian'>('user');
   const [loading, setLoading] = useState(false);
 
+  // Native Google account picker (Android Credential Manager) -> Supabase signInWithIdToken.
+  // Returns true if handled natively (success or user cancel), false to fall back to the web flow.
+  const nativeGoogleSignIn = async (): Promise<boolean> => {
+    const webClientId = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID;
+    if (Platform.OS === 'web' || !webClientId) return false;
+    let GS: typeof import('@react-native-google-signin/google-signin');
+    try {
+      GS = require('@react-native-google-signin/google-signin');
+      GS.GoogleSignin.configure({
+        webClientId,
+        iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID,
+      });
+      await GS.GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+      const res: any = await GS.GoogleSignin.signIn();
+      if (res?.type === 'cancelled') return true;
+      const idToken = res?.data?.idToken ?? res?.idToken;
+      if (!idToken) throw new Error(t('login.err_google_incomplete'));
+      const { error } = await supabase.auth.signInWithIdToken({ provider: 'google', token: idToken });
+      if (error) throw error;
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      track.login('google');
+      return true;
+    } catch (e: any) {
+      if (e?.code === GS!?.statusCodes?.SIGN_IN_CANCELLED) return true;
+      if (__DEV__) console.warn('[GoogleSignIn] native failed', e?.code, e?.message);
+      throw e;
+    }
+  };
+
   const handleGoogleSignIn = async () => {
     setLoading(true);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     try {
+      if (await nativeGoogleSignIn()) return;
+
       // Fixed custom scheme (matches app.json + AndroidManifest); createURL throws in standalone builds without one.
       const redirectUrl = 'vitatribe://auth-callback';
       const { data, error } = await supabase.auth.signInWithOAuth({
