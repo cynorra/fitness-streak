@@ -11,7 +11,6 @@ import Animated, {
 import { StyleSheet, Text, View } from 'react-native';
 import Svg, { Circle, Path, Defs, RadialGradient, Stop } from 'react-native-svg';
 import { useTranslation } from '../lib/i18n/i18n';
-import StreakFitLogo from './StreakFitLogo';
 
 interface AnimatedStreakNumberProps {
   streak: number;
@@ -78,10 +77,6 @@ export default function AnimatedStreakNumber({ streak }: AnimatedStreakNumberPro
     opacity: glowPulse.value,
   }));
 
-  const flameAnimStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: flamePulse.value }],
-  }));
-
   return (
     <View style={styles.container}>
       {/* Radial Glow Arkası */}
@@ -100,7 +95,7 @@ export default function AnimatedStreakNumber({ streak }: AnimatedStreakNumberPro
 
       {/* Dönen Enerji Arkı (Sport Circular Arc) */}
       <Animated.View style={[styles.arcWrap, ringStyle]}>
-        <Svg width={230} height={230} viewBox="0 0 100 100">
+        <Svg width={236} height={236} viewBox="0 0 100 100">
           {/* Arka plan sönük iz */}
           <Circle
             cx="50"
@@ -124,11 +119,6 @@ export default function AnimatedStreakNumber({ streak }: AnimatedStreakNumberPro
         </Svg>
       </Animated.View>
 
-      {/* Orijinal Alev Amblemi / Logo S */}
-      <Animated.View style={[styles.logoCenter, flameAnimStyle]}>
-        <StreakFitLogo size={68} animated style={{ opacity: isActive ? 1 : 0.85 }} />
-      </Animated.View>
-
       {/* Büyük Sayı */}
       <Animated.Text style={[styles.number, { color: accentColor }, numberStyle]}>
         {streak}
@@ -147,10 +137,11 @@ export default function AnimatedStreakNumber({ streak }: AnimatedStreakNumberPro
 
 const styles = StyleSheet.create({
   container: {
+    width: 240,
+    height: 240,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
-    paddingVertical: 12,
   },
   glowWrap: {
     position: 'absolute',
@@ -176,7 +167,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    marginTop: 6,
+    marginTop: 2,
     zIndex: 2,
   },
   dot: {

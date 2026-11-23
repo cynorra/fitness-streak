@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, SafeAreaView, useWindowDimensions } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, SafeAreaView, useWindowDimensions, RefreshControl, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as Haptics from 'expo-haptics';
@@ -11,40 +11,34 @@ import { Ionicons } from '@expo/vector-icons';
 import AmbientBackground from '../../components/AmbientBackground';
 import FeaturedDietitians from '../../components/FeaturedDietitians';
 import { useAuth } from '../../lib/auth';
-
-// Dummy Video Data - Mümkün olan en popüler ve ücretsiz Youtube videoları
-const WORKOUT_CATEGORIES = [
-  {
-    id: 'hiit',
-    titleKey: 'hiit',
-    videos: [
-      { id: 'ml6cT4AZdqI', title: '15 Min Fat Burn (No Equipment)', duration: '15 dk', thumbnail: 'https://img.youtube.com/vi/ml6cT4AZdqI/hqdefault.jpg' },
-      { id: 'cbKkB3oaKAw', title: '20 Min Full Body HIIT', duration: '20 dk', thumbnail: 'https://img.youtube.com/vi/cbKkB3oaKAw/hqdefault.jpg' },
-    ]
-  },
-  {
-    id: 'yoga',
-    titleKey: 'yoga',
-    videos: [
-      { id: 'v7AYKMP6rOE', title: '10 Min Morning Yoga', duration: '10 dk', thumbnail: 'https://img.youtube.com/vi/v7AYKMP6rOE/hqdefault.jpg' },
-      { id: 'sTANio_2E0Q', title: 'Yoga for Beginners', duration: '20 dk', thumbnail: 'https://img.youtube.com/vi/sTANio_2E0Q/hqdefault.jpg' },
-    ]
-  },
-  {
-    id: 'strength',
-    titleKey: 'strength',
-    videos: [
-      { id: 'UBnfm4s7CRA', title: '10 Min Abs Workout', duration: '10 dk', thumbnail: 'https://img.youtube.com/vi/UBnfm4s7CRA/hqdefault.jpg' },
-      { id: 'qWy_aPANBu0', title: '15 Min Dumbbell Arms', duration: '15 dk', thumbnail: 'https://img.youtube.com/vi/qWy_aPANBu0/hqdefault.jpg' },
-    ]
-  }
-];
+import { loadDiscover, timeAgo, DiscoverCategory } from '../../lib/discover';
 
 export default function WorkoutsScreen() {
   const { profile } = useAuth();
   const router = useRouter();
   const { width } = useWindowDimensions();
   const { t, locale } = useTranslation();
+  const [categories, setCategories] = useState<DiscoverCategory[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const load = useCallback(async (force = false) => {
+    try {
+      setCategories(await loadDiscover(force));
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    load(true);
+  };
 
   const handleVideoPress = (videoId: string, title: string) => {
     Haptics.selectionAsync();
@@ -63,13 +57,21 @@ export default function WorkoutsScreen() {
         <Text style={styles.headerSubtitle}>{t('workouts.subtitle')}</Text>
       </View>
 
-      <ScrollView style={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#10b981" />}
+      >
         {profile && profile.role !== 'dietitian' && (
           <View style={{ marginTop: 16 }}>
             <FeaturedDietitians userId={profile.id} />
           </View>
         )}
-        {WORKOUT_CATEGORIES.map((category, idx) => (
+        {loading && <ActivityIndicator color="#10b981" style={{ marginTop: 40 }} />}
+        {!loading && categories.every((c) => c.videos.length === 0) && (
+          <Text style={{ color: '#888', textAlign: 'center', marginTop: 40, paddingHorizontal: 32 }}>{t('workouts.empty')}</Text>
+        )}
+        {categories.filter((c) => c.videos.length > 0).map((category, idx) => (
           <View key={category.id} style={styles.categoryContainer}>
             <Text style={styles.categoryTitle}>{t(`workouts.${category.titleKey}`)}</Text>
             
@@ -94,7 +96,7 @@ export default function WorkoutsScreen() {
                     <Ionicons name="play" size={22} color="#fff" style={{ marginLeft: 2 }} />
                   </View>
                   <View style={styles.durationBadge}>
-                    <Text style={styles.durationText}>{video.duration.replace('dk', t('common.minutes_abbr'))}</Text>
+                    <Text style={styles.durationText}>{timeAgo(video.publishedAt, locale)}</Text>
                   </View>
                   <View style={styles.cardFooter}>
                     <Text style={styles.videoTitle} numberOfLines={2}>
