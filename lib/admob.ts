@@ -1,32 +1,81 @@
-import mobileAds, { AdsConsent, InterstitialAd, AdEventType } from 'react-native-google-mobile-ads';
+import mobileAds, { AdsConsent, InterstitialAd, AdEventType, MaxAdContentRating } from 'react-native-google-mobile-ads';
 import { Platform } from 'react-native';
 
 export const ADMOB_CONFIG = {
   // Always the real AdMob units, in every build type.
-  BANNER_ID: process.env.EXPO_PUBLIC_ADMOB_BANNER_ID || 'ca-app-pub-4674211063760769/3783071528',
-  INTERSTITIAL_ID: process.env.EXPO_PUBLIC_ADMOB_INTERSTITIAL_ID || 'ca-app-pub-4674211063760769/1969570638',
+  BANNER_ID: (process.env.EXPO_PUBLIC_ADMOB_BANNER_ID || '').trim() || 'ca-app-pub-4674211063760769/3783071528',
+  INTERSTITIAL_ID: (process.env.EXPO_PUBLIC_ADMOB_INTERSTITIAL_ID || '').trim() || 'ca-app-pub-4674211063760769/1969570638',
 };
+
+let adsInitialized = false;
+let initPromise: Promise<void> | null = null;
+const readyListeners = new Set<() => void>();
+
+export function onAdsReady(cb: () => void): () => void {
+  if (adsInitialized) {
+    cb();
+    return () => {};
+  }
+  readyListeners.add(cb);
+  return () => {
+    readyListeners.delete(cb);
+  };
+}
+
+function notifyAdsReady() {
+  adsInitialized = true;
+  readyListeners.forEach((cb) => {
+    try {
+      cb();
+    } catch {}
+  });
+  readyListeners.clear();
+}
+
+const withTimeout = <T>(promise: Promise<T>, ms: number): Promise<T> =>
+  Promise.race([
+    promise,
+    new Promise<T>((_, reject) => setTimeout(() => reject(new Error('AdMob timeout')), ms)),
+  ]);
 
 /**
  * AdMob SDK başlatma
  */
 export async function initializeAds() {
   if (Platform.OS === 'web') return;
+  if (adsInitialized) return;
+  if (initPromise) return initPromise;
 
-  try {
-    const consentInfo = await AdsConsent.gatherConsent();
-    if (consentInfo.canRequestAds) {
-      await mobileAds().initialize();
-    }
-  } catch (error) {
+  initPromise = (async () => {
     try {
-      await mobileAds().initialize();
-    } catch (initError) {
-      console.log('[AdMob] Init hatası:', initError);
-    }
-  }
+      await mobileAds()
+        .setRequestConfiguration({
+          maxAdContentRating: MaxAdContentRating.G,
+          tagForChildDirectedTreatment: false,
+          tagForUnderAgeOfConsent: false,
+        })
+        .catch(() => {});
 
-  loadInterstitialAd();
+      try {
+        await withTimeout(AdsConsent.gatherConsent(), 5000);
+      } catch (_consentErr) {
+        // Proceed with SDK initialization even if UMP is not configured or times out
+      }
+
+      await withTimeout(mobileAds().initialize(), 8000);
+    } catch (error) {
+      try {
+        await mobileAds().initialize();
+      } catch (initError) {
+        console.log('[AdMob] Init hatası:', initError);
+      }
+    } finally {
+      notifyAdsReady();
+      loadInterstitialAd();
+    }
+  })();
+
+  return initPromise;
 }
 
 let interstitialAd: InterstitialAd | null = null;
@@ -41,7 +90,7 @@ export function loadInterstitialAd() {
 
   try {
     interstitialAd = InterstitialAd.createForAdRequest(ADMOB_CONFIG.INTERSTITIAL_ID, {
-      requestNonPersonalizedAdsOnly: true,
+      requestNonPersonalizedAdsOnly: false,
     });
 
     interstitialAd.addAdEventListener(AdEventType.LOADED, () => {

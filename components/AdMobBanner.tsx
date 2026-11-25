@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, View, ViewStyle, Platform, useWindowDimensions } from 'react-native';
 import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
-import { ADMOB_CONFIG } from '../lib/admob';
+import { ADMOB_CONFIG, initializeAds, onAdsReady } from '../lib/admob';
 
-const MAX_RETRIES = 4;
-const RETRY_DELAY_MS = 30000;
+const RETRY_DELAY_MS = 25000;
 
 interface AdMobBannerProps {
   style?: ViewStyle;
@@ -25,41 +24,52 @@ export default function AdMobBanner({
   size = BannerAdSize.ANCHORED_ADAPTIVE_BANNER,
 }: AdMobBannerProps) {
   const { width } = useWindowDimensions();
+  const [sdkReady, setSdkReady] = useState(false);
   const [adLoaded, setAdLoaded] = useState(false);
-  const [adFailed, setAdFailed] = useState(false);
-  // Bumped to remount the BannerAd and request a fresh ad after a no-fill / network failure.
   const [attempt, setAttempt] = useState(0);
+  const retryTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    if (!adFailed || attempt >= MAX_RETRIES) return;
-    const t = setTimeout(() => {
-      setAdFailed(false);
-      setAttempt((n) => n + 1);
-    }, RETRY_DELAY_MS * (attempt + 1));
-    return () => clearTimeout(t);
-  }, [adFailed, attempt]);
+    initializeAds();
+    const unsub = onAdsReady(() => setSdkReady(true));
+    return () => {
+      unsub();
+      if (retryTimer.current) clearTimeout(retryTimer.current);
+    };
+  }, []);
 
-  if (Platform.OS === 'web' || adFailed) {
+  if (Platform.OS === 'web' || width === 0 || !sdkReady) {
     return null;
   }
 
-  const adUnitId = unitId || ADMOB_CONFIG.BANNER_ID;
+  const adUnitId = (unitId || ADMOB_CONFIG.BANNER_ID).trim();
 
   return (
-    <View style={[styles.container, { maxWidth: width }, style]}>
+    <View
+      pointerEvents={adLoaded ? 'auto' : 'none'}
+      style={[
+        styles.container,
+        { maxWidth: width, overflow: 'hidden' },
+        adLoaded ? style : styles.pending,
+      ]}
+    >
       <BannerAd
         key={attempt}
         unitId={adUnitId}
         size={size}
         requestOptions={{
-          requestNonPersonalizedAdsOnly: true,
+          requestNonPersonalizedAdsOnly: false,
         }}
         onAdLoaded={() => {
           setAdLoaded(true);
         }}
         onAdFailedToLoad={(error) => {
           console.log(`[AdMob Banner] (${adUnitId}):`, error?.message || error);
-          setAdFailed(true);
+          setAdLoaded(false);
+          if (retryTimer.current) clearTimeout(retryTimer.current);
+          retryTimer.current = setTimeout(() => {
+            setAttempt((n) => n + 1);
+          }, RETRY_DELAY_MS);
         }}
       />
     </View>
@@ -67,6 +77,11 @@ export default function AdMobBanner({
 }
 
 const styles = StyleSheet.create({
+  pending: {
+    height: 1,
+    opacity: 0,
+    marginVertical: 0,
+  },
   container: {
     width: '100%',
     marginVertical: 8,

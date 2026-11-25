@@ -12,6 +12,7 @@ import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from '../lib/i18n/i18n';
+import AdMobBanner from './AdMobBanner';
 
 type IconName = React.ComponentProps<typeof Ionicons>['name'];
 
@@ -98,6 +99,7 @@ export default function AnimatedTabBar({ state, navigation }: BottomTabBarProps)
 
   return (
     <View style={[styles.outer, { paddingBottom: Math.max(insets.bottom, 10) }]} pointerEvents="box-none">
+      <AdMobBanner style={{ marginTop: 0, marginBottom: 6 }} />
       <View style={styles.bar} onLayout={onLayout}>
         <LinearGradient
           colors={['#161b24', '#0c0f14']}
