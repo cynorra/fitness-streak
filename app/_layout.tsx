@@ -13,6 +13,7 @@ import { registerForPushNotificationsAsync, syncNotificationSchedules } from '..
 import { initializeAds } from '../lib/admob';
 import OfflineBanner from '../components/OfflineBanner';
 import AnimatedSplashScreen from '../components/AnimatedSplashScreen';
+import RateAppModal from '../components/RateAppModal';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
@@ -223,6 +224,7 @@ function AppContent() {
       </View>
       <OfflineBanner />
       <AnimatedSplashScreen isReady={!loading} />
+      <RateAppModal ready={!loading} />
     </View>
   );
 }
