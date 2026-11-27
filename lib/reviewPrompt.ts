@@ -4,7 +4,7 @@ import { Linking } from 'react-native';
 const STORAGE_KEY = 'app_review_prompt_state_v1';
 const PACKAGE_ID = 'com.vitatribe.fitness.spor.diyet.diyetisyen';
 const PLAY_STORE_WEB_URL = `https://play.google.com/store/apps/details?id=${PACKAGE_ID}`;
-const MIN_LAUNCHES = 3;
+const MIN_LAUNCHES = 2;
 const MAX_PROMPTS = 2;
 const COOLDOWN_MS = 21 * 24 * 60 * 60 * 1000;
 
